@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>HoldTranslate 多段落独立翻译与精准还原测试</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      margin: 0;
+      padding: 40px 20px 80px;
+      line-height: 1.7;
+      background: #0f1115;
+      color: #e2e8f0;
+    }
+    .container {
+      max-width: 820px;
+      margin: 0 auto;
+    }
+    .card {
+      background: #181b20;
+      border: 1px solid #272c35;
+      padding: 24px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #94a3b8;
+      border-bottom: 1px dashed rgba(255,255,255,0.08);
+      padding-bottom: 8px;
+    }
+    .tip {
+      background: rgba(134, 160, 3, 0.12);
+      border-left: 4px solid #86a003;
+      padding: 12px 16px;
+      border-radius: 6px;
+      margin-bottom: 24px;
+      font-size: 13.5px;
+      color: #cbd5e1;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      background: #252b36;
+      color: #86a003;
+      margin-bottom: 8px;
+    }
+    p {
+      margin: 10px 0 16px 0;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>HoldTranslate 多段落独立翻译与精准还原测试</h2>
+
+    <div class="tip">
+      <strong>已修复的核心交互行为：</strong>
+      <ol style="margin: 6px 0 0 18px; padding: 0;">
+        <li><strong>多段独立共存</strong>：翻译完第一段后，直接长按第二段，<strong>会正常翻译第二段</strong>，绝不会误将第一段还原！</li>
+        <li><strong>精准 1 对 1 还原</strong>：只有再次长按第一段（或直接长按第一段译文）时，才会还原第一段；各段落互不干扰。</li>
+      </ol>
+    </div>
+
+    <!-- 多段落连续翻译与定向还原测试区 -->
+    <div class="card">
+      <div class="card-title">连续段落测试区 (长按第一段后，再长按第二段体验)</div>
+
+      <div class="badge">段落 A (请先长按翻译此段)</div>
+      <p>
+        Formula 1 engines are the most thermally efficient internal combustion power units in the world, achieving over 50 percent thermal efficiency through advanced hybrid energy recovery systems.
+      </p>
+
+      <div class="badge">段落 B (长按 A 之后，长按此段翻译，A 应当保持译文不被误还原)</div>
+      <p>
+        Aerodynamic ground effect tunnels generate significant downforce by directing airflow underneath the car chassis, reducing wake turbulence for following competitors.
+      </p>
+
+      <div class="badge">段落 C (第三段测试，验证多段完全独立)</div>
+      <p>
+        Tire degradation management and pit stop strategies frequently determine the final podium positions regardless of pure qualifying pace.
+      </p>
+    </div>
+
+    <!-- 新闻卡片与大标题/小字段落复合测试区 (复刻 BBC/CNN 真实结构) -->
+    <div class="card">
+      <div class="card-title">新闻复合卡片测试区 (验证大标题加粗字号与下方小字独立翻译)</div>
+      <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 18px;">
+        <a href="#news-link" style="text-decoration: none; color: inherit; display: block;">
+          <h2 style="font-size: 28px; line-height: 1.25; margin: 0 0 10px 0; font-weight: 600; color: #f8fafc;">
+            Germany's far-right AfD hails big victory in east, but falls short of majority
+          </h2>
+          <p style="font-size: 14px; line-height: 1.5; color: #94a3b8; margin: 0 0 12px 0;">
+            Alternative for Germany hails a "historic" success as preliminary results show a big margin of victory with almost 44% of the vote.
+          </p>
+          <div style="font-size: 12px; color: #64748b;">
+            <span>2 hrs ago</span> | <span>Europe</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- YouTube 真实视频卡片结构测试区 -->
+    <div class="card">
+      <div class="card-title">YouTube 视频标题结构测试区 (精确提取 16px 标题与 Medium 加粗)</div>
+      <div style="display: flex; gap: 16px; align-items: flex-start; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 16px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #10b981, #06b6d4); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold;">12K</div>
+        <div style="flex: 1;">
+          <h3 style="margin: 0; font-size: 13px; font-weight: normal;">
+            <a id="video-title-link" href="#yt" style="text-decoration: none; color: inherit;">
+              <span id="video-title" style="display: block; font-family: 'Roboto', sans-serif; font-size: 16px; line-height: 22px; font-weight: 500; color: #f1f5f9;">
+                MAJESTIC 12K HDR 120fps Video Dolby Vision (8K Video)
+              </span>
+            </a>
+          </h3>
+          <div style="font-size: 12px; color: #94a3b8; margin-top: 6px;">
+            12K VIDEO ULTRA HD ✔ • 6.9M views • 1 year ago
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 斜体、下划线、删除线与样式同步测试区 -->
+    <div class="card">
+      <div class="card-title">富文本格式同步测试区 (验证斜体、下划线、加粗完全保持一致)</div>
+
+      <div class="badge">测试 1：斜体段落 (Italic Text)</div>
+      <p style="font-style: italic; font-size: 16px; color: #cbd5e1;">
+        The speed of light in vacuum is approximately 299,792,458 meters per second according to special relativity.
+      </p>
+
+      <div class="badge">测试 2：下划线段落 (Underlined Text)</div>
+      <p style="text-decoration: underline; font-size: 16px; color: #cbd5e1;">
+        Quantum entanglement allows particles to maintain instantaneous correlations regardless of distance.
+      </p>
+
+      <div class="badge">测试 3：斜体 + 下划线 + 加粗复合样式 (Italic + Underline + Bold)</div>
+      <p style="font-style: italic; text-decoration: underline; font-weight: 700; font-size: 18px; color: #f8fafc;">
+        Thermodynamic entropy always increases in an isolated closed system over time.
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>

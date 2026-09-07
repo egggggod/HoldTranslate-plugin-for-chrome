@@ -1,0 +1,104 @@
+/* HoldTranslate - Immersive Bilingual Content Styles */
+
+/* Progress Ring during Long Press */
+.__gtrans-progress-indicator {
+  position: fixed;
+  z-index: 2147483647;
+  pointer-events: none;
+  width: 30px;
+  height: 30px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.__gtrans-progress-indicator.active {
+  opacity: 1;
+}
+
+.__gtrans-progress-indicator svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.__gtrans-progress-indicator circle.bg {
+  fill: rgba(0, 0, 0, 0.4);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 2.5;
+}
+
+.__gtrans-progress-indicator circle.meter {
+  fill: none;
+  stroke: #86a003;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-dasharray: 88;
+  stroke-dashoffset: 88;
+  transition: stroke-dashoffset linear;
+}
+
+/* Immersive Inline Translation Element (No Card, No Borders, Transparent Background) */
+.__gtrans-inline-result {
+  display: block !important;
+  box-sizing: border-box !important;
+  margin: 4px 0 10px 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  word-spacing: normal !important;
+  text-indent: 0 !important;
+  text-align: left !important;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  transition: opacity 0.18s ease-out, transform 0.18s ease-out !important;
+  animation: __gtrans-fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  user-select: text !important;
+  position: relative !important;
+}
+
+/* Fade in animation */
+@keyframes __gtrans-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Revert / Fade out */
+.__gtrans-inline-result.__gtrans-fade-out {
+  opacity: 0 !important;
+  transform: translateY(-2px) !important;
+  pointer-events: none !important;
+}
+
+/* Loading status text */
+.__gtrans-loading {
+  font-style: italic !important;
+  opacity: 0.7 !important;
+  animation: __gtrans-pulse 1.2s infinite ease-in-out !important;
+  font-size: 0.9em !important;
+}
+
+@keyframes __gtrans-pulse {
+  0%, 100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+/* Error text */
+.__gtrans-error {
+  opacity: 0.85 !important;
+  font-size: 0.88em !important;
+}
