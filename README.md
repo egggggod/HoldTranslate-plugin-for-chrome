@@ -72,8 +72,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.0.0)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.0.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.0/holdtranslate-chrome-extension-v1.0.0.zip))
+1. **Manual Installation (Recommended - latest v1.0.1)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.0.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.1/holdtranslate-chrome-extension-v1.0.1.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)

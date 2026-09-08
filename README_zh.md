@@ -68,8 +68,8 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.0.0）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.0.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.0/holdtranslate-chrome-extension-v1.0.0.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.0.1）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.0.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.1/holdtranslate-chrome-extension-v1.0.1.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
