@@ -6,7 +6,7 @@
   <title>HoldTranslate</title>
   <link rel="stylesheet" href="popup.css">
 </head>
-<body>
+<body class="liquid-glass">
   <!-- VisionOS 流体漫反射氛围微光底图 -->
   <div class="ambient-fluid-container" aria-hidden="true">
     <div class="fluid-orb orb-primary"></div>
@@ -28,7 +28,6 @@
           </div>
           <div class="brand-text">
             <span class="brand-title">HoldTranslate</span>
-            <span class="brand-sub">沉浸式长按翻译</span>
           </div>
         </div>
         <div class="header-action">
@@ -108,24 +107,22 @@
 
       <!-- 页面环境状态指示 (微光状态药丸) -->
       <div class="status-pill-wrap">
-        <div class="status-card ready" id="statusCard">
+        <div class="status-card ready" id="statusCard" title="当前页面就绪，长按即可翻译">
           <span class="status-dot"></span>
-          <span class="status-message" id="statusMessage">页面就绪 · 长按即译</span>
+          <span class="status-message" id="statusMessage">就绪</span>
         </div>
       </div>
 
-      <!-- 底部操作栏 (参照参考图: 设置 | 版本号 | 更多) -->
+      <!-- 底部操作栏 (纯图标按钮: 设置 ⚙️ | 版本号 | 测试页 ↗) -->
       <footer class="bottom-bar">
-        <button type="button" class="bar-btn" id="openSettingsBtn" title="打开详细偏好设置">
-          <svg viewBox="0 0 24 24" width="15" height="15">
+        <button type="button" class="bar-icon-btn" id="openSettingsBtn" title="偏好设置" aria-label="偏好设置">
+          <svg viewBox="0 0 24 24" width="16" height="16">
             <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
           </svg>
-          <span>设置</span>
         </button>
-        <span class="bar-version">v1.3.0</span>
-        <button type="button" class="bar-btn right" id="openTestPageBtn" title="打开本地测试基准页">
-          <span>测试页</span>
-          <svg viewBox="0 0 24 24" width="13" height="13">
+        <span class="bar-version">v1.4.0</span>
+        <button type="button" class="bar-icon-btn" id="openTestPageBtn" title="打开测试基准页" aria-label="测试页">
+          <svg viewBox="0 0 24 24" width="15" height="15">
             <path fill="currentColor" d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
           </svg>
         </button>
@@ -159,8 +156,23 @@
           </label>
         </div>
 
-        <!-- ② 视觉外观体系 (视觉优先) -->
-        <div class="section-title">视觉外观</div>
+        <!-- ② 视觉外观体系 (图形化图标 + 新增 Liquid Glass 开关) -->
+        <div class="section-title">
+          <span class="section-icon">✨</span>
+          <span>视觉外观</span>
+        </div>
+
+        <!-- 新增: Liquid Glass 液态玻璃效果独立开关 -->
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="liquidGlassSwitch">液态玻璃拟态效果</label>
+            <span class="setting-desc">开启晶莹磨砂与流体光晕，关闭为极简纯色</span>
+          </div>
+          <label class="switch" title="开启/关闭液态玻璃效果">
+            <input type="checkbox" id="liquidGlassSwitch" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
 
         <!-- 译文字体颜色设置 -->
         <div class="setting-item">
@@ -207,7 +219,10 @@
         </div>
 
         <!-- ③ 手势参数体系 -->
-        <div class="section-title">手势与时延</div>
+        <div class="section-title">
+          <span class="section-icon">⏱️</span>
+          <span>手势与时延</span>
+        </div>
 
         <!-- 显示圆圈开关 -->
         <div class="setting-item toggle-row">
@@ -257,7 +272,10 @@
         </div>
 
         <!-- ④ API 服务配置 -->
-        <div class="section-title">大模型与服务 API 配置</div>
+        <div class="section-title">
+          <span class="section-icon">🤖</span>
+          <span>大模型与服务 API 配置</span>
+        </div>
 
         <!-- DeepSeek 配置卡片 -->
         <div class="api-card">
