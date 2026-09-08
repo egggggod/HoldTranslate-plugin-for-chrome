@@ -373,11 +373,13 @@ input:checked + .slider:before {
   margin-bottom: 12px;
   box-shadow: var(--glass-inner-bevel), var(--glass-card-shadow);
   transition: all 0.2s ease;
+  overflow: visible;
 }
 
 .language-card.dropdown-open,
 .language-card:has(.custom-dropdown.open) {
-  z-index: 60;
+  z-index: 70 !important;
+  overflow: visible !important;
 }
 
 .language-card:hover {
@@ -581,17 +583,19 @@ input:checked + .slider:before {
 .custom-dropdown-menu.lang-menu {
   max-height: 185px;
   overflow-y: auto;
-  min-width: 132px;
+  min-width: 136px;
 }
 
 #sourceLangDropdown .custom-dropdown-menu {
   left: 0;
   right: auto;
+  transform-origin: top left;
 }
 
 #targetLangDropdown .custom-dropdown-menu {
   right: 0;
   left: auto;
+  transform-origin: top right;
 }
 
 .custom-dropdown-menu.lang-menu::-webkit-scrollbar {
@@ -809,9 +813,12 @@ input:checked + .slider:before {
    7.5 Apple 2025 Specular Sheen Sweep & Press Indentation
    ========================================================= */
 .service-capsule,
-.language-card,
 .bottom-bar.floating-island-bar {
   overflow: hidden;
+}
+
+.language-card {
+  overflow: visible;
 }
 
 .service-capsule::after,

@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.4.3-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.4-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.4.3-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.4-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.3/holdtranslate-chrome-extension-v1.4.3.zip) (v1.4.3)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.4/holdtranslate-chrome-extension-v1.4.4.zip) (v1.4.4)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -106,7 +106,11 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.4.3`
+  - 当前版本：`v1.4.4`
+  - `v1.4.4` 更新重点：
+    - 彻底修复语言选择下拉浮层（源语言/目标语言）在部分场景下因卡片 overflow 隐藏导致被边缘裁切无法显示的问题；
+    - 完美维持苹果 2025 VisionOS 高通透液态毛玻璃卡片质感，源语言靠左对齐、目标语言靠右对齐弹出，带微弹簧动量与选中绿勾（`✓`）指示；
+    - 保留常态 225px 黄金紧致高度（0 留白）与灵动玻璃药丸底栏，开启语言浮层时弹性伸展至 375px，收起时自动平滑回缩。
   - `v1.4.3` 更新重点：
     - 忠实模仿苹果 2025 最新软件设计规范（Apple June 2025 Liquid Glass & Floating Island）：引入一体化浮动晶莹药丸底栏（`.floating-island-bar`）、115° 镜面高光光泽扫掠（Hover Sheen Sweep）、微触觉形变回弹（0.97 Press Indentation）；
     - 彻底根除“就绪”下方的留白空白（弹窗开窗高度由 568px 紧密收敛至 225px 黄金尺寸，DOM 脱离流重构与双视图容器隔绝）；
