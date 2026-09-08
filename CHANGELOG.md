@@ -4,6 +4,21 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.3.0] - 2026-09-08
+
+### Added
+- **Multi-Engine Translation Support**: Built-in support for **Google Translate** (zero-config), **Microsoft Translator** (Bing with automated session auth), **DeepSeek API** (`deepseek-chat`), and **Custom OpenAI-compatible API** (GPT-4o, Claude, SiliconFlow, Ollama, etc.).
+- **Quick View Engine Switcher**: Added an interactive service dropdown capsule in the Quick Dashboard allowing instant switching between translation engines.
+- **Dedicated LLM API Cards**: Clean configuration cards in Settings with secure storage for DeepSeek API Key and custom OpenAI-compatible endpoint parameters (Base URL, API Key, Model).
+
+### Changed & Optimized
+- **Visual-First Layout Ordering (视觉优先型)**: Reorganized settings controls into a clear, intuitive hierarchy: Master Switch → Visual Color Palette & Live Preview → Gestures & Delays → LLM / API Configuration.
+- **Zero-Clipping Palette Spacing**: Added breathing room and visible overflow to the color chip container, ensuring the active halo indicator on the leftmost chip is perfectly rounded without clipping.
+- **Streamlined Intent Delay Guidance**: Simplified explanation to `💡 鼠标按下多久后显示旋转圆圈，设为 0ms 为立即显示。`
+- **Clean Chinese Text Handling**: Removed the Simplified/Traditional mutual translation switch; automatically skips native Chinese text on web pages when the target language is set to Chinese.
+
+---
+
 ## [v1.2.0] - 2026-09-08
 
 ### Added

@@ -78,10 +78,10 @@
         </div>
       </div>
 
-      <!-- 翻译服务选择栏 -->
+      <!-- 翻译服务选择栏 (秒切引擎) -->
       <div class="service-bar">
         <div class="service-label">
-          <svg class="google-icon" viewBox="0 0 24 24" width="16" height="16">
+          <svg class="service-logo" id="serviceLogo" viewBox="0 0 24 24" width="16" height="16">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
@@ -89,7 +89,15 @@
           </svg>
           <span class="service-text">翻译服务：</span>
         </div>
-        <div class="service-badge">谷歌翻译 (免配置极速)</div>
+        <div class="service-capsule">
+          <select id="serviceSelect" class="service-select" aria-label="选择翻译服务">
+            <option value="google">Google 翻译 (免配置)</option>
+            <option value="microsoft">Microsoft 微软翻译</option>
+            <option value="deepseek">DeepSeek 大模型</option>
+            <option value="custom">自定义 OpenAI 兼容</option>
+          </select>
+          <span class="capsule-arrow">▾</span>
+        </div>
       </div>
 
       <!-- 页面环境状态指示条 (对齐参考图中的提示卡片) -->
@@ -106,7 +114,7 @@
           </svg>
           <span>设置</span>
         </button>
-        <span class="bar-version">v1.2.0</span>
+        <span class="bar-version">v1.3.0</span>
         <button type="button" class="bar-btn right" id="openTestPageBtn" title="打开本地测试基准页">
           <span>测试页</span>
           <svg viewBox="0 0 24 24" width="13" height="13">
@@ -131,7 +139,7 @@
       </header>
 
       <div class="settings-content">
-        <!-- 启用长按翻译主开关 -->
+        <!-- ① 核心总开关 -->
         <div class="setting-item toggle-row">
           <div class="setting-info">
             <label class="setting-label" for="enabledSwitch">启用长按翻译</label>
@@ -143,20 +151,8 @@
           </label>
         </div>
 
-        <!-- 语种识别与过滤 -->
-        <div class="section-title">语种过滤策略</div>
-
-        <!-- 繁体简体互译开关 -->
-        <div class="setting-item toggle-row">
-          <div class="setting-info">
-            <label class="setting-label" for="mutualChineseSwitch">繁体简体是否互译</label>
-            <span class="setting-desc">默认开启；开启后简体转繁体、繁体转简体</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="mutualChineseSwitch" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
+        <!-- ② 视觉外观体系 (视觉优先) -->
+        <div class="section-title">视觉外观</div>
 
         <!-- 译文字体颜色设置 -->
         <div class="setting-item">
@@ -187,7 +183,7 @@
           </div>
         </div>
 
-        <!-- 实时预览区 -->
+        <!-- 实时双色预览区 -->
         <div class="preview-section">
           <div class="preview-header">
             <span class="preview-title">实时双色预览</span>
@@ -200,6 +196,21 @@
             <div class="preview-original">Because you suck!! Fred Vasseur suck...</div>
             <div class="preview-translation" id="previewTranslation">因为你太烂了！！ 弗雷德·瓦瑟尔烂透了...</div>
           </div>
+        </div>
+
+        <!-- ③ 手势参数体系 -->
+        <div class="section-title">手势与时延</div>
+
+        <!-- 显示圆圈开关 -->
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="ringSwitch">长按光标指示环</label>
+            <span class="setting-desc">按住时在光标处显示圆环旋转进度</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="ringSwitch" checked>
+            <span class="slider"></span>
+          </label>
         </div>
 
         <!-- 长按触发时长滑条 (100ms - 800ms) -->
@@ -225,7 +236,7 @@
             <span class="duration-badge" id="confirmDelayValue">160 ms</span>
           </div>
           <div class="setting-desc help-tip">
-            💡 <strong>含义说明</strong>：按下鼠标后延迟多久才显示进度圆圈。普通点击通常在 50~100ms 内松开，在此延迟期内松开<strong>绝不转圈</strong>；按住超过此时间才确认有长按意图并显示圆圈。设为 0ms 则按下鼠标立即出圈。
+            💡 鼠标按下多久后显示旋转圆圈，设为 0ms 为立即显示。
           </div>
           <div class="slider-wrapper">
             <input type="range" id="confirmDelaySlider" min="0" max="300" step="20" value="160" class="range-slider">
@@ -237,16 +248,40 @@
           </div>
         </div>
 
-        <!-- 显示圆圈开关 -->
-        <div class="setting-item toggle-row">
-          <div class="setting-info">
-            <label class="setting-label" for="ringSwitch">长按光标指示环</label>
-            <span class="setting-desc">按住时在光标处显示圆环旋转进度</span>
+        <!-- ④ API 服务配置 -->
+        <div class="section-title">大模型与服务 API 配置</div>
+
+        <!-- DeepSeek 配置卡片 -->
+        <div class="api-card">
+          <div class="api-card-header">
+            <span class="api-title">DeepSeek 官方 API</span>
+            <span class="api-tag">推荐</span>
           </div>
-          <label class="switch">
-            <input type="checkbox" id="ringSwitch" checked>
-            <span class="slider"></span>
-          </label>
+          <div class="api-desc">极速且高性价比大模型，默认使用 deepseek-chat</div>
+          <div class="input-group">
+            <label for="deepseekApiKey" class="input-label">API Key</label>
+            <input type="password" id="deepseekApiKey" class="api-input" placeholder="sk-..." spellcheck="false" autocomplete="off">
+          </div>
+        </div>
+
+        <!-- 通用 OpenAI 兼容配置卡片 -->
+        <div class="api-card">
+          <div class="api-card-header">
+            <span class="api-title">自定义 OpenAI 兼容接口</span>
+          </div>
+          <div class="api-desc">支持 GPT-4o、Claude、硅基流动、Kimi、Ollama 等任意标准接口</div>
+          <div class="input-group">
+            <label for="customApiUrl" class="input-label">Base URL</label>
+            <input type="text" id="customApiUrl" class="api-input" placeholder="https://api.openai.com/v1" spellcheck="false">
+          </div>
+          <div class="input-group">
+            <label for="customApiKey" class="input-label">API Key</label>
+            <input type="password" id="customApiKey" class="api-input" placeholder="sk-..." spellcheck="false" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="customModel" class="input-label">Model 名称</label>
+            <input type="text" id="customModel" class="api-input" placeholder="gpt-4o-mini" spellcheck="false">
+          </div>
         </div>
       </div>
 

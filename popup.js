@@ -12,18 +12,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const sourceLangSelect = document.getElementById('sourceLangSelect');
   const targetLangSelect = document.getElementById('targetLangSelect');
   const swapLangBtn = document.getElementById('swapLangBtn');
+  const serviceSelect = document.getElementById('serviceSelect');
+  const serviceLogo = document.getElementById('serviceLogo');
   const statusCard = document.getElementById('statusCard');
   const statusMessage = document.getElementById('statusMessage');
 
   // Settings view elements
   const enabledSwitch = document.getElementById('enabledSwitch');
-  const mutualChineseSwitch = document.getElementById('mutualChineseSwitch');
   const durationSlider = document.getElementById('durationSlider');
   const durationValue = document.getElementById('durationValue');
   const confirmDelaySlider = document.getElementById('confirmDelaySlider');
   const confirmDelayValue = document.getElementById('confirmDelayValue');
   const ringSwitch = document.getElementById('ringSwitch');
   const savedHint = document.getElementById('savedHint');
+
+  // API Config elements
+  const deepseekApiKey = document.getElementById('deepseekApiKey');
+  const customApiUrl = document.getElementById('customApiUrl');
+  const customApiKey = document.getElementById('customApiKey');
+  const customModel = document.getElementById('customModel');
 
   // Color elements
   const colorPalette = document.getElementById('colorPalette');
@@ -75,6 +82,36 @@ document.addEventListener('DOMContentLoaded', () => {
     window.__savedTimer = setTimeout(() => {
       savedHint.classList.remove('show');
     }, 1200);
+  }
+
+  // Update Service Logo
+  function updateServiceLogo(service) {
+    if (!serviceLogo) return;
+    if (service === 'google') {
+      serviceLogo.innerHTML = `
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+      `;
+    } else if (service === 'microsoft') {
+      serviceLogo.innerHTML = `
+        <path fill="#F25022" d="M1 1h10v10H1z"/>
+        <path fill="#7FBA00" d="M13 1h10v10H13z"/>
+        <path fill="#00A4EF" d="M1 13h10v10H1z"/>
+        <path fill="#FFB900" d="M13 13h10v10H13z"/>
+      `;
+    } else if (service === 'deepseek') {
+      serviceLogo.innerHTML = `
+        <circle cx="12" cy="12" r="10" fill="#0284c7"/>
+        <path fill="#ffffff" d="M8 13c1.5 2 6.5 2 8 0M9 9h.01M15 9h.01" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      `;
+    } else {
+      serviceLogo.innerHTML = `
+        <circle cx="12" cy="12" r="10" fill="var(--accent-color)"/>
+        <path fill="#ffffff" d="M11 7h2v6h-2zm0 8h2v2h-2z"/>
+      `;
+    }
   }
 
   // 2. Color UI & Logic
@@ -182,7 +219,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.get([
       'enabled', 'sourceLang', 'targetLang', 'pressDuration', 'confirmDelay',
-      'showRing', 'textColor', 'mutualChinese'
+      'showRing', 'textColor', 'translateService', 'deepseekApiKey',
+      'customApiUrl', 'customApiKey', 'customModel'
     ], (res) => {
       // Main switches
       const isEnabled = res.enabled !== undefined ? res.enabled : true;
@@ -197,10 +235,18 @@ document.addEventListener('DOMContentLoaded', () => {
         targetLangSelect.value = res.targetLang || 'zh-CN';
       }
 
-      // Mutual Chinese filtering
-      if (mutualChineseSwitch) {
-        mutualChineseSwitch.checked = res.mutualChinese !== undefined ? res.mutualChinese : true;
+      // Translation Service selection
+      const service = res.translateService || 'google';
+      if (serviceSelect) {
+        serviceSelect.value = service;
+        updateServiceLogo(service);
       }
+
+      // API Config
+      if (deepseekApiKey) deepseekApiKey.value = res.deepseekApiKey || '';
+      if (customApiUrl) customApiUrl.value = res.customApiUrl || 'https://api.openai.com/v1';
+      if (customApiKey) customApiKey.value = res.customApiKey || '';
+      if (customModel) customModel.value = res.customModel || 'gpt-4o-mini';
 
       // Sliders & Ring
       updateDurationUI(res.pressDuration !== undefined ? res.pressDuration : 500);
@@ -362,14 +408,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 11. Secondary Toggles
-  if (mutualChineseSwitch) {
-    mutualChineseSwitch.addEventListener('change', () => {
+  // 11. Service Selection & API Config Listeners
+  if (serviceSelect) {
+    serviceSelect.addEventListener('change', () => {
+      const service = serviceSelect.value;
+      updateServiceLogo(service);
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-        chrome.storage.sync.set({ mutualChinese: mutualChineseSwitch.checked }, showSaved);
+        chrome.storage.sync.set({ translateService: service }, showSaved);
       }
     });
   }
+
+  function bindInputSave(el, key) {
+    if (!el) return;
+    el.addEventListener('change', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ [key]: el.value.trim() }, showSaved);
+      }
+    });
+  }
+
+  bindInputSave(deepseekApiKey, 'deepseekApiKey');
+  bindInputSave(customApiUrl, 'customApiUrl');
+  bindInputSave(customApiKey, 'customApiKey');
+  bindInputSave(customModel, 'customModel');
 
   if (ringSwitch) {
     ringSwitch.addEventListener('change', () => {

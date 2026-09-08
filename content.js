@@ -17,7 +17,7 @@
     targetLang: 'auto',
     showRing: true,
     textColor: '#86a003',        // Default: screenshot olive green
-    mutualChinese: true          // 默认开启：简体转繁体、繁体转简体
+    translateService: 'google'
   };
 
   // Check if extension context is still valid
@@ -56,7 +56,7 @@
     try {
       chrome.storage.sync.get([
         'enabled', 'pressDuration', 'confirmDelay', 'sourceLang', 'targetLang', 'showRing', 'textColor',
-        'mutualChinese'
+        'translateService'
       ], (res) => {
         if (!isExtensionValid() || (chrome.runtime && chrome.runtime.lastError)) return;
         if (res.enabled !== undefined) config.enabled = res.enabled;
@@ -66,7 +66,7 @@
         if (res.targetLang !== undefined) config.targetLang = res.targetLang;
         if (res.showRing !== undefined) config.showRing = res.showRing;
         if (res.textColor) config.textColor = res.textColor;
-        if (res.mutualChinese !== undefined) config.mutualChinese = res.mutualChinese;
+        if (res.translateService) config.translateService = res.translateService;
       });
 
       chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -81,7 +81,7 @@
           if (changes.sourceLang) config.sourceLang = changes.sourceLang.newValue;
           if (changes.targetLang) config.targetLang = changes.targetLang.newValue;
           if (changes.showRing) config.showRing = changes.showRing.newValue;
-          if (changes.mutualChinese !== undefined) config.mutualChinese = changes.mutualChinese.newValue;
+          if (changes.translateService) config.translateService = changes.translateService.newValue;
           if (changes.textColor) {
             config.textColor = changes.textColor.newValue;
             updateExistingTranslationsColor(config.textColor);
@@ -586,7 +586,7 @@
           text: text,
           sourceLang: config.sourceLang || 'auto',
           targetLang: config.targetLang,
-          mutualChinese: config.mutualChinese
+          service: config.translateService || 'google'
         },
         (res) => {
           if (!isExtensionValid()) {

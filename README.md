@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.2.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.3.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.2.0/holdtranslate-chrome-extension-v1.2.0.zip) (click to download v1.2.0) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.3.0/holdtranslate-chrome-extension-v1.3.0.zip) (click to download v1.3.0) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -28,11 +28,11 @@ Here is a demo of using the latest [HoldTranslate Chrome extension](https://gith
 
 ## Overview
 
-This project consists of three core components:
+This project consists of three core pillars:
 
 1. **Precision Typography Synchronizer**: A DOM inspection engine that automatically extracts and mirrors the original font-size, font-weight (with Windows medium-weight compensation), font-style (italic), text-decorations (underline/strikethrough), and font-family (serif vs. sans-serif).
-2. **Interactive Long-Press Engine**: A dual-slider timing and anti-misclick system (100ms~800ms duration slider + confirmation buffer + 16px micro-jitter tolerance) with secondary long-press instant restoration.
-3. **Immersive Customizer**: Built-in 7-color eye-care palette, HTML5 color picker with Hex input, and real-time dual-mode preview.
+2. **Multi-Engine Intelligence & Translation Dispatcher**: Seamlessly connects to **Google Translate** (zero-config default), **Microsoft Translator** (Bing with automated session auth), **DeepSeek Official API** (`deepseek-chat`), and any **Custom OpenAI-Compatible Endpoint** (GPT-4o, Claude, SiliconFlow, Ollama, Kimi).
+3. **Interactive Long-Press Engine & Visual Customizer**: A visual-first settings hierarchy featuring a zero-clipping circular palette picker, dynamic theme synchronization across all UI components, and timing sliders (100ms~800ms trigger duration + intention confirmation buffer).
 
 ## Project Structure
 
@@ -43,12 +43,12 @@ HoldTranslate-plugin-for-chrome/
 │   └── demo-dark.png
 ├── icons/              # Extension icons (16x16, 48x48, 128x128)
 ├── manifest.json       # Chrome Manifest V3 configuration
-├── background.js       # Background service worker & translation API dispatcher
+├── background.js       # Multi-service worker (Google, Microsoft, DeepSeek, Custom LLM)
 ├── content.js          # Core DOM observer, typography extractor, long-press engine
 ├── content.css         # Minimal inline translation animations and styles
-├── popup.html          # Extension settings popup UI
-├── popup.css           # Settings panel layout & preview styling
-├── popup.js            # Settings logic, color picker & slider controls
+├── popup.html          # Adaptive dual-view popup UI
+├── popup.css           # Modern popup styling, palette halo spacing & cards
+├── popup.js            # Dual-view navigation, engine switcher, color & API bindings
 ├── test.html           # Comprehensive test suite (YouTube title, rich text, dark mode)
 ├── LICENSE             # MIT License
 ├── README.md           # English documentation
@@ -63,19 +63,19 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### Features
 
+- 🌐 **Multi-Engine Translation Architecture**: Switch freely between **Google Translate**, **Microsoft Bing Translator**, **DeepSeek API** (`deepseek-chat`), and **Custom OpenAI-compatible LLMs** (GPT-4o, Claude, SiliconFlow, Ollama).
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
-- 🪟 **Modern Dual-View Quick Dashboard**: Inspired by clean modern translation UI, featuring an instant language selection bar (`[Source] ⇄ [Target]`), service indicator, dynamic tab status, and smooth in-popup navigation to full settings.
-- 🎨 **Circular Palette Picker & Whole-Theme Sync**: Circular 🎨 palette button with anti-clipping breathing halo selection indicator; chosen translation color automatically synchronizes across all colored plugin UI elements (switches, buttons, slider thumbs, and back arrow).
-- 🔄 **Simplified / Traditional Mutual Translation**: Automatically converts Simplified to Traditional or Traditional to Simplified on long-press, or safely skips Chinese text when disabled to prevent accidental mis-triggers.
-- ⚡ **Adjustable Timing & Anti-Misclick Engine**: Custom sliders for trigger duration (100ms~800ms) and confirmation hover buffer to eliminate accidental clicks.
+- 🪟 **Modern Dual-View Quick Dashboard**: Compact quick view with instant translation service switcher capsule (`Google / Microsoft / DeepSeek / Custom`), dual-capsule language bar (`[Source] ⇄ [Target]`), and 1-click navigation to settings.
+- 🎨 **Zero-Clipping Palette & Full-Theme Sync**: Circular 🎨 palette button with generous container breathing room ensuring the active halo indicator on the leftmost chip is perfectly rounded without clipping. Chosen color dynamically synchronizes across all colored plugin UI elements.
+- ⚡ **Visual-First Layout & Adjustable Timing**: Streamlined control hierarchy: Master Switch → Visual Color Palette & Live Preview → Gestures & Delays → LLM / API Configuration.
 - 🖱️ **Seamless Drag & Gesture Compatibility**: Full support for sliding/dragging hyperlinks (native drag-to-tab, Super Drag, and mouse gesture extensions like CrxMouse and smartUp) without interfering with long-press translation.
 - 📋 **Dual Translation Modes**: Long-press any block for full paragraph translation, or select text first to translate specific excerpts.
 - 🛡️ **Adaptive Light/Dark Theming**: Auto-detects system theme with 7 eye-care presets, custom Hex input, and live dark/light preview.
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.2.0)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.2.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.2.0/holdtranslate-chrome-extension-v1.2.0.zip))
+1. **Manual Installation (Recommended - latest v1.3.0)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.3.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.3.0/holdtranslate-chrome-extension-v1.3.0.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -91,7 +91,7 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 Once installed, just:
 
-1. Click on the **HoldTranslate** icon in the Chrome toolbar to customize your preferred text color, trigger duration, or confirmation buffer.
+1. Click on the **HoldTranslate** icon in the Chrome toolbar to select your preferred translation engine or configure LLM API keys.
 2. Visit any website (or open the included [`test.html`](test.html) in Chrome).
 3. **Press and hold the left mouse button** on any text or paragraph for ~500ms.
 4. The translated subtitles will smoothly slide in directly below the source text.
@@ -101,19 +101,25 @@ Once installed, just:
 
 - **Zero Distraction**: No banner ads, no watermark cards, and no floating widgets cluttering your screen.
 - **Visual Harmony**: The translation blends seamlessly into the webpage typography as if it was authored natively.
-- **Accurate & Effortless**: Powered by high-speed Google Translate API with built-in micro-jitter tolerance.
+- **Multi-Engine Power**: Choose fast free web translation (Google/Microsoft) or cutting-edge LLM reasoning translation (DeepSeek/GPT-4o).
 - **Privacy & Lightweight**: Pure vanilla JavaScript without tracking, external dependencies, or telemetry.
 
 ## Release Page & Versioning
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.2.0`
+  - Current Version: `v1.3.0`
+  - `v1.3.0`:
+    - Added Microsoft Translator and mainstream LLM API support (DeepSeek + Custom OpenAI-compatible).
+    - Quick View engine switcher dropdown capsule.
+    - Optimized settings layout to Visual-First hierarchy (Switch → Palette & Preview → Gestures → API Config).
+    - Fixed palette container padding and overflow to completely eliminate leftmost chip halo clipping.
+    - Streamlined intent confirmation delay explanation.
+    - Removed mutual Chinese translation toggle and automatically skip native Chinese on Chinese pages.
   - `v1.2.0`:
     - Added circular palette button (🎨) for arbitrary custom font color picking.
     - Added breathing halo selection ring with card background spacing to prevent clipping or obscuring color chips.
     - Synchronized chosen translation color to all colored plugin UI elements (switches, buttons, slider thumbs, hover states).
-    - Added Simplified / Traditional Chinese mutual translation and removed Chinese-to-English setting.
   - `v1.1.0`:
     - Modern dual-view popup redesign: minimalist quick dashboard + smooth in-popup navigation to full settings.
     - 1-click dual-capsule language selection bar (`[Source] ⇄ [Target]`) with instant language swapping.
