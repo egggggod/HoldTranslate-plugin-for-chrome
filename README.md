@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.1.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.2.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.1.0/holdtranslate-chrome-extension-v1.1.0.zip) (click to download v1.1.0) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.2.0/holdtranslate-chrome-extension-v1.2.0.zip) (click to download v1.2.0) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -65,17 +65,17 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
 - 🪟 **Modern Dual-View Quick Dashboard**: Inspired by clean modern translation UI, featuring an instant language selection bar (`[Source] ⇄ [Target]`), service indicator, dynamic tab status, and smooth in-popup navigation to full settings.
-- 🔄 **Long-Press to Translate & Smooth Restore**: Long-press to reveal the translation; long-press again to smoothly fade out and restore the original page view.
+- 🎨 **Circular Palette Picker & Whole-Theme Sync**: Circular 🎨 palette button with anti-clipping breathing halo selection indicator; chosen translation color automatically synchronizes across all colored plugin UI elements (switches, buttons, slider thumbs, and back arrow).
+- 🔄 **Simplified / Traditional Mutual Translation**: Automatically converts Simplified to Traditional or Traditional to Simplified on long-press, or safely skips Chinese text when disabled to prevent accidental mis-triggers.
 - ⚡ **Adjustable Timing & Anti-Misclick Engine**: Custom sliders for trigger duration (100ms~800ms) and confirmation hover buffer to eliminate accidental clicks.
 - 🖱️ **Seamless Drag & Gesture Compatibility**: Full support for sliding/dragging hyperlinks (native drag-to-tab, Super Drag, and mouse gesture extensions like CrxMouse and smartUp) without interfering with long-press translation.
 - 📋 **Dual Translation Modes**: Long-press any block for full paragraph translation, or select text first to translate specific excerpts.
-- 🛡️ **Smart Language Filtering**: Automatically skips existing Chinese text; toggleable switch for translating Traditional Chinese to Simplified Chinese.
-- 🎨 **Adaptive Light/Dark Theme**: Auto-detects system theme with 7 eye-care presets (defaulting to immersive olive green `#86a003`), custom Hex input, and live dark/light preview.
+- 🛡️ **Adaptive Light/Dark Theming**: Auto-detects system theme with 7 eye-care presets, custom Hex input, and live dark/light preview.
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.1.0)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.1.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.1.0/holdtranslate-chrome-extension-v1.1.0.zip))
+1. **Manual Installation (Recommended - latest v1.2.0)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.2.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.2.0/holdtranslate-chrome-extension-v1.2.0.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -108,18 +108,23 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.1.0`
+  - Current Version: `v1.2.0`
+  - `v1.2.0`:
+    - Added circular palette button (🎨) for arbitrary custom font color picking.
+    - Added breathing halo selection ring with card background spacing to prevent clipping or obscuring color chips.
+    - Synchronized chosen translation color to all colored plugin UI elements (switches, buttons, slider thumbs, hover states).
+    - Added Simplified / Traditional Chinese mutual translation and removed Chinese-to-English setting.
   - `v1.1.0`:
     - Modern dual-view popup redesign: minimalist quick dashboard + smooth in-popup navigation to full settings.
     - 1-click dual-capsule language selection bar (`[Source] ⇄ [Target]`) with instant language swapping.
     - Added service bar and real-time tab permission / readiness status detection.
     - Full system-adaptive light and dark visual themes.
   - `v1.0.2`:
-    - Fixed HTML5 `dragstart` handling on hyperlinks so links can be slid/dragged open smoothly (supporting native drag-to-tab, drag-to-bookmark, and Super Drag / Mouse Gesture extensions like CrxMouse and smartUp).
+    - Fixed HTML5 `dragstart` handling on hyperlinks so links can be slid/dragged open smoothly.
     - Added graceful drag cancellation: instantly aborts pending translation timer and hides progress ring upon drag initiation.
   - `v1.0.1`:
-    - Resolved stretched-link overlay issue on BBC and news cards (clicking article descriptions no longer mis-triggers the headline link above).
-    - Fixed horizontal flex container translation placement (e.g. BBC related video links with `▶` icons now correctly display translations on their own line underneath instead of to the right).
+    - Resolved stretched-link overlay issue on BBC and news cards.
+    - Fixed horizontal flex container translation placement.
     - Strengthened inline full-width formatting (`width: 100% !important; clear: both !important;`).
   - `v1.0.0`: Initial release with 1:1 typography mirroring, YouTube deep extraction, custom color palette, and anti-misclick sliders.
   - To upgrade an existing installation: simply download the latest release zip, replace the folder contents, and click the refresh button (⟳) in `chrome://extensions/`.

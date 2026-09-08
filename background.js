@@ -51,45 +51,31 @@ async function translateText(text, options = {}) {
   const {
     sourceLang = 'auto',
     targetLang = 'auto',
-    translateChinese = false,      // 默认中文不翻译
-    translateTraditional = true    // 默认繁体中文翻译为简体中文
+    mutualChinese = true
   } = options;
 
   let actualTargetLang = targetLang;
 
   // Language auto-detection & filtering
-  if (!actualTargetLang || actualTargetLang === 'auto') {
+  if (!actualTargetLang || actualTargetLang === 'auto' || actualTargetLang === 'zh-CN' || actualTargetLang === 'zh-TW') {
     const isChinese = isChineseText(trimmed);
     if (isChinese) {
-      const isTrad = isTraditionalChinese(trimmed);
-      if (isTrad) {
-        // Traditional Chinese
-        if (!translateTraditional) {
-          return {
-            success: false,
-            skipped: true,
-            reason: 'traditional_disabled',
-            message: '已设置繁体中文不翻译'
-          };
-        }
-        // Translate Traditional to Simplified Chinese
-        actualTargetLang = 'zh-CN';
-      } else {
-        // Simplified Chinese
-        if (!translateChinese) {
-          return {
-            success: false,
-            skipped: true,
-            reason: 'chinese_disabled',
-            message: '已设置中文不翻译'
-          };
-        }
-        // User explicitly enabled Chinese translation -> translate to English
-        actualTargetLang = 'en';
+      if (!mutualChinese) {
+        return {
+          success: false,
+          skipped: true,
+          reason: 'chinese_disabled',
+          message: '已设置中文不翻译'
+        };
       }
+      // 繁体中文转简体中文；简体中文转繁体中文
+      const isTrad = isTraditionalChinese(trimmed);
+      actualTargetLang = isTrad ? 'zh-CN' : 'zh-TW';
     } else {
-      // Non-Chinese language (English, Japanese, etc.) -> translate to Simplified Chinese
-      actualTargetLang = 'zh-CN';
+      // Non-Chinese language (English, Japanese, etc.) -> default to Simplified Chinese
+      if (!actualTargetLang || actualTargetLang === 'auto') {
+        actualTargetLang = 'zh-CN';
+      }
     }
   }
 
@@ -138,20 +124,12 @@ async function translateText(text, options = {}) {
       }
 
       // Check detected source language post-API check
-      if ((detectedLang === 'zh-CN' || detectedLang === 'zh') && !translateChinese && actualTargetLang === 'zh-CN') {
+      if ((detectedLang === 'zh-CN' || detectedLang === 'zh' || detectedLang === 'zh-TW' || detectedLang === 'zh-HK') && !mutualChinese) {
         return {
           success: false,
           skipped: true,
           reason: 'chinese_disabled',
           message: '检测到中文，已跳过翻译'
-        };
-      }
-      if ((detectedLang === 'zh-TW' || detectedLang === 'zh-HK') && !translateTraditional) {
-        return {
-          success: false,
-          skipped: true,
-          reason: 'traditional_disabled',
-          message: '检测到繁体中文，已跳过翻译'
         };
       }
 
@@ -188,7 +166,7 @@ async function translateText(text, options = {}) {
           .trim();
         const detectedLang = data[2] || 'auto';
 
-        if ((detectedLang === 'zh-CN' || detectedLang === 'zh') && !translateChinese && actualTargetLang === 'zh-CN') {
+        if ((detectedLang === 'zh-CN' || detectedLang === 'zh' || detectedLang === 'zh-TW' || detectedLang === 'zh-HK') && !mutualChinese) {
           return {
             success: false,
             skipped: true,
@@ -221,9 +199,9 @@ async function translateText(text, options = {}) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'TRANSLATE') {
     translateText(request.text, {
+      sourceLang: request.sourceLang,
       targetLang: request.targetLang,
-      translateChinese: request.translateChinese,
-      translateTraditional: request.translateTraditional
+      mutualChinese: request.mutualChinese !== undefined ? request.mutualChinese : true
     })
       .then((res) => sendResponse(res))
       .catch((err) => {

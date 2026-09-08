@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.1.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.2.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.1.0/holdtranslate-chrome-extension-v1.1.0.zip) (v1.1.0)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.2.0/holdtranslate-chrome-extension-v1.2.0.zip) (v1.2.0)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -32,7 +32,7 @@
 
 1. **精准排版同步引擎 (Precision Typography Synchronizer)**：智能 DOM 分析器，1:1 提取并镜像原文的计算字号、粗体字重（针对 Windows 微软雅黑 Medium 字重做了视觉补偿）、斜体、下划线/删除线以及衬线体/非衬线体属性。
 2. **交互式长按引擎 (Interactive Long-Press Engine)**：具备双滑块调节与防误触体系（100ms~800ms 触发时长 + 确认缓冲时间 + 16px 鼠标微动防抖），并支持二次长按平滑还原。
-3. **沉浸式调色面板 (Immersive Customizer)**：内置 7 款经典护眼预设色彩、HTML5 原生色盘与 Hex 精准输入，并在设置弹窗中提供深/浅双色实时预览。
+3. **沉浸式调色面板 (Immersive Customizer)**：内置 7 款经典护眼预设色彩、新增圆形调色盘自选圆钮、防遮挡呼吸光环，全域联动插件主题色与深/浅双色实时预览。
 
 ## 项目结构 (Project Structure)
 
@@ -61,17 +61,17 @@ HoldTranslate-plugin-for-chrome/
 
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
 - 🪟 **现代双视图极简控制面板**：对齐现代翻译设计美学，提供快捷面板（源/目标语言双胶囊下拉栏、语言一键互换、服务状态与实时页面权限检测），底部设置按键可平滑推拉切换至完整偏好设置。
-- 🔄 **长按即时翻译 & 平滑还原**：长按任意段落即可嵌入译文，再次长按原段落或译文即可平滑淡出移除，恢复初始网页排版。
+- 🎨 **圆形调色盘自选与全域主题色联动**：常用色块末尾新增圆形调色盘按钮（🎨），点击直接呼出系统拾色器；双层呼吸留白设计彻底解决边框遮挡色块问题；选中的译文字体颜色实时同步至插件开关、按钮与高亮边框。
+- 🔄 **繁体简体双向互译与静默跳过**：长按简体中文自动转繁体，长按繁体中文自动转简体；关闭开关时长按中文一律静默跳过，彻底避免中文网页误触发。
 - ⚡ **滑块定制与防误触机制**：提供长按触发时间滑条（100ms~800ms）与确认时间滑条，搭配 16px 防抖容差，彻底避免浏览与点击链接时的误触发。
 - 🖱️ **超链接滑动/手势完美兼容**：全面兼容鼠标左键滑动/拖拽超链接（支持拖拽至标签页、书签栏打开，以及 CrxMouse、smartUp 等超级拖拽插件与鼠标手势），长按翻译与滑动打开互不干扰。
 - 📋 **段落与划词双模式**：直接长按翻译整段文本；先划选高亮文字再长按仅翻译选定内容。
-- 🛡️ **智能语言过滤**：自动跳过纯中文或已翻译内容，防止重复翻译；提供繁体中文翻译独立开关。
-- 🎨 **自适应深浅双色美感**：根据系统与浏览器主题自动切换纯净浅白或沉浸深黑，内置 7 色护眼预设（默认沉浸橄榄绿 `#86a003`），支持自定义 Hex 色值与深浅色模式实时预览。
+- 🛡️ **自适应深浅双色美感**：根据系统与浏览器主题自动切换纯净浅白或沉浸深黑，内置 7 色护眼预设，支持自定义 Hex 色值与深浅色模式实时预览。
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.1.0）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.1.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.1.0/holdtranslate-chrome-extension-v1.1.0.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.2.0）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.2.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.2.0/holdtranslate-chrome-extension-v1.2.0.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
@@ -103,18 +103,23 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.1.0`
-  - `v1.1.0` 更新重点：
+  - 当前版本：`v1.2.0`
+  - `v1.2.0` 更新重点：
+    - 新增圆形调色盘自选按钮（🎨），支持任意颜色拾取与实时 HEX 联动；
+    - 独创呼吸留白双层外环，彻底解决颜色色块被边框遮挡贴边问题；
+    - 全域主题色联动：所选译文颜色自动同步至开关滑块、按钮、滑条与高亮边框；
+    - 移除中文转英文设置，新增“繁体简体是否互译”双向智能转换与静默跳过保护。
+  - `v1.1.0`：
     - 全新重构双视图弹窗：极简紧凑快捷面板 + 平滑推拉切换至完整设置；
-    - 快捷界面新增源/目标语言双胶囊下拉框与一键互换（无需进设置即可瞬时切换翻译语种）；
+    - 快捷界面新增源/目标语言双胶囊下拉框与一键互换；
     - 新增翻译服务指示与当前页面特权状态动态检测；
     - 全面适配系统/浏览器级深浅色自适应主题。
   - `v1.0.2`：
-    - 修复因拦截 `dragstart` 导致超链接无法滑动/拖拽打开的问题（完美兼容原生标签拖拽及 smartUp、CrxMouse 等超级拖拽手势扩展）；
-    - 增加拖拽启动即时熔断：一旦用户滑动拖拽超链接，立刻取消长按计时器并收起进度环，彻底杜绝拖拽与翻译冲突。
+    - 修复因拦截 `dragstart` 导致超链接无法滑动/拖拽打开的问题；
+    - 增加拖拽启动即时熔断：一旦用户滑动拖拽超链接，立刻取消长按计时器并收起进度环。
   - `v1.0.1`：
-    - 修复 BBC 等复杂新闻卡片使用 Stretched Link 全卡片覆盖伪元素（`a::before { inset: 0 }`）时，点击正文描述段落误触发上方大标题翻译的问题；
-    - 修复 BBC 关联视频链接等水平 Flex 容器内插入译文被挤到右侧的问题，保证译文始终在正下方独立整行展示；
+    - 修复 BBC 等复杂新闻卡片使用 Stretched Link 全卡片覆盖伪元素时误触发上方标题翻译的问题；
+    - 修复 BBC 关联视频链接等水平 Flex 容器内插入译文被挤到右侧的问题；
     - 强化译文元素流式排版（`width: 100% !important; clear: both !important;`）。
   - `v1.0.0`：初版发布（沉浸式排版、1:1 字号/加粗/斜体/下划线排版镜像、YouTube 专项穿透、防误触双滑条与 7 色调色板）。
   - 后续更新：直接在 Releases 页面下载最新 zip 替换本地文件，在 `chrome://extensions/` 中点击刷新图标 (⟳) 即可无缝升级。

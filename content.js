@@ -17,8 +17,7 @@
     targetLang: 'auto',
     showRing: true,
     textColor: '#86a003',        // Default: screenshot olive green
-    translateChinese: false,     // 默认中文不翻译
-    translateTraditional: true   // 默认繁体中文翻译为简体
+    mutualChinese: true          // 默认开启：简体转繁体、繁体转简体
   };
 
   // Check if extension context is still valid
@@ -57,7 +56,7 @@
     try {
       chrome.storage.sync.get([
         'enabled', 'pressDuration', 'confirmDelay', 'sourceLang', 'targetLang', 'showRing', 'textColor',
-        'translateChinese', 'translateTraditional'
+        'mutualChinese'
       ], (res) => {
         if (!isExtensionValid() || (chrome.runtime && chrome.runtime.lastError)) return;
         if (res.enabled !== undefined) config.enabled = res.enabled;
@@ -67,8 +66,7 @@
         if (res.targetLang !== undefined) config.targetLang = res.targetLang;
         if (res.showRing !== undefined) config.showRing = res.showRing;
         if (res.textColor) config.textColor = res.textColor;
-        if (res.translateChinese !== undefined) config.translateChinese = res.translateChinese;
-        if (res.translateTraditional !== undefined) config.translateTraditional = res.translateTraditional;
+        if (res.mutualChinese !== undefined) config.mutualChinese = res.mutualChinese;
       });
 
       chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -83,8 +81,7 @@
           if (changes.sourceLang) config.sourceLang = changes.sourceLang.newValue;
           if (changes.targetLang) config.targetLang = changes.targetLang.newValue;
           if (changes.showRing) config.showRing = changes.showRing.newValue;
-          if (changes.translateChinese !== undefined) config.translateChinese = changes.translateChinese.newValue;
-          if (changes.translateTraditional !== undefined) config.translateTraditional = changes.translateTraditional.newValue;
+          if (changes.mutualChinese !== undefined) config.mutualChinese = changes.mutualChinese.newValue;
           if (changes.textColor) {
             config.textColor = changes.textColor.newValue;
             updateExistingTranslationsColor(config.textColor);
@@ -589,8 +586,7 @@
           text: text,
           sourceLang: config.sourceLang || 'auto',
           targetLang: config.targetLang,
-          translateChinese: config.translateChinese,
-          translateTraditional: config.translateTraditional
+          mutualChinese: config.mutualChinese
         },
         (res) => {
           if (!isExtensionValid()) {

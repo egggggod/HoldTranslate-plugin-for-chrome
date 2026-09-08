@@ -106,7 +106,7 @@
           </svg>
           <span>设置</span>
         </button>
-        <span class="bar-version">v1.1.0</span>
+        <span class="bar-version">v1.2.0</span>
         <button type="button" class="bar-btn right" id="openTestPageBtn" title="打开本地测试基准页">
           <span>测试页</span>
           <svg viewBox="0 0 24 24" width="13" height="13">
@@ -146,26 +146,14 @@
         <!-- 语种识别与过滤 -->
         <div class="section-title">语种过滤策略</div>
 
-        <!-- 中文翻译为英文开关 -->
+        <!-- 繁体简体互译开关 -->
         <div class="setting-item toggle-row">
           <div class="setting-info">
-            <label class="setting-label" for="translateChineseSwitch">中文翻译为英文</label>
-            <span class="setting-desc">默认关闭 (中文不翻译)；开启后中文翻为英文</span>
+            <label class="setting-label" for="mutualChineseSwitch">繁体简体是否互译</label>
+            <span class="setting-desc">默认开启；开启后简体转繁体、繁体转简体</span>
           </div>
           <label class="switch">
-            <input type="checkbox" id="translateChineseSwitch">
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <!-- 繁体中文转简体开关 -->
-        <div class="setting-item toggle-row">
-          <div class="setting-info">
-            <label class="setting-label" for="translateTraditionalSwitch">繁体中文翻译为简体</label>
-            <span class="setting-desc">默认开启；开启后繁体中文自动转换为简体</span>
-          </div>
-          <label class="switch">
-            <input type="checkbox" id="translateTraditionalSwitch" checked>
+            <input type="checkbox" id="mutualChineseSwitch" checked>
             <span class="slider"></span>
           </label>
         </div>
@@ -185,10 +173,16 @@
               <button type="button" class="color-chip" data-color="#10b981" style="background-color: #10b981;" title="清透翡翠"></button>
               <button type="button" class="color-chip" data-color="#fb7185" style="background-color: #fb7185;" title="珊瑚柔粉"></button>
               <button type="button" class="color-chip" data-color="#94a3b8" style="background-color: #94a3b8;" title="中性银灰"></button>
+              
+              <!-- 调色盘自选圆钮 -->
+              <label class="color-chip palette-chip" id="paletteChip" title="调色盘自选">
+                <span class="palette-chip-icon">🎨</span>
+                <input type="color" id="colorPicker" value="#86a003" aria-label="自定义拾色器">
+              </label>
             </div>
             <div class="custom-color-input-row">
-              <input type="color" id="colorPicker" value="#86a003">
-              <input type="text" id="colorHex" value="#86a003" maxlength="7" spellcheck="false">
+              <span class="hex-label">当前色值</span>
+              <input type="text" id="colorHex" value="#86A003" maxlength="7" spellcheck="false" title="输入 16 进制颜色代码回车确认">
             </div>
           </div>
         </div>

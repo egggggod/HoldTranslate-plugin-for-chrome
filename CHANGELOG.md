@@ -4,6 +4,16 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.0] - 2026-09-08
+
+### Added
+- **Circular Palette Color Picker (🎨)**: Integrated a circular palette button with native color picker at the end of the preset color row, allowing arbitrary custom font color selection with real-time HEX code sync.
+- **Anti-Clipping Breathing Halo Selection**: Redesigned active chip indicator with double-layered shadow ring (card-color gap + dynamic theme ring), preventing any border collision or clipping of the color chip.
+- **Whole-Plugin Dynamic Accent Color Sync**: The selected translation color now dynamically synchronizes across all colored plugin UI elements (switches, buttons, slider thumbs, hover states, and back arrow).
+- **Simplified / Traditional Mutual Translation**: Replaced Chinese-to-English setting with a streamlined "Simplified/Traditional Mutual Translation" option (auto-translates Simplified to Traditional and Traditional to Simplified; skips Chinese text entirely when disabled).
+
+---
+
 ## [v1.1.0] - 2026-09-08
 
 ### Added

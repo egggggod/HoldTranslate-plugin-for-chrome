@@ -17,8 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Settings view elements
   const enabledSwitch = document.getElementById('enabledSwitch');
-  const translateChineseSwitch = document.getElementById('translateChineseSwitch');
-  const translateTraditionalSwitch = document.getElementById('translateTraditionalSwitch');
+  const mutualChineseSwitch = document.getElementById('mutualChineseSwitch');
   const durationSlider = document.getElementById('durationSlider');
   const durationValue = document.getElementById('durationValue');
   const confirmDelaySlider = document.getElementById('confirmDelaySlider');
@@ -28,6 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Color elements
   const colorPalette = document.getElementById('colorPalette');
+  const paletteChip = document.getElementById('paletteChip');
   const colorPicker = document.getElementById('colorPicker');
   const colorHex = document.getElementById('colorHex');
   const previewTranslation = document.getElementById('previewTranslation');
@@ -58,6 +58,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // URL query parameter support for testing / preview
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.has('settings') && viewsWrapper) {
+    viewsWrapper.classList.add('show-settings');
+  }
+  if (urlParams.has('color')) {
+    updateColorUI(urlParams.get('color'));
+  }
+
   // Save indication
   function showSaved() {
     if (!savedHint) return;
@@ -70,20 +79,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // 2. Color UI & Logic
   function updateColorUI(hex) {
+    if (!hex) return;
     currentColor = hex;
+
+    // Dynamically apply accent color to the document root (so all switches, buttons, sliders adapt)
+    document.documentElement.style.setProperty('--accent-color', hex);
+
     if (colorPicker) colorPicker.value = hex;
     if (colorHex) colorHex.value = hex.toUpperCase();
     if (previewTranslation) previewTranslation.style.color = hex;
 
+    let matchedPreset = false;
     if (colorPalette) {
-      const chips = colorPalette.querySelectorAll('.color-chip');
+      const chips = colorPalette.querySelectorAll('.color-chip:not(.palette-chip)');
       chips.forEach((chip) => {
-        if (chip.dataset.color.toLowerCase() === hex.toLowerCase()) {
+        if (chip.dataset.color && chip.dataset.color.toLowerCase() === hex.toLowerCase()) {
           chip.classList.add('active');
+          matchedPreset = true;
         } else {
           chip.classList.remove('active');
         }
       });
+    }
+
+    if (paletteChip) {
+      if (!matchedPreset) {
+        paletteChip.classList.add('active');
+        paletteChip.style.backgroundColor = hex;
+      } else {
+        paletteChip.classList.remove('active');
+        paletteChip.style.backgroundColor = '';
+      }
     }
   }
 
@@ -156,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.get([
       'enabled', 'sourceLang', 'targetLang', 'pressDuration', 'confirmDelay',
-      'showRing', 'textColor', 'translateChinese', 'translateTraditional'
+      'showRing', 'textColor', 'mutualChinese'
     ], (res) => {
       // Main switches
       const isEnabled = res.enabled !== undefined ? res.enabled : true;
@@ -171,12 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
         targetLangSelect.value = res.targetLang || 'zh-CN';
       }
 
-      // Chinese filtering
-      if (translateChineseSwitch) {
-        translateChineseSwitch.checked = res.translateChinese !== undefined ? res.translateChinese : false;
-      }
-      if (translateTraditionalSwitch) {
-        translateTraditionalSwitch.checked = res.translateTraditional !== undefined ? res.translateTraditional : true;
+      // Mutual Chinese filtering
+      if (mutualChineseSwitch) {
+        mutualChineseSwitch.checked = res.mutualChinese !== undefined ? res.mutualChinese : true;
       }
 
       // Sliders & Ring
@@ -187,14 +210,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Color
-      if (res.textColor) {
-        updateColorUI(res.textColor);
-      } else {
-        updateColorUI('#86a003');
-      }
+      const initColor = urlParams.get('color') || res.textColor || '#86a003';
+      updateColorUI(initColor);
     });
   } else {
-    updateColorUI('#86a003');
+    const initColor = urlParams.get('color') || '#86a003';
+    updateColorUI(initColor);
     updateDurationUI(500);
     updateConfirmDelayUI(160);
   }
@@ -293,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 9. Color Palette & Pickers
   if (colorPalette) {
     colorPalette.addEventListener('click', (e) => {
-      const chip = e.target.closest('.color-chip');
+      const chip = e.target.closest('.color-chip:not(.palette-chip)');
       if (chip && chip.dataset.color) {
         saveColor(chip.dataset.color);
       }
@@ -319,6 +340,11 @@ document.addEventListener('DOMContentLoaded', () => {
         colorHex.value = currentColor.toUpperCase();
       }
     });
+    colorHex.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        colorHex.blur();
+      }
+    });
   }
 
   // 10. Live Preview Theme Toggle
@@ -337,18 +363,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 11. Secondary Toggles
-  if (translateChineseSwitch) {
-    translateChineseSwitch.addEventListener('change', () => {
+  if (mutualChineseSwitch) {
+    mutualChineseSwitch.addEventListener('change', () => {
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-        chrome.storage.sync.set({ translateChinese: translateChineseSwitch.checked }, showSaved);
-      }
-    });
-  }
-
-  if (translateTraditionalSwitch) {
-    translateTraditionalSwitch.addEventListener('change', () => {
-      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-        chrome.storage.sync.set({ translateTraditional: translateTraditionalSwitch.checked }, showSaved);
+        chrome.storage.sync.set({ mutualChinese: mutualChineseSwitch.checked }, showSaved);
       }
     });
   }
