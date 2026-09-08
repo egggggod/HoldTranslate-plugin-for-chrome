@@ -150,6 +150,49 @@
       </p>
     </div>
 
+    <!-- BBC 新闻卡片与关联视频链接专项测试区 -->
+    <div class="card">
+      <div class="card-title">BBC 新闻卡片测试区 (验证覆盖链接防穿透、段落精准提取与下方视频链接译文位置)</div>
+
+      <div style="background: #ffffff; color: #202224; padding: 20px; border-radius: 8px; position: relative; display: grid; gap: 14px; max-width: 520px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <!-- BBC 标题区域 (带 ::before 全卡片覆盖链接) -->
+        <div style="position: relative;">
+          <a href="#bbc-article" class="bbc-stretched-link" style="text-decoration: none; color: #202224;">
+            <h2 style="font-family: Georgia, 'Times New Roman', serif; font-size: 24px; line-height: 28px; font-weight: 700; margin: 0; text-decoration: underline;">
+              Flight recorders recovered from 'devastating' Amazon cargo plane crash
+            </h2>
+          </a>
+        </div>
+
+        <!-- BBC 描述段落 (位于 ::before 覆盖层下方) -->
+        <p style="font-family: Georgia, 'Times New Roman', serif; font-size: 15px; line-height: 1.45; color: #444; margin: 0;">
+          Five people were killed and five others seriously injured when the Boeing 767-300 overshot the runway at Miami International Airport.
+        </p>
+
+        <div style="font-size: 13px; color: #777;">6 hrs ago | US & Canada</div>
+
+        <!-- BBC 关联视频链接 (水平 flex 容器，带 ▶ 图标) -->
+        <div style="position: relative; z-index: 1000; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+          <a href="#bbc-video" style="text-decoration: none; color: #202224;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span style="font-size: 13px; color: #202224; flex-shrink: 0;">▶</span>
+              <h4 style="font-size: 15px; font-weight: 600; margin: 0; color: #202224;">
+                Five killed as Amazon cargo plane crashes at Miami airport
+              </h4>
+            </div>
+          </a>
+        </div>
+      </div>
+      <style>
+        .bbc-stretched-link::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          z-index: 990;
+        }
+      </style>
+    </div>
+
   </div>
 
 </body>

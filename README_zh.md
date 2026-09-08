@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.0.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.0.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.0/holdtranslate-chrome-extension-v1.0.0.zip) (v1.0.0)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.1/holdtranslate-chrome-extension-v1.0.1.zip) (v1.0.1)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -101,7 +101,12 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.0.0`
+  - 当前版本：`v1.0.1`
+  - `v1.0.1` 更新重点：
+    - 修复 BBC 等复杂新闻卡片使用 Stretched Link 全卡片覆盖伪元素（`a::before { inset: 0 }`）时，点击正文描述段落误触发上方大标题翻译的问题；
+    - 修复 BBC 关联视频链接等水平 Flex 容器内插入译文被挤到右侧的问题，保证译文始终在正下方独立整行展示；
+    - 强化译文元素流式排版（`width: 100% !important; clear: both !important;`）。
+  - `v1.0.0`：初版发布（沉浸式排版、1:1 字号/加粗/斜体/下划线排版镜像、YouTube 专项穿透、防误触双滑条与 7 色调色板）。
   - 后续更新：直接在 Releases 页面下载最新 zip 替换本地文件，在 `chrome://extensions/` 中点击刷新图标 (⟳) 即可无缝升级。
 
 ## 参与贡献 (Contributing)

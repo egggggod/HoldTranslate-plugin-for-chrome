@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "HoldTranslate - 长按鼠标左键翻译/还原",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "长按鼠标左键自动在原文下方插入 Google 翻译，再次长按即可还原移除，支持划词与整段翻译",
   "permissions": [
     "storage"

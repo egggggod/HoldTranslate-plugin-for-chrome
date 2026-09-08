@@ -42,6 +42,8 @@
 /* Immersive Inline Translation Element (No Card, No Borders, Transparent Background) */
 .__gtrans-inline-result {
   display: block !important;
+  width: 100% !important;
+  clear: both !important;
   box-sizing: border-box !important;
   margin: 4px 0 10px 0 !important;
   padding: 0 !important;

@@ -251,6 +251,86 @@
     }
   }
 
+  // Resolve true target element under pointer, piercing through stretched link overlays (e.g. BBC card headline a::before)
+  function getTrueTargetAtPoint(target, x, y) {
+    if (typeof x !== 'number' || typeof y !== 'number') return target;
+    if (target && target.closest?.('.__gtrans-inline-result')) return target;
+
+    const elems = document.elementsFromPoint ? document.elementsFromPoint(x, y) : [target];
+    if (!elems || elems.length <= 1) return target;
+
+    const targetRect = target.getBoundingClientRect();
+    const targetContainsPoint = (
+      x >= targetRect.left && x <= targetRect.right &&
+      y >= targetRect.top && y <= targetRect.bottom
+    );
+
+    if (targetContainsPoint) {
+      // Even if target contains point, if target is an <a> or generic card container,
+      // prefer the deeper semantic text element (H1-H6, P, SPAN, LI) under (x, y)
+      for (const el of elems) {
+        if (el === target || target.contains(el)) {
+          if (/^(H[1-6]|P|SPAN|STRONG|B|EM|I|U|LI|BLOCKQUOTE|FIGCAPTION|SUMMARY)$/i.test(el.tagName)) {
+            return el;
+          }
+        }
+      }
+      return target;
+    }
+
+    // Target bounding rect DOES NOT contain (x, y) (stretched link pseudo-element overlay!)
+    for (const el of elems) {
+      if (el === target || el === document.body || el === document.documentElement) continue;
+      const rect = el.getBoundingClientRect();
+      if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
+        if (/^(P|H[1-6]|LI|BLOCKQUOTE|FIGCAPTION|SUMMARY|SPAN|DIV|A)$/i.test(el.tagName)) {
+          if (el.innerText && el.innerText.trim().length > 0) {
+            const innerSemantic = el.querySelector?.('p, h1, h2, h3, h4, h5, h6, span');
+            if (innerSemantic) {
+              const innerRect = innerSemantic.getBoundingClientRect();
+              if (x >= innerRect.left && x <= innerRect.right && y >= innerRect.top && y <= innerRect.bottom) {
+                return innerSemantic;
+              }
+            }
+            return el;
+          }
+        }
+      }
+    }
+
+    return target;
+  }
+
+  // If targetBlock is inside a horizontal flex row (or inline-flex), find the outer block/anchor so translation appears below
+  function findInsertionAnchor(targetBlock) {
+    if (!targetBlock) return targetBlock;
+    let curr = targetBlock;
+    while (curr && curr !== document.body && curr !== document.documentElement) {
+      const parent = curr.parentElement;
+      if (!parent) break;
+
+      try {
+        const parentStyle = window.getComputedStyle(parent);
+        const isFlex = parentStyle.display === 'flex' || parentStyle.display === 'inline-flex';
+        const isHorizontalFlex = isFlex && !parentStyle.flexDirection.startsWith('column');
+
+        if (isHorizontalFlex) {
+          // Check if wrapped in an <a>
+          const enclosingLink = parent.closest?.('a');
+          if (enclosingLink && enclosingLink !== document.body) {
+            return enclosingLink;
+          }
+          return parent;
+        }
+      } catch (e) {}
+
+      if (curr.tagName === 'LI' || curr.tagName === 'TD' || curr.tagName === 'ARTICLE') break;
+      if (parent.tagName === 'DIV' || parent.tagName === 'SECTION' || parent.tagName === 'MAIN') break;
+      curr = parent;
+    }
+    return targetBlock;
+  }
+
   // Find the closest meaningful block container for insertion
   function findBestBlockElement(node) {
     let el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
@@ -343,17 +423,28 @@
       if (found) return found;
     }
 
-    // B. Check if the immediate next sibling is specifically the translation for THIS block
-    const sib = block.nextElementSibling;
+    // Check anchor if block is inside a flex/link structure
+    const anchor = findInsertionAnchor(block);
+    if (anchor && anchor !== block) {
+      const anchorActiveId = anchor.getAttribute?.('data-gtrans-active');
+      if (anchorActiveId) {
+        const root = anchor.getRootNode ? anchor.getRootNode() : document;
+        const found = root.querySelector?.(`.__gtrans-inline-result[data-gtrans-target-id="${anchorActiveId}"]`);
+        if (found) return found;
+      }
+    }
+
+    // B. Check if the immediate next sibling is specifically the translation for THIS block/anchor
+    const sib = (anchor || block).nextElementSibling;
     if (sib && sib.classList && sib.classList.contains('__gtrans-inline-result')) {
       const targetId = sib.getAttribute('data-gtrans-target-id');
-      if (activeId && targetId === activeId) {
+      if ((activeId && targetId === activeId) || (!activeId && targetId)) {
         return sib;
       }
     }
 
     // C. Check child translation inside LI or TD
-    const child = block.querySelector?.(':scope > .__gtrans-inline-result');
+    const child = (anchor || block).querySelector?.(':scope > .__gtrans-inline-result');
     if (child) {
       const targetId = child.getAttribute('data-gtrans-target-id');
       if (activeId && targetId === activeId) {
@@ -371,9 +462,9 @@
     const targetId = el.getAttribute('data-gtrans-target-id');
     if (targetId) {
       const root = el.getRootNode ? el.getRootNode() : document;
-      const originalBlock = root.querySelector?.(`[data-gtrans-active="${targetId}"]`);
-      if (originalBlock) {
-        originalBlock.removeAttribute('data-gtrans-active');
+      const originalBlocks = root.querySelectorAll?.(`[data-gtrans-active="${targetId}"]`);
+      if (originalBlocks) {
+        originalBlocks.forEach((b) => b.removeAttribute('data-gtrans-active'));
       }
     }
     el.classList.add('__gtrans-fade-out');
@@ -423,21 +514,23 @@
 
   // Insert translation cleanly in DOM
   function insertTranslationElement(targetBlock, el) {
-    // Purge any stale translation element sitting right after targetBlock
-    let next = targetBlock.nextElementSibling;
+    const anchor = findInsertionAnchor(targetBlock);
+
+    // Purge any stale translation element sitting right after anchor
+    let next = anchor.nextElementSibling;
     while (next && next.classList.contains('__gtrans-inline-result')) {
       const toRemove = next;
       next = next.nextElementSibling;
       toRemove.remove();
     }
 
-    if (['TD', 'TH', 'LI'].includes(targetBlock.tagName)) {
+    if (['TD', 'TH', 'LI'].includes(anchor.tagName)) {
       // Also purge inside LI/TD
-      const oldChild = targetBlock.querySelector(':scope > .__gtrans-inline-result');
+      const oldChild = anchor.querySelector(':scope > .__gtrans-inline-result');
       if (oldChild) oldChild.remove();
-      targetBlock.appendChild(el);
+      anchor.appendChild(el);
     } else {
-      targetBlock.insertAdjacentElement('afterend', el);
+      anchor.insertAdjacentElement('afterend', el);
     }
   }
 
@@ -578,6 +671,10 @@
     // 4. Insert immersive translation element right after/inside the target block
     const targetId = `gtrans-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
     targetBlock.setAttribute('data-gtrans-active', targetId);
+    const anchor = findInsertionAnchor(targetBlock);
+    if (anchor && anchor !== targetBlock) {
+      anchor.setAttribute('data-gtrans-active', targetId);
+    }
 
     const translationEl = createTranslationElement(targetId, typo);
     insertTranslationElement(targetBlock, translationEl);
@@ -609,7 +706,7 @@
 
     startX = e.clientX;
     startY = e.clientY;
-    downTarget = e.target;
+    downTarget = getTrueTargetAtPoint(e.target, startX, startY);
     isLongPressTriggered = false;
 
     // Use user-configured confirmDelay (capped to avoid exceeding pressDuration)
