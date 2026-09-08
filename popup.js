@@ -61,17 +61,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentColor = '#86a003';
 
+  const quickView = document.getElementById('quickView');
+  const settingsView = document.getElementById('settingsView');
+
   // 1. Dual View Navigation
-  if (openSettingsBtn && viewsWrapper) {
-    openSettingsBtn.addEventListener('click', () => {
+  function openSettings() {
+    if (!viewsWrapper || !settingsView || !quickView) return;
+    if (typeof closeAllDropdowns === 'function') closeAllDropdowns();
+    settingsView.style.display = 'flex';
+    requestAnimationFrame(() => {
       viewsWrapper.classList.add('show-settings');
+      setTimeout(() => {
+        if (viewsWrapper.classList.contains('show-settings')) {
+          quickView.style.display = 'none';
+        }
+      }, 360);
     });
   }
 
-  if (backToQuickBtn && viewsWrapper) {
-    backToQuickBtn.addEventListener('click', () => {
+  function closeSettings() {
+    if (!viewsWrapper || !settingsView || !quickView) return;
+    quickView.style.display = 'flex';
+    requestAnimationFrame(() => {
       viewsWrapper.classList.remove('show-settings');
+      setTimeout(() => {
+        if (!viewsWrapper.classList.contains('show-settings')) {
+          settingsView.style.display = 'none';
+        }
+      }, 360);
     });
+  }
+
+  if (openSettingsBtn) {
+    openSettingsBtn.addEventListener('click', openSettings);
+  }
+
+  if (backToQuickBtn) {
+    backToQuickBtn.addEventListener('click', closeSettings);
   }
 
   if (openTestPageBtn) {
@@ -85,7 +111,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // URL query parameter support for testing / preview
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has('settings') && viewsWrapper) {
-    viewsWrapper.classList.add('show-settings');
+    openSettings();
+  } else if (settingsView) {
+    settingsView.style.display = 'none';
   }
   if (urlParams.has('color')) {
     updateColorUI(urlParams.get('color'));
@@ -145,6 +173,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.language-card, .service-capsule-bar').forEach((card) => {
       card.classList.remove('dropdown-open');
     });
+    if (viewsWrapper) {
+      viewsWrapper.classList.remove('dropdown-open');
+    }
   }
 
   function syncDropdownUI(dropdownEl, selectEl, labelEl) {
@@ -178,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
         triggerEl.setAttribute('aria-expanded', 'true');
         const parentCard = dropdownEl.closest('.language-card, .service-capsule-bar');
         if (parentCard) parentCard.classList.add('dropdown-open');
+        if (viewsWrapper) viewsWrapper.classList.add('dropdown-open');
       }
     });
 

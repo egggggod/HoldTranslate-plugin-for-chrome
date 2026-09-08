@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.4.2-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.3-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.4.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.3-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.2/holdtranslate-chrome-extension-v1.4.2.zip) (click to download v1.4.2) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.3/holdtranslate-chrome-extension-v1.4.3.zip) (click to download v1.4.3) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -63,11 +63,11 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### Features
 
+- 🍏 **Apple 2025 Floating Island Bar & Specular Sheen**: Reconstructed the bottom bar into an Apple WWDC25 June 2025 unified floating crystal island (`.floating-island-bar`) combining `[⚙️ Settings]`, `[● 就绪 · v1.4.3]`, and `[↗ Test Page]`. Features 115° specular sheen sweeps on hover and `scale(0.97)` tactile press indentation physics.
+- ⚡ **Zero Excess Whitespace & Dynamic Elastic Morphing**: Completely eliminated the 340px blank space under "就绪" (at rest, popup window height hugs content at ~225px). Seamlessly morphs height to 375px when custom popovers open, and to 566px for Settings view.
 - 🌐 **Minimalist Multi-Engine Architecture**: Clean English naming across all services (**Google Translate**, **Microsoft Translator**, **DeepSeek API**, and **Custom API**) while preserving localized Chinese for intuitive language selection.
-- 🍏 **Apple-Grade Spring Motion & Physics**: iOS view-switching slide and depth-scale transitions, iOS switch knob elongation on press (`cubic-bezier(0.34, 1.56, 0.64, 1)`), spring pop on active color chips, and tactile spring scaling on range slider thumbs.
 - 🪟 **VisionOS Liquid Glass & Frosted Transparency**: High-transparency frosted glass (`backdrop-filter: blur(28px) saturate(190%)`), dynamic multi-color ambient fluid mesh glow, specular edge bevel reflections, and Obsidian dark glass mode.
 - 💧 **VisionOS Floating Popover Dropdowns**: Custom floating frosted glass popovers with specular bevels, smooth micro-spring scaling animations, brand SVG logos, and clean active checkmarks (`✓`), completely eliminating clunky OS native dropdowns.
-- ⚡ **Ultra-Compact Quick Dashboard**: Centered frosted status capsule (`● 就绪 · v1.4.2`) integrated into the bottom bar, eliminating all bottom whitespace for a tightly-wrapped, modern ~220px popup height.
 - 🎛️ **Clean & Decluttered Settings Hierarchy**: Removed leading emojis from section titles, streamlined LLM cards to concise labels and placeholder demonstrations (`sk-...`, `https://api.openai.com/v1`), and provided an independent Liquid Glass switch.
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
 - 🎨 **Zero-Clipping Palette & Full-Theme Sync**: Circular 🎨 palette button with generous container breathing room ensuring the active halo indicator on the leftmost chip is perfectly rounded without clipping. Chosen color dynamically synchronizes across all colored plugin UI elements and fluid orbs.
@@ -77,8 +77,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.4.2)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.2/holdtranslate-chrome-extension-v1.4.2.zip))
+1. **Manual Installation (Recommended - latest v1.4.3)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.3.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.3/holdtranslate-chrome-extension-v1.4.3.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -111,7 +111,12 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.4.2`
+  - Current Version: `v1.4.3`
+  - `v1.4.3`:
+    - Recreated Apple WWDC25 June 2025 software redesign language: unified floating island pill bar (`.floating-island-bar`), 115° specular sheen sweep on hover, and 0.97 tactile press indentation.
+    - Completely eliminated blank whitespace under "就绪", reducing closed window height from 568px to 225px.
+    - Added elastic popover expansion allowing floating dropdowns to display without any bottom boundary clipping.
+    - Verified with DOM (44/44 IDs) and E2E translation automated test suites.
   - `v1.4.2`:
     - Cleaned up main interface service naming to standard English (`Google Translate`, `Microsoft Translator`, `DeepSeek API`, `Custom API`).
     - Implemented Apple-grade physics: iOS view transitions, spring elongation switches (`cubic-bezier(0.34, 1.56, 0.64, 1)`), spring-popped active color chips, and tactile range slider thumb scaling.

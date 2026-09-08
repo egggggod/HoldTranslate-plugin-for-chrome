@@ -87,15 +87,21 @@
   padding: 0;
 }
 
-body {
+html, body {
   width: 340px;
+  height: auto;
   min-height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   font-size: 13.5px;
   line-height: 1.5;
-  overflow-x: hidden;
   user-select: none;
   position: relative;
   -webkit-font-smoothing: antialiased;
@@ -105,8 +111,11 @@ body {
    1. VisionOS Ambient Fluid Glow Container
    ========================================================= */
 .ambient-fluid-container {
-  position: fixed;
-  inset: -20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
@@ -170,14 +179,20 @@ body {
 .views-wrapper {
   position: relative;
   width: 100%;
-  overflow-x: clip;
-  overflow-y: visible;
+  overflow: hidden;
   z-index: 1;
+  transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.views-wrapper.dropdown-open,
+.views-wrapper:has(.custom-dropdown.open) {
+  overflow: visible;
+  min-height: 375px;
 }
 
 .view-panel {
   width: 100%;
-  padding: 14px 16px 12px;
+  padding: 12px 14px 12px;
   display: flex;
   flex-direction: column;
   transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.28s ease, filter 0.28s ease;
@@ -199,8 +214,9 @@ body {
   transform: translateX(100%);
   opacity: 0;
   pointer-events: none;
-  padding: 14px 16px 14px;
+  padding: 12px 14px 14px;
   filter: blur(2px);
+  display: none;
 }
 
 .views-wrapper.show-settings #quickView {
@@ -220,6 +236,7 @@ body {
   filter: blur(0px);
   pointer-events: auto;
   position: relative;
+  display: flex;
 }
 
 /* =========================================================
@@ -540,7 +557,7 @@ input:checked + .slider:before {
   border-radius: 16px;
   padding: 6px;
   box-shadow: var(--glass-inner-bevel), 0 14px 38px -4px rgba(15, 23, 42, 0.16), 0 2px 8px rgba(0, 0, 0, 0.04);
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 3px;
   opacity: 0;
@@ -549,11 +566,12 @@ input:checked + .slider:before {
   transform-origin: top center;
   pointer-events: none;
   transition: opacity 0.24s cubic-bezier(0.32, 0.72, 0, 1),
-              transform 0.32s cubic-bezier(0.34, 1.4, 0.64, 1),
+              transform 0.32s cubic-bezier(0.34, 1.45, 0.64, 1),
               visibility 0.24s ease;
 }
 
 .custom-dropdown.open > .custom-dropdown-menu {
+  display: flex;
   opacity: 1;
   visibility: visible;
   transform: translateY(0) scale(1);
@@ -656,24 +674,68 @@ input:checked + .slider:before {
 /* =========================================================
    7. Bottom Bar & Integrated Status Badge
    ========================================================= */
-.bottom-bar {
+/* =========================================================
+   7. Apple 2025 Floating Island Bar & Status Capsule
+   ========================================================= */
+.bottom-bar.floating-island-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 10px;
-  border-top: 1px solid var(--glass-border-subtle);
+  margin-top: 8px;
+  padding: 4px 6px;
+  border-top: none;
+  background: var(--glass-card);
+  backdrop-filter: blur(28px) saturate(190%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%);
+  border: 1px solid var(--glass-border);
+  border-radius: 22px;
+  box-shadow: var(--glass-inner-bevel), 0 4px 16px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.bar-status-badge {
+.bottom-bar.floating-island-bar:hover {
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-inner-bevel), 0 6px 20px var(--accent-subtle);
+}
+
+.island-btn.bar-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: none;
+}
+
+.island-btn.bar-icon-btn:hover {
+  background: var(--glass-capsule-hover);
+  color: var(--accent-color);
+  transform: scale(1.12);
+  box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.island-btn.bar-icon-btn:active {
+  transform: scale(0.92);
+}
+
+.bar-status-badge.island-status {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 25px;
+  height: 24px;
   padding: 0 10px;
-  border-radius: 20px;
+  border-radius: 14px;
   background: var(--glass-capsule);
   border: 1px solid var(--glass-border-subtle);
-  box-shadow: var(--glass-inner-bevel);
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.4);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   user-select: none;
   backdrop-filter: blur(16px);
@@ -743,53 +805,40 @@ input:checked + .slider:before {
   50% { transform: scale(1.35); opacity: 0.45; }
 }
 
-.bar-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  border: 1px solid var(--glass-border-subtle);
-  background: var(--glass-capsule);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: var(--glass-inner-bevel);
+/* =========================================================
+   7.5 Apple 2025 Specular Sheen Sweep & Press Indentation
+   ========================================================= */
+.service-capsule,
+.language-card,
+.bottom-bar.floating-island-bar {
+  overflow: hidden;
 }
 
-.bar-icon-btn:hover {
-  background: var(--glass-capsule-hover);
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  transform: translateY(-1px);
-  box-shadow: var(--glass-inner-bevel), 0 0 12px var(--accent-glow);
+.service-capsule::after,
+.language-card::after,
+.bottom-bar.floating-island-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.12) 48%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.12) 52%, transparent 65%);
+  background-size: 200% 100%;
+  background-position: -150% 0;
+  pointer-events: none;
+  transition: background-position 0.6s ease;
 }
 
-.bar-icon-btn:active {
-  transform: scale(0.94);
+.service-capsule:hover::after,
+.language-card:hover::after,
+.bottom-bar.floating-island-bar:hover::after {
+  background-position: 150% 0;
 }
 
-.bar-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 12px;
-  font-weight: 500;
-  padding: 5px 10px;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.bar-btn:hover {
-  background: var(--glass-capsule-hover);
-  border-color: var(--glass-border-subtle);
-  color: var(--accent-color);
-  box-shadow: var(--glass-inner-bevel), 0 2px 8px var(--accent-subtle);
+.service-capsule:active,
+.lang-capsule:active,
+.brand-avatar:active,
+.bottom-bar.floating-island-bar:active {
+  transform: scale(0.97);
 }
 
 .bar-version {
