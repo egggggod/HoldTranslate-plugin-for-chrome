@@ -126,7 +126,7 @@
                 <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
               </svg>
             </div>
-            <span class="custom-dropdown-label" id="serviceSelectedLabel">Google 翻译</span>
+            <span class="custom-dropdown-label" id="serviceSelectedLabel">Google Translate</span>
             <span class="capsule-arrow">▾</span>
           </button>
           
@@ -140,7 +140,7 @@
                   <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
                 </svg>
               </div>
-              <span class="item-text">Google 翻译</span>
+              <span class="item-text">Google Translate</span>
               <span class="item-check">✓</span>
             </div>
             <div class="dropdown-item" data-value="microsoft" role="option">
@@ -152,7 +152,7 @@
                   <path fill="#FFB900" d="M13 13h10v10H13z"/>
                 </svg>
               </div>
-              <span class="item-text">Microsoft 微软翻译</span>
+              <span class="item-text">Microsoft Translator</span>
               <span class="item-check">✓</span>
             </div>
             <div class="dropdown-item" data-value="deepseek" role="option">
@@ -162,7 +162,7 @@
                   <path fill="#ffffff" d="M8 13c1.5 2 6.5 2 8 0M9 9h.01M15 9h.01" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
                 </svg>
               </div>
-              <span class="item-text">DeepSeek 官方 API</span>
+              <span class="item-text">DeepSeek API</span>
               <span class="item-check">✓</span>
             </div>
             <div class="dropdown-item" data-value="custom" role="option">
@@ -172,36 +172,33 @@
                   <path fill="#ffffff" d="M11 7h2v6h-2zm0 8h2v2h-2z"/>
                 </svg>
               </div>
-              <span class="item-text">自定义 OpenAI 兼容</span>
+              <span class="item-text">Custom API</span>
               <span class="item-check">✓</span>
             </div>
           </div>
           
           <select id="serviceSelect" class="visually-hidden" aria-hidden="true" tabindex="-1">
-            <option value="google">Google 翻译 (免配置)</option>
-            <option value="microsoft">Microsoft 微软翻译</option>
-            <option value="deepseek">DeepSeek 官方 API</option>
-            <option value="custom">自定义 OpenAI 兼容</option>
+            <option value="google">Google Translate</option>
+            <option value="microsoft">Microsoft Translator</option>
+            <option value="deepseek">DeepSeek API</option>
+            <option value="custom">Custom API</option>
           </select>
         </div>
       </div>
 
-      <!-- 页面环境状态指示 (微光状态药丸) -->
-      <div class="status-pill-wrap">
-        <div class="status-card ready" id="statusCard" title="当前页面就绪，长按即可翻译">
-          <span class="status-dot"></span>
-          <span class="status-message" id="statusMessage">就绪</span>
-        </div>
-      </div>
-
-      <!-- 底部操作栏 (纯图标按钮: 设置 ⚙️ | 版本号 | 测试页 ↗) -->
+      <!-- 底部操作栏 (纯图标按钮: 设置 ⚙️ | 居中精致状态+版本 | 测试页 ↗) -->
       <footer class="bottom-bar">
         <button type="button" class="bar-icon-btn" id="openSettingsBtn" title="偏好设置" aria-label="偏好设置">
           <svg viewBox="0 0 24 24" width="16" height="16">
             <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
           </svg>
         </button>
-        <span class="bar-version">v1.4.1</span>
+        <div class="bar-status-badge ready" id="statusCard" title="当前页面就绪，长按即可翻译">
+          <span class="status-dot"></span>
+          <span class="status-message" id="statusMessage">就绪</span>
+          <span class="status-sep">·</span>
+          <span class="bar-version">v1.4.2</span>
+        </div>
         <button type="button" class="bar-icon-btn" id="openTestPageBtn" title="打开测试基准页" aria-label="测试页">
           <svg viewBox="0 0 24 24" width="15" height="15">
             <path fill="currentColor" d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
@@ -237,9 +234,8 @@
           </label>
         </div>
 
-        <!-- ② 视觉外观体系 (图形化图标 + 新增 Liquid Glass 开关) -->
+        <!-- ② 视觉外观体系 -->
         <div class="section-title">
-          <span class="section-icon">✨</span>
           <span>视觉外观</span>
         </div>
 
@@ -301,7 +297,6 @@
 
         <!-- ③ 手势参数体系 -->
         <div class="section-title">
-          <span class="section-icon">⏱️</span>
           <span>手势与时延</span>
         </div>
 
@@ -340,7 +335,7 @@
             <span class="duration-badge" id="confirmDelayValue">160 ms</span>
           </div>
           <div class="setting-desc help-tip">
-            💡 鼠标按下多久后显示旋转圆圈，设为 0ms 为立即显示。
+            鼠标按下多久后显示指示环，设为 0ms 为立即显示
           </div>
           <div class="slider-wrapper">
             <input type="range" id="confirmDelaySlider" min="0" max="300" step="20" value="160" class="range-slider">
@@ -354,17 +349,14 @@
 
         <!-- ④ API 服务配置 -->
         <div class="section-title">
-          <span class="section-icon">🤖</span>
-          <span>大模型与服务 API 配置</span>
+          <span>服务与 API 配置</span>
         </div>
 
         <!-- DeepSeek 配置卡片 -->
         <div class="api-card">
           <div class="api-card-header">
             <span class="api-title">DeepSeek 官方 API</span>
-            <span class="api-tag">推荐</span>
           </div>
-          <div class="api-desc">极速且高性价比大模型，默认使用 deepseek-chat</div>
           <div class="input-group">
             <label for="deepseekApiKey" class="input-label">API Key</label>
             <input type="password" id="deepseekApiKey" class="api-input" placeholder="sk-..." spellcheck="false" autocomplete="off">
@@ -376,7 +368,6 @@
           <div class="api-card-header">
             <span class="api-title">自定义 OpenAI 兼容接口</span>
           </div>
-          <div class="api-desc">支持 GPT-4o、Claude、硅基流动、Kimi、Ollama 等任意标准接口</div>
           <div class="input-group">
             <label for="customApiUrl" class="input-label">Base URL</label>
             <input type="text" id="customApiUrl" class="api-input" placeholder="https://api.openai.com/v1" spellcheck="false">

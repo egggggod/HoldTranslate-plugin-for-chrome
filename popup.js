@@ -299,7 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isRestricted) {
           if (statusCard) {
-            statusCard.className = 'status-card warn';
+            statusCard.classList.remove('ready');
+            statusCard.classList.add('warn');
             statusCard.title = '暂无权限翻译当前页面（新标签页或浏览器内置页面）';
           }
           if (statusMessage) {
@@ -307,7 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         } else {
           if (statusCard) {
-            statusCard.className = 'status-card ready';
+            statusCard.classList.remove('warn');
+            statusCard.classList.add('ready');
             statusCard.title = '当前页面已就绪，长按即可翻译';
           }
           if (statusMessage) {

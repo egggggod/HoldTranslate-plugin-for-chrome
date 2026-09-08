@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.4.1-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.2-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.4.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.1/holdtranslate-chrome-extension-v1.4.1.zip) (v1.4.1)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.2/holdtranslate-chrome-extension-v1.4.2.zip) (v1.4.2)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -59,11 +59,12 @@ HoldTranslate-plugin-for-chrome/
 
 ## 浏览器扩展特性 (Features)
 
-- 🌐 **多引擎翻译矩阵 (Multi-Engine Matrix)**：自由切换 **Google 翻译**、**Microsoft 微软翻译**、**DeepSeek 大模型** 以及 **自定义 OpenAI 兼容接口**（支持 GPT-4o、Claude、硅基流动、Ollama 本地模型）。
+- 🌐 **极简纯英服务标识 (Minimal English Services)**：主界面翻译服务全面取消冗余中文字样，统一采用标准英文品牌名称（**Google Translate**、**Microsoft Translator**、**DeepSeek API**、**Custom API**），语言选择器保留地道中文以符合直觉。
+- 🍏 **苹果级微动效与物理弹簧动量 (Apple Motion Physics)**：全局融入 iOS 级平滑推拉与景深缩放视图切换；开关控件按下即刻发生物理形变拉伸（`cubic-bezier(0.34, 1.56, 0.64, 1)` 与 22px 触感延展）；调色盘选中弹力微跳，滑动条圆钮 Hover/Active 阻尼缩放。
 - 🪟 **VisionOS 液态玻璃拟态美学 (Liquid Glass)**：基于苹果 VisionOS 风格的高通透磨砂毛玻璃 (`backdrop-filter: blur(28px) saturate(190%)`)，卡片通透度大幅优化（20%~38%），镜面高光边缘倒角与深空黑曜石暗黑玻璃。
-- 💧 **VisionOS 浮动液态毛玻璃下拉菜单**：彻底重构服务引擎与语言选择下拉框，告别 Windows 原生生硬白底直角原生下拉控件；全新设计 16px 圆角高通透液态毛玻璃卡片浮层，内嵌彩色官方 SVG 品牌 Logo 与细腻柔和的选中绿勾状态指示（`✓`），支持弹性微动效与点击外部/ESC自动收起。
-- 🎛️ **液态玻璃独立开关**：在设置页「✨ 视觉外观」中置顶加入独立开关，一键在晶莹液态玻璃与极简纯色经典卡片之间随心切换。
-- ⚡ **主界面极致图形化与去文字化**：去除冗余副标题文案，底栏采用高质感纯图标操作按钮（⚙️ 偏好设置 + ↗ 测试页，带悬停提示），极窄呼吸微光药丸指示器（`● 就绪`），设置页分类增加精致图形符号（`✨/⏱️/🤖`）。
+- 💧 **VisionOS 浮动液态毛玻璃下拉菜单**：全新设计 16px 圆角高通透液态毛玻璃卡片浮层，内嵌彩色官方 SVG 品牌 Logo 与细腻柔和的选中绿勾状态指示（`✓`），支持弹性微动效与点击外部/ESC自动收起。
+- ⚡ **超紧凑无留白快捷仪表盘**：状态指示胶囊移入底部控制栏正中（`● 就绪 · v1.4.2`），完全消除底部多余空白区域，弹窗高度紧凑收缩至 ~220px 黄金尺寸。
+- 🎛️ **去冗余纯净设置体系**：移除设置小标题所有 Emoji 图标，移除大模型冗长介绍文案与推荐标签，保留清晰字段标签与直观示范占位符（`sk-...`、`https://api.openai.com/v1`、`gpt-4o-mini`），并提供独立液态玻璃开关。
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
 - 🎨 **零遮挡呼吸调色盘与动态流体光晕联动**：圆形调色盘按钮（🎨）呼出系统拾色器；容器四周增加呼吸间距彻底杜绝最左侧色块贴边遮挡；切换颜色时，底层环境流体光球与界面强调色实时同步变色。
 - 🖱️ **超链接滑动/手势完美兼容**：全面兼容鼠标左键滑动/拖拽超链接（支持拖拽至标签页、书签栏打开，以及 CrxMouse、smartUp 等超级拖拽插件与鼠标手势），长按翻译与滑动打开互不干扰。
@@ -72,8 +73,8 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.4.1）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.4.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.1/holdtranslate-chrome-extension-v1.4.1.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.4.2）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.4.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.2/holdtranslate-chrome-extension-v1.4.2.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
@@ -105,7 +106,12 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.4.1`
+  - 当前版本：`v1.4.2`
+  - `v1.4.2` 更新重点：
+    - 主界面服务标识全部取消中文字样，仅保留标准英文（`Google Translate`、`Microsoft Translator`、`DeepSeek API`、`Custom API`）；
+    - 全面引入苹果级微动效：视图推拉与景深缩放、iOS 物理拉伸开关（`cubic-bezier(0.34, 1.56, 0.64, 1)`）、调色盘选中弹性放大与滑条圆钮阻尼缩放；
+    - 就绪状态胶囊整合至底栏正中（`● 就绪 · v1.4.2`），彻底消除多余垂直空白，弹窗高度紧凑收缩至 ~220px；
+    - 设置界面纯净去繁：取消小标题 Emoji 图标，取消大模型介绍文案与推荐标签，保留清晰示范占位符。
   - `v1.4.1` 更新重点：
     - 彻底重构翻译服务选择与源/目标语言选择下拉菜单，彻底替换生硬白底的 Windows 原生直角系统级下拉框；
     - 采用极简去繁的高质感选项布局：彩色官方品牌 Logo + 简洁服务名称 + 优雅柔和的选中绿勾指示（`✓`）；

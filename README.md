@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.4.1-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.2-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.4.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.1/holdtranslate-chrome-extension-v1.4.1.zip) (click to download v1.4.1) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.2/holdtranslate-chrome-extension-v1.4.2.zip) (click to download v1.4.2) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -63,12 +63,13 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### Features
 
-- 🌐 **Multi-Engine Translation Architecture**: Switch freely between **Google Translate**, **Microsoft Bing Translator**, **DeepSeek API** (`deepseek-chat`), and **Custom OpenAI-compatible LLMs** (GPT-4o, Claude, SiliconFlow, Ollama).
+- 🌐 **Minimalist Multi-Engine Architecture**: Clean English naming across all services (**Google Translate**, **Microsoft Translator**, **DeepSeek API**, and **Custom API**) while preserving localized Chinese for intuitive language selection.
+- 🍏 **Apple-Grade Spring Motion & Physics**: iOS view-switching slide and depth-scale transitions, iOS switch knob elongation on press (`cubic-bezier(0.34, 1.56, 0.64, 1)`), spring pop on active color chips, and tactile spring scaling on range slider thumbs.
 - 🪟 **VisionOS Liquid Glass & Frosted Transparency**: High-transparency frosted glass (`backdrop-filter: blur(28px) saturate(190%)`), dynamic multi-color ambient fluid mesh glow, specular edge bevel reflections, and Obsidian dark glass mode.
-- 💧 **VisionOS Floating Popover Dropdowns**: Reconstructed all engine and language selectors into custom floating frosted glass popovers with specular bevels, smooth micro-spring scaling animations, brand SVG logos, and clean active checkmarks (`✓`), completely eliminating clunky OS native dropdowns.
-- 🎛️ **Liquid Glass Independent Switch**: Toggle between glowing frosted Liquid Glass and classic crisp flat cards with a single click in Settings.
+- 💧 **VisionOS Floating Popover Dropdowns**: Custom floating frosted glass popovers with specular bevels, smooth micro-spring scaling animations, brand SVG logos, and clean active checkmarks (`✓`), completely eliminating clunky OS native dropdowns.
+- ⚡ **Ultra-Compact Quick Dashboard**: Centered frosted status capsule (`● 就绪 · v1.4.2`) integrated into the bottom bar, eliminating all bottom whitespace for a tightly-wrapped, modern ~220px popup height.
+- 🎛️ **Clean & Decluttered Settings Hierarchy**: Removed leading emojis from section titles, streamlined LLM cards to concise labels and placeholder demonstrations (`sk-...`, `https://api.openai.com/v1`), and provided an independent Liquid Glass switch.
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
-- ⚡ **Graphicalized & Decluttered Quick Dashboard**: Pure icon bottom buttons (⚙️ Settings + ↗ Test Page with hover tooltips), minimalist breathing pulse status indicator (`● 就绪`), and clean section iconography (`✨/⏱️/🤖`).
 - 🎨 **Zero-Clipping Palette & Full-Theme Sync**: Circular 🎨 palette button with generous container breathing room ensuring the active halo indicator on the leftmost chip is perfectly rounded without clipping. Chosen color dynamically synchronizes across all colored plugin UI elements and fluid orbs.
 - 🖱️ **Seamless Drag & Gesture Compatibility**: Full support for sliding/dragging hyperlinks (native drag-to-tab, Super Drag, and mouse gesture extensions like CrxMouse and smartUp) without interfering with long-press translation.
 - 📋 **Dual Translation Modes**: Long-press any block for full paragraph translation, or select text first to translate specific excerpts.
@@ -76,8 +77,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.4.1)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.1/holdtranslate-chrome-extension-v1.4.1.zip))
+1. **Manual Installation (Recommended - latest v1.4.2)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.2/holdtranslate-chrome-extension-v1.4.2.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -110,7 +111,12 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.4.1`
+  - Current Version: `v1.4.2`
+  - `v1.4.2`:
+    - Cleaned up main interface service naming to standard English (`Google Translate`, `Microsoft Translator`, `DeepSeek API`, `Custom API`).
+    - Implemented Apple-grade physics: iOS view transitions, spring elongation switches (`cubic-bezier(0.34, 1.56, 0.64, 1)`), spring-popped active color chips, and tactile range slider thumb scaling.
+    - Docked status badge cleanly into the bottom bar center (`● 就绪 · v1.4.2`), eliminating bottom whitespace and shrinking popup height to an ultra-compact ~220px.
+    - Minimalist settings styling: removed emoji icons from section headers, removed verbose introduction text from LLM cards, retaining clean demonstration placeholders.
   - `v1.4.1`:
     - Replaced clunky OS native `<select>` dropdowns with custom Apple VisionOS Liquid Glass floating popovers for both translation service and language selectors.
     - Designed ultra-clean minimalist option layouts: colorful official brand logos (Google, Microsoft, DeepSeek, Custom API) + soft green checkmark indicators (`✓`).
@@ -140,7 +146,7 @@ Once installed, just:
   - `v1.0.2`:
     - Fixed HTML5 `dragstart` handling on hyperlinks so links can be slid/dragged open smoothly.
     - Added graceful drag cancellation: instantly aborts pending translation timer and hides progress ring upon drag initiation.
-  - `v1.0.1`:
+    - `v1.0.1`:
     - Resolved stretched-link overlay issue on BBC and news cards.
     - Fixed horizontal flex container translation placement.
     - Strengthened inline full-width formatting (`width: 100% !important; clear: both !important;`).
