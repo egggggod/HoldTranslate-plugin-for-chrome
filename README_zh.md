@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.3.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.3.0/holdtranslate-chrome-extension-v1.3.0.zip) (v1.3.0)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.0/holdtranslate-chrome-extension-v1.4.0.zip) (v1.4.0)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -60,18 +60,19 @@ HoldTranslate-plugin-for-chrome/
 ## 浏览器扩展特性 (Features)
 
 - 🌐 **多引擎翻译矩阵 (Multi-Engine Matrix)**：自由切换 **Google 翻译**、**Microsoft 微软翻译**、**DeepSeek 大模型** 以及 **自定义 OpenAI 兼容接口**（支持 GPT-4o、Claude、硅基流动、Ollama 本地模型）。
+- 🪟 **VisionOS 液态玻璃拟态美学 (Liquid Glass)**：基于苹果 VisionOS 风格的高通透磨砂毛玻璃 (`backdrop-filter: blur(28px) saturate(190%)`)，卡片通透度大幅优化（20%~38%），镜面高光边缘倒角与深空黑曜石暗黑玻璃。
+- 🎛️ **液态玻璃独立开关**：在设置页「✨ 视觉外观」中置顶加入独立开关，一键在晶莹液态玻璃与极简纯色经典卡片之间随心切换。
+- ⚡ **主界面极致图形化与去文字化**：去除冗余副标题文案，底栏采用高质感纯图标操作按钮（⚙️ 偏好设置 + ↗ 测试页，带悬停提示），极窄呼吸微光药丸指示器（`● 就绪`），设置页分类增加精致图形符号（`✨/⏱️/🤖`）。
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
-- 🪟 **现代双视图控制面板与秒切引擎胶囊**：快捷面板集成即时翻译服务切换胶囊（Google / Microsoft / DeepSeek / Custom）、源/目标语言双胶囊下拉栏、语言一键互换，底部按键平滑切换至完整设置。
-- 🎨 **零遮挡呼吸调色盘与全域主题色联动**：圆形调色盘按钮（🎨）呼出系统拾色器；容器四周增加呼吸间距彻底杜绝最左侧色块选中光环贴边遮挡；选中颜色全域同步至开关、按钮与滑块。
-- ⚡ **视觉优先型布局与意图确认时延定制**：按用户习惯优化控制流：核心开关 → 字体颜色/调色盘/实时预览 → 手势与时延滑条 → API 配置；精炼意图确认延迟说明。
+- 🎨 **零遮挡呼吸调色盘与动态流体光晕联动**：圆形调色盘按钮（🎨）呼出系统拾色器；容器四周增加呼吸间距彻底杜绝最左侧色块贴边遮挡；切换颜色时，底层环境流体光球与界面强调色实时同步变色。
 - 🖱️ **超链接滑动/手势完美兼容**：全面兼容鼠标左键滑动/拖拽超链接（支持拖拽至标签页、书签栏打开，以及 CrxMouse、smartUp 等超级拖拽插件与鼠标手势），长按翻译与滑动打开互不干扰。
 - 📋 **段落与划词双模式**：直接长按翻译整段文本；先划选高亮文字再长按仅翻译选定内容。
 - 🛡️ **自适应深浅双色美感**：根据系统与浏览器主题自动切换纯净浅白或沉浸深黑，内置 7 色护眼预设，支持自定义 Hex 色值与深浅色模式实时预览。
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.3.0）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.3.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.3.0/holdtranslate-chrome-extension-v1.3.0.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.4.0）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.4.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.0/holdtranslate-chrome-extension-v1.4.0.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
@@ -103,7 +104,12 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.3.0`
+  - 当前版本：`v1.4.0`
+  - `v1.4.0` 更新重点：
+    - 全新引入 Apple VisionOS 风格液态玻璃（Liquid Glass）高通透磨砂拟态系统与动态多色环境流体光晕；
+    - 在偏好设置「✨ 视觉外观」新增独立液态玻璃开关（默认开启），支持平滑回退至极简经典卡片；
+    - 主界面（Quick View）极致图形化与去文字化：移除冗余副标题，底栏升级为纯图标毛玻璃按钮（⚙️ 设置 + ↗ 测试页），状态栏升级为呼吸光点微胶囊（`● 就绪`）；
+    - 调色盘选色与底层流体光球多色折射实时联动，暗色黑曜石玻璃通透度大幅提升。
   - `v1.3.0` 更新重点：
     - 新增 Microsoft 微软翻译与主流大模型 API 翻译（DeepSeek 官方 API + 自定义 OpenAI 兼容接口）；
     - 快捷面板新增翻译引擎切换下拉胶囊，支持秒级切换；

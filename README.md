@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.3.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.3.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.3.0/holdtranslate-chrome-extension-v1.3.0.zip) (click to download v1.3.0) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.0/holdtranslate-chrome-extension-v1.4.0.zip) (click to download v1.4.0) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -64,18 +64,19 @@ The browser extension embeds bilingual translations directly beneath web text wi
 ### Features
 
 - 🌐 **Multi-Engine Translation Architecture**: Switch freely between **Google Translate**, **Microsoft Bing Translator**, **DeepSeek API** (`deepseek-chat`), and **Custom OpenAI-compatible LLMs** (GPT-4o, Claude, SiliconFlow, Ollama).
+- 🪟 **VisionOS Liquid Glass & Frosted Transparency**: High-transparency frosted glass (`backdrop-filter: blur(28px) saturate(190%)`), dynamic multi-color ambient fluid mesh glow, specular edge bevel reflections, and Obsidian dark glass mode.
+- 🎛️ **Liquid Glass Independent Switch**: Toggle between glowing frosted Liquid Glass and classic crisp flat cards with a single click in Settings.
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
-- 🪟 **Modern Dual-View Quick Dashboard**: Compact quick view with instant translation service switcher capsule (`Google / Microsoft / DeepSeek / Custom`), dual-capsule language bar (`[Source] ⇄ [Target]`), and 1-click navigation to settings.
-- 🎨 **Zero-Clipping Palette & Full-Theme Sync**: Circular 🎨 palette button with generous container breathing room ensuring the active halo indicator on the leftmost chip is perfectly rounded without clipping. Chosen color dynamically synchronizes across all colored plugin UI elements.
-- ⚡ **Visual-First Layout & Adjustable Timing**: Streamlined control hierarchy: Master Switch → Visual Color Palette & Live Preview → Gestures & Delays → LLM / API Configuration.
+- ⚡ **Graphicalized & Decluttered Quick Dashboard**: Pure icon bottom buttons (⚙️ Settings + ↗ Test Page with hover tooltips), minimalist breathing pulse status indicator (`● 就绪`), and clean section iconography (`✨/⏱️/🤖`).
+- 🎨 **Zero-Clipping Palette & Full-Theme Sync**: Circular 🎨 palette button with generous container breathing room ensuring the active halo indicator on the leftmost chip is perfectly rounded without clipping. Chosen color dynamically synchronizes across all colored plugin UI elements and fluid orbs.
 - 🖱️ **Seamless Drag & Gesture Compatibility**: Full support for sliding/dragging hyperlinks (native drag-to-tab, Super Drag, and mouse gesture extensions like CrxMouse and smartUp) without interfering with long-press translation.
 - 📋 **Dual Translation Modes**: Long-press any block for full paragraph translation, or select text first to translate specific excerpts.
 - 🛡️ **Adaptive Light/Dark Theming**: Auto-detects system theme with 7 eye-care presets, custom Hex input, and live dark/light preview.
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.3.0)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.3.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.3.0/holdtranslate-chrome-extension-v1.3.0.zip))
+1. **Manual Installation (Recommended - latest v1.4.0)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.0/holdtranslate-chrome-extension-v1.4.0.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -108,7 +109,12 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.3.0`
+  - Current Version: `v1.4.0`
+  - `v1.4.0`:
+    - Implemented Apple VisionOS inspired Liquid Glass UI system with high frosted transparency (20%~38% card opacity) and specular bevel highlights.
+    - Dynamic multi-color ambient fluid mesh glow behind the frosted glass with real-time theme color refraction.
+    - Added dedicated Liquid Glass toggle switch in Settings (Visual Appearance) with instant fallback to classic crisp solid card mode.
+    - Graphicalized and decluttered Quick View: pure icon bottom bar (⚙️ Settings + ↗ Test Page), glowing micro-pill status indicator (`● 就绪`), and section header icons (`✨/⏱️/🤖`).
   - `v1.3.0`:
     - Added Microsoft Translator and mainstream LLM API support (DeepSeek + Custom OpenAI-compatible).
     - Quick View engine switcher dropdown capsule.
