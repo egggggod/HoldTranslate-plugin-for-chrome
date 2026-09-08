@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.4.4-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.5.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.4.4-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.5.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.4/holdtranslate-chrome-extension-v1.4.4.zip) (v1.4.4)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.5.0/holdtranslate-chrome-extension-v1.5.0.zip) (v1.5.0)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -59,11 +59,11 @@ HoldTranslate-plugin-for-chrome/
 
 ## 浏览器扩展特性 (Features)
 
-- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.4.3]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
-- ⚡ **零多余留白与动态高度弹簧自适应 (Zero Whitespace & Dynamic Height Morphing)**：彻底消除常态下“就绪”下方的留白空间（开窗高度紧密收缩至 ~225px 黄金尺寸，严丝合缝包裹快捷操作），点击展开液态下拉浮层或偏好设置时平滑弹性延展至 375px / 566px，收起时自动回缩。
+- 📱 **Apple iOS 紧凑平滑滑动子页面架构（选择语言零变长、恒定 225px）**：彻底推翻向下展开菜单拉长界面的旧逻辑，采用苹果 iOS 设置级水平推拉子页面架构（`.show-subpage #subpageView`）。无论选择源语言、目标语言还是翻译服务，弹窗开窗高度**绝对严格锁定在 225px**，彻底消除界面抖动与上下拉长变形。
+- ⚡ **120ms 触觉确认平滑回弹流**：点击任意语言或服务选项，立即点亮精致绿勾（`✓`）与柔和胶囊底色提供即时触觉确认，随后经 120ms 平滑滑动自动返回主面板；左上角 `← 返回` 胶囊按钮与键盘 ESC 键随时可手动返回。
+- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.5.0]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
 - 🌐 **极简纯英服务标识 (Minimal English Services)**：主界面翻译服务全面取消冗余中文字样，统一采用标准英文品牌名称（**Google Translate**、**Microsoft Translator**、**DeepSeek API**、**Custom API**），语言选择器保留地道中文以符合直觉。
 - 🪟 **VisionOS 液态玻璃拟态美学 (Liquid Glass)**：基于苹果 VisionOS 风格的高通透磨砂毛玻璃 (`backdrop-filter: blur(28px) saturate(190%)`)，卡片通透度大幅优化（20%~38%），镜面高光边缘倒角与深空黑曜石暗黑玻璃。
-- 💧 **VisionOS 浮动液态毛玻璃下拉菜单**：全新设计 16px 圆角高通透液态毛玻璃卡片浮层，内嵌彩色官方 SVG 品牌 Logo 与细腻柔和的选中绿勾状态指示（`✓`），支持弹性微动效与点击外部/ESC自动收起。
 - 🎛️ **去冗余纯净设置体系**：移除设置小标题所有 Emoji 图标，移除大模型冗长介绍文案与推荐标签，保留清晰字段标签与直观示范占位符（`sk-...`、`https://api.openai.com/v1`、`gpt-4o-mini`），并提供独立液态玻璃开关。
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
 - 🎨 **零遮挡呼吸调色盘与动态流体光晕联动**：圆形调色盘按钮（🎨）呼出系统拾色器；容器四周增加呼吸间距彻底杜绝最左侧色块贴边遮挡；切换颜色时，底层环境流体光球与界面强调色实时同步变色。
@@ -73,8 +73,8 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.4.3）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.4.3.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.3/holdtranslate-chrome-extension-v1.4.3.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.5.0）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.5.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.5.0/holdtranslate-chrome-extension-v1.5.0.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
@@ -106,7 +106,12 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.4.4`
+  - 当前版本：`v1.5.0`
+  - `v1.5.0` 更新重点：
+    - **恒定 225px 零加长架构**：引入苹果 iOS 设置级水平推拉子页面（`#subpageView`），统一承载源语言、目标语言与翻译服务选择，弹窗高度绝对锁定在 225px，彻底告别界面向下被拉长、高度跳动与边缘溢出裁切问题；
+    - **120ms 触觉回弹动效**：选项点击立即高亮绿勾（`✓`）与柔和胶囊底色，并在 120ms 后自动平滑滑回主界面，兼顾操作流畅度与直观确认感，左上角返回按钮与 ESC 随时可手动退回；
+    - **VisionOS 液态毛玻璃子页面卡片**：12px 倒角卡片、柔和悬浮微交互、极细无感滚动条与全域主题色联动；
+    - **100% DOM 与自动化测试兼容**：保持全量 44 个原始 DOM 元素 ID，与现有端到端测试完全兼容。
   - `v1.4.4` 更新重点：
     - 彻底修复语言选择下拉浮层（源语言/目标语言）在部分场景下因卡片 overflow 隐藏导致被边缘裁切无法显示的问题；
     - 完美维持苹果 2025 VisionOS 高通透液态毛玻璃卡片质感，源语言靠左对齐、目标语言靠右对齐弹出，带微弹簧动量与选中绿勾（`✓`）指示；

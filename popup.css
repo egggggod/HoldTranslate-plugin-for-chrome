@@ -184,10 +184,12 @@ body {
   transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
-.views-wrapper.dropdown-open,
-.views-wrapper:has(.custom-dropdown.open) {
-  overflow: visible;
-  min-height: 375px;
+.views-wrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  z-index: 1;
+  transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .view-panel {
@@ -195,7 +197,7 @@ body {
   padding: 12px 14px 12px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.36s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.28s ease, filter 0.28s ease;
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.26s ease, filter 0.26s ease;
 }
 
 #quickView {
@@ -204,6 +206,20 @@ body {
   opacity: 1;
   min-height: auto;
   filter: blur(0px);
+}
+
+#subpageView {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 225px;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  filter: blur(2px);
+  display: none;
+  overflow: hidden;
 }
 
 #settingsView {
@@ -219,6 +235,28 @@ body {
   display: none;
 }
 
+/* 切换至子页面 (iOS 级 225px 恒定高度平滑滑动) */
+.views-wrapper.show-subpage #quickView {
+  transform: translateX(-24%) scale(0.96);
+  opacity: 0;
+  filter: blur(3px);
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+.views-wrapper.show-subpage #subpageView {
+  transform: translateX(0) scale(1);
+  opacity: 1;
+  filter: blur(0px);
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+}
+
+/* 切换至偏好设置 */
 .views-wrapper.show-settings #quickView {
   transform: translateX(-20%) scale(0.96);
   opacity: 0;
@@ -237,6 +275,130 @@ body {
   pointer-events: auto;
   position: relative;
   display: flex;
+}
+
+/* =========================================================
+   2.5 iOS Subpage View Styling (225px Locked Height)
+   ========================================================= */
+.subpage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  position: relative;
+}
+
+.subpage-back-btn {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.subpage-title {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  flex: 1;
+  letter-spacing: -0.01em;
+}
+
+.subpage-spacer {
+  width: 58px;
+  flex-shrink: 0;
+}
+
+.subpage-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4.5px;
+  max-height: 168px;
+  overflow-y: auto;
+  padding: 1px 2px 4px 1px;
+}
+
+.subpage-list-container::-webkit-scrollbar {
+  width: 4px;
+}
+
+.subpage-list-container::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+
+.subpage-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  border-radius: 12px;
+  background: var(--glass-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border-subtle);
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.35);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.subpage-item:hover {
+  background: var(--glass-card-hover);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transform: translateX(2px);
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.5), 0 2px 8px var(--accent-subtle);
+}
+
+.subpage-item:active {
+  transform: scale(0.98);
+}
+
+.subpage-item.active {
+  background: var(--status-ready-bg);
+  border-color: var(--status-ready-border);
+  color: var(--status-ready-text);
+  font-weight: 600;
+  box-shadow: 0 0 10px var(--status-ready-glow), inset 0 1px 0.5px rgba(255, 255, 255, 0.4);
+}
+
+.subpage-item-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.subpage-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.subpage-item-check {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--status-ready-text);
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.subpage-item.active .subpage-item-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.custom-dropdown-menu {
+  display: none !important;
 }
 
 /* =========================================================

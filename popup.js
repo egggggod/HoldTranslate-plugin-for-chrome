@@ -63,11 +63,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const quickView = document.getElementById('quickView');
   const settingsView = document.getElementById('settingsView');
+  const subpageView = document.getElementById('subpageView');
+  const subpageBackBtn = document.getElementById('subpageBackBtn');
+  const subpageTitle = document.getElementById('subpageTitle');
+  const subpageList = document.getElementById('subpageList');
 
   // 1. Dual View Navigation
   function openSettings() {
     if (!viewsWrapper || !settingsView || !quickView) return;
-    if (typeof closeAllDropdowns === 'function') closeAllDropdowns();
+    if (typeof closeSubpage === 'function') closeSubpage();
     settingsView.style.display = 'flex';
     requestAnimationFrame(() => {
       viewsWrapper.classList.add('show-settings');
@@ -122,6 +126,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('liquid-glass');
     if (liquidGlassSwitch) liquidGlassSwitch.checked = false;
   }
+  if (urlParams.has('subpage') && viewsWrapper) {
+    openSubpage(urlParams.get('subpage'));
+  }
 
   // Save indication
   function showSaved() {
@@ -163,91 +170,241 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // 1.5 Custom Liquid Glass Dropdown Management
-  function closeAllDropdowns() {
-    document.querySelectorAll('.custom-dropdown.open').forEach((dd) => {
-      dd.classList.remove('open');
-      const trigger = dd.querySelector('[aria-haspopup="listbox"]');
-      if (trigger) trigger.setAttribute('aria-expanded', 'false');
-    });
-    document.querySelectorAll('.language-card, .service-capsule-bar').forEach((card) => {
-      card.classList.remove('dropdown-open');
-    });
-    if (viewsWrapper) {
-      viewsWrapper.classList.remove('dropdown-open');
+  // 1.5 iOS Sliding Subpage Architecture (Locked 225px Window Height)
+  const SOURCE_LANGUAGES = [
+    { value: 'auto', label: '自动检测' },
+    { value: 'en', label: '英语' },
+    { value: 'zh-CN', label: '简体中文' },
+    { value: 'zh-TW', label: '繁体中文' },
+    { value: 'ja', label: '日语' },
+    { value: 'ko', label: '韩语' },
+    { value: 'fr', label: '法语' },
+    { value: 'de', label: '德语' },
+    { value: 'es', label: '西班牙语' },
+    { value: 'ru', label: '俄语' }
+  ];
+
+  const TARGET_LANGUAGES = [
+    { value: 'zh-CN', label: '简体中文' },
+    { value: 'zh-TW', label: '繁体中文' },
+    { value: 'en', label: '英语' },
+    { value: 'ja', label: '日语' },
+    { value: 'ko', label: '韩语' },
+    { value: 'fr', label: '法语' },
+    { value: 'de', label: '德语' },
+    { value: 'es', label: '西班牙语' },
+    { value: 'ru', label: '俄语' },
+    { value: 'auto', label: '自动选择' }
+  ];
+
+  const SERVICES = [
+    {
+      value: 'google',
+      label: 'Google Translate',
+      iconSvg: `<svg viewBox="0 0 24 24" width="16" height="16">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+        <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+      </svg>`
+    },
+    {
+      value: 'microsoft',
+      label: 'Microsoft Translator',
+      iconSvg: `<svg viewBox="0 0 24 24" width="16" height="16">
+        <path fill="#F25022" d="M1 1h10v10H1z"/>
+        <path fill="#7FBA00" d="M13 1h10v10H13z"/>
+        <path fill="#00A4EF" d="M1 13h10v10H1z"/>
+        <path fill="#FFB900" d="M13 13h10v10H13z"/>
+      </svg>`
+    },
+    {
+      value: 'deepseek',
+      label: 'DeepSeek API',
+      iconSvg: `<svg viewBox="0 0 24 24" width="16" height="16">
+        <circle cx="12" cy="12" r="10" fill="#0284c7"/>
+        <path fill="#ffffff" d="M8 13c1.5 2 6.5 2 8 0M9 9h.01M15 9h.01" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+      </svg>`
+    },
+    {
+      value: 'custom',
+      label: 'Custom API',
+      iconSvg: `<svg viewBox="0 0 24 24" width="16" height="16">
+        <circle cx="12" cy="12" r="10" fill="var(--accent-color)"/>
+        <path fill="#ffffff" d="M11 7h2v6h-2zm0 8h2v2h-2z"/>
+      </svg>`
     }
-  }
+  ];
 
   function syncDropdownUI(dropdownEl, selectEl, labelEl) {
-    if (!dropdownEl || !selectEl) return;
+    if (!selectEl) return;
     const val = selectEl.value;
-    const items = dropdownEl.querySelectorAll('.dropdown-item');
     let matchedText = '';
-    items.forEach((item) => {
-      if (item.dataset.value === val) {
-        item.classList.add('active');
-        const textEl = item.querySelector('.item-text');
-        if (textEl) matchedText = textEl.textContent.trim();
-      } else {
-        item.classList.remove('active');
+
+    if (dropdownEl) {
+      const items = dropdownEl.querySelectorAll('.dropdown-item');
+      items.forEach((item) => {
+        if (item.dataset.value === val) {
+          item.classList.add('active');
+          const textEl = item.querySelector('.item-text');
+          if (textEl) matchedText = textEl.textContent.trim();
+        } else {
+          item.classList.remove('active');
+        }
+      });
+    }
+
+    if (!matchedText) {
+      const allLists = [SOURCE_LANGUAGES, TARGET_LANGUAGES, SERVICES];
+      for (const list of allLists) {
+        const found = list.find((i) => i.value === val);
+        if (found) {
+          matchedText = found.label;
+          break;
+        }
       }
-    });
+    }
+
     if (labelEl && matchedText) {
       labelEl.textContent = matchedText;
     }
   }
 
-  function setupCustomDropdown(dropdownEl, triggerEl, menuEl, selectEl, labelEl, onSelectCallback) {
-    if (!dropdownEl || !triggerEl || !menuEl || !selectEl) return;
+  let currentSubpageType = null;
+  let subpageCloseTimer = null;
 
-    triggerEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = dropdownEl.classList.contains('open');
-      closeAllDropdowns();
-      if (!isOpen) {
-        dropdownEl.classList.add('open');
-        triggerEl.setAttribute('aria-expanded', 'true');
-        const parentCard = dropdownEl.closest('.language-card, .service-capsule-bar');
-        if (parentCard) parentCard.classList.add('dropdown-open');
-        if (viewsWrapper) viewsWrapper.classList.add('dropdown-open');
-      }
-    });
+  function openSubpage(type) {
+    if (!viewsWrapper || !subpageView || !quickView) return;
+    currentSubpageType = type;
+    clearTimeout(subpageCloseTimer);
 
-    menuEl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const item = e.target.closest('.dropdown-item');
-      if (!item) return;
+    let titleText = '选择';
+    let items = [];
+    let currentValue = '';
+    let targetSelect = null;
 
-      const val = item.dataset.value;
-      if (val !== undefined) {
-        if (selectEl.value !== val) {
-          selectEl.value = val;
-          selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+    if (type === 'sourceLang') {
+      titleText = '选择源语言';
+      items = SOURCE_LANGUAGES;
+      targetSelect = sourceLangSelect;
+      currentValue = sourceLangSelect ? sourceLangSelect.value : 'auto';
+    } else if (type === 'targetLang') {
+      titleText = '选择目标语言';
+      items = TARGET_LANGUAGES;
+      targetSelect = targetLangSelect;
+      currentValue = targetLangSelect ? targetLangSelect.value : 'zh-CN';
+    } else if (type === 'service') {
+      titleText = '选择翻译服务';
+      items = SERVICES;
+      targetSelect = serviceSelect;
+      currentValue = serviceSelect ? serviceSelect.value : 'google';
+    }
+
+    if (subpageTitle) subpageTitle.textContent = titleText;
+
+    if (subpageList) {
+      subpageList.innerHTML = items.map((item) => {
+        const isActive = item.value === currentValue;
+        const iconHtml = item.iconSvg ? `<span class="subpage-item-icon">${item.iconSvg}</span>` : '';
+        return `
+          <div class="subpage-item ${isActive ? 'active' : ''}" data-value="${item.value}" role="option" tabindex="0">
+            <div class="subpage-item-left">
+              ${iconHtml}
+              <span class="subpage-item-text">${item.label}</span>
+            </div>
+            <span class="subpage-item-check">✓</span>
+          </div>
+        `;
+      }).join('');
+
+      // Add click listener on items with tactile 120ms auto-return
+      subpageList.querySelectorAll('.subpage-item').forEach((itemEl) => {
+        itemEl.addEventListener('click', () => {
+          const val = itemEl.dataset.value;
+          // Visual checkmark feedback
+          subpageList.querySelectorAll('.subpage-item').forEach(i => i.classList.remove('active'));
+          itemEl.classList.add('active');
+
+          if (targetSelect && targetSelect.value !== val) {
+            targetSelect.value = val;
+            targetSelect.dispatchEvent(new Event('change', { bubbles: true }));
+          }
+
+          if (type === 'sourceLang') {
+            syncDropdownUI(sourceLangDropdown, sourceLangSelect, sourceLangLabel);
+          } else if (type === 'targetLang') {
+            syncDropdownUI(targetLangDropdown, targetLangSelect, targetLangLabel);
+          } else if (type === 'service') {
+            updateServiceLogo(val);
+            syncDropdownUI(serviceDropdown, serviceSelect, serviceSelectedLabel);
+          }
+
+          // Tactile confirmation: 120ms smooth auto-slide back
+          subpageCloseTimer = setTimeout(() => {
+            closeSubpage();
+          }, 120);
+        });
+      });
+    }
+
+    subpageView.style.display = 'flex';
+    requestAnimationFrame(() => {
+      viewsWrapper.classList.add('show-subpage');
+      setTimeout(() => {
+        if (viewsWrapper.classList.contains('show-subpage')) {
+          quickView.style.display = 'none';
         }
-        syncDropdownUI(dropdownEl, selectEl, labelEl);
-        if (onSelectCallback) onSelectCallback(val);
-      }
-      closeAllDropdowns();
+      }, 340);
     });
   }
 
-  // Bind custom dropdowns
-  setupCustomDropdown(sourceLangDropdown, sourceLangTrigger, sourceLangMenu, sourceLangSelect, sourceLangLabel);
-  setupCustomDropdown(targetLangDropdown, targetLangTrigger, targetLangMenu, targetLangSelect, targetLangLabel);
-  setupCustomDropdown(serviceDropdown, serviceDropdownTrigger, serviceMenu, serviceSelect, serviceSelectedLabel, (val) => {
-    updateServiceLogo(val);
-  });
+  function closeSubpage() {
+    if (!viewsWrapper || !subpageView || !quickView) return;
+    clearTimeout(subpageCloseTimer);
+    quickView.style.display = 'flex';
+    requestAnimationFrame(() => {
+      viewsWrapper.classList.remove('show-subpage');
+      setTimeout(() => {
+        if (!viewsWrapper.classList.contains('show-subpage')) {
+          subpageView.style.display = 'none';
+        }
+      }, 340);
+    });
+  }
 
-  // Global dismiss on click outside or Escape
-  document.addEventListener('click', (e) => {
-    if (!e.target.closest('.custom-dropdown')) {
-      closeAllDropdowns();
-    }
-  });
+  // Bind trigger buttons to sliding subpages
+  if (sourceLangTrigger) {
+    sourceLangTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openSubpage('sourceLang');
+    });
+  }
+
+  if (targetLangTrigger) {
+    targetLangTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openSubpage('targetLang');
+    });
+  }
+
+  if (serviceDropdownTrigger) {
+    serviceDropdownTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openSubpage('service');
+    });
+  }
+
+  if (subpageBackBtn) {
+    subpageBackBtn.addEventListener('click', closeSubpage);
+  }
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
-      closeAllDropdowns();
+      if (viewsWrapper && viewsWrapper.classList.contains('show-subpage')) {
+        closeSubpage();
+      } else if (viewsWrapper && viewsWrapper.classList.contains('show-settings')) {
+        closeSettings();
+      }
     }
   });
 
