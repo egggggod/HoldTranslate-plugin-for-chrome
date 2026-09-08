@@ -39,6 +39,7 @@
       window.removeEventListener('mouseup', handleMouseUp, { capture: true });
       window.removeEventListener('contextmenu', handleContextMenu, { capture: true });
       window.removeEventListener('dragstart', handleDragStart, { capture: true });
+      window.removeEventListener('dragend', handleDragEnd, { capture: true });
     } catch (e) {}
   }
 
@@ -780,11 +781,38 @@
     }
   }
 
-  // Prevent browser native drag-and-drop on <a> links during long press
+  // Handle HTML5 drag start (e.g. dragging a link to open in new tab, super drag, etc.)
   function handleDragStart(e) {
-    if (holdTimer || isLongPressTriggered) {
+    if (isLongPressTriggered) {
+      // Long press has already triggered and translated. Prevent unwanted drag ghost while releasing.
       e.preventDefault();
+      return;
     }
+
+    // User is dragging an element (e.g. sliding a link, dragging an image or text).
+    // Cancel pending long-press translation immediately so the drag operation is smooth and unhindered.
+    if (ringTimer) {
+      clearTimeout(ringTimer);
+      ringTimer = null;
+    }
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+    hideProgressIndicator();
+  }
+
+  function handleDragEnd(e) {
+    if (ringTimer) {
+      clearTimeout(ringTimer);
+      ringTimer = null;
+    }
+    if (holdTimer) {
+      clearTimeout(holdTimer);
+      holdTimer = null;
+    }
+    hideProgressIndicator();
+    isLongPressTriggered = false;
   }
 
   // Register listeners
@@ -793,5 +821,6 @@
   window.addEventListener('mouseup', handleMouseUp, { capture: true });
   window.addEventListener('contextmenu', handleContextMenu, { capture: true });
   window.addEventListener('dragstart', handleDragStart, { capture: true });
+  window.addEventListener('dragend', handleDragEnd, { capture: true });
 
 })();

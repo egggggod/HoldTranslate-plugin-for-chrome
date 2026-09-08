@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.0.1-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.0.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.0.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.1/holdtranslate-chrome-extension-v1.0.1.zip) (click to download v1.0.1) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.2/holdtranslate-chrome-extension-v1.0.2.zip) (click to download v1.0.2) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -66,14 +66,15 @@ The browser extension embeds bilingual translations directly beneath web text wi
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
 - 🔄 **Long-Press to Translate & Smooth Restore**: Long-press to reveal the translation; long-press again to smoothly fade out and restore the original page view.
 - ⚡ **Adjustable Timing & Anti-Misclick Engine**: Custom sliders for trigger duration (100ms~800ms) and confirmation hover buffer to eliminate accidental clicks.
+- 🪟 **Seamless Drag & Gesture Compatibility**: Full support for sliding/dragging hyperlinks (native drag-to-tab, Super Drag, and mouse gesture extensions like CrxMouse and smartUp) without interfering with long-press translation.
 - 📋 **Dual Translation Modes**: Long-press any block for full paragraph translation, or select text first to translate specific excerpts.
 - 🛡️ **Smart Language Filtering**: Automatically skips existing Chinese text; toggleable switch for translating Traditional Chinese to Simplified Chinese.
 - 🎨 **Clean, Customizable Aesthetics**: Pure transparent background with 7 eye-care presets (defaulting to immersive olive green `#86a003`), custom Hex input, and live dark/light preview.
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.0.1)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.0.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.1/holdtranslate-chrome-extension-v1.0.1.zip))
+1. **Manual Installation (Recommended - latest v1.0.2)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.0.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.2/holdtranslate-chrome-extension-v1.0.2.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -106,7 +107,10 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.0.1`
+  - Current Version: `v1.0.2`
+  - `v1.0.2`:
+    - Fixed HTML5 `dragstart` handling on hyperlinks so links can be slid/dragged open smoothly (supporting native drag-to-tab, drag-to-bookmark, and Super Drag / Mouse Gesture extensions like CrxMouse and smartUp).
+    - Added graceful drag cancellation: instantly aborts pending translation timer and hides progress ring upon drag initiation.
   - `v1.0.1`:
     - Resolved stretched-link overlay issue on BBC and news cards (clicking article descriptions no longer mis-triggers the headline link above).
     - Fixed horizontal flex container translation placement (e.g. BBC related video links with `▶` icons now correctly display translations on their own line underneath instead of to the right).

@@ -191,6 +191,68 @@
           z-index: 990;
         }
       </style>
+    <!-- 超链接长按翻译与滑动/拖拽测试区 -->
+    <div class="card">
+      <div class="card-title">超链接长按翻译与滑动/拖拽测试区 (验证长按翻译与滑动打开完美兼容)</div>
+
+      <div class="tip">
+        💡 <strong>测试说明：</strong><br>
+        1. <strong>长按翻译测试：</strong> 鼠标左键长按下方英文超链接约 500ms，进度环转满后顺利在正下方展示译文，松开鼠标不会误打开链接。<br>
+        2. <strong>滑动/拖拽测试：</strong> 鼠标左键按住链接并<strong>向任意方向滑动/拖拽</strong>，链接可正常拖动（拖至浏览器标签栏或触发超级拖拽/手势），不会被拦截，也不会误触发长按翻译。
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <div>
+          <div class="badge">测试链接 1：标准超链接</div>
+          <div>
+            <a href="https://en.wikipedia.org/wiki/Artificial_intelligence" target="_blank" style="color: #60a5fa; font-size: 16px; font-weight: 500; text-decoration: underline;">
+              Artificial intelligence is transforming scientific discovery and modern computing paradigms.
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <div class="badge">测试链接 2：短标题超链接</div>
+          <div>
+            <a href="https://github.com" target="_blank" style="color: #38bdf8; font-size: 18px; font-weight: 700; text-decoration: none;">
+              Explore the World's Leading Developer Platform and Open Source Community
+            </a>
+          </div>
+        </div>
+
+        <!-- 拖放测试接收区 -->
+        <div id="drag-drop-zone" style="border: 2px dashed #334155; border-radius: 8px; padding: 16px; text-align: center; color: #94a3b8; font-size: 13px; transition: all 0.2s ease;">
+          🎯 拖拽链接测试区域：尝试将上方链接拖动到此处，拖拽状态将实时显示
+        </div>
+      </div>
+      <script>
+        const dropZone = document.getElementById('drag-drop-zone');
+        if (dropZone) {
+          dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#86a003';
+            dropZone.style.color = '#86a003';
+            dropZone.innerText = '松开鼠标完成拖拽！';
+          });
+          dropZone.addEventListener('dragleave', () => {
+            dropZone.style.borderColor = '#334155';
+            dropZone.style.color = '#94a3b8';
+            dropZone.innerText = '🎯 拖拽链接测试区域：尝试将上方链接拖动到此处，拖拽状态将实时显示';
+          });
+          dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const text = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain') || '未知内容';
+            dropZone.style.borderColor = '#22c55e';
+            dropZone.style.color = '#22c55e';
+            dropZone.innerText = '✅ 拖拽成功接收！URL: ' + text;
+            setTimeout(() => {
+              dropZone.style.borderColor = '#334155';
+              dropZone.style.color = '#94a3b8';
+              dropZone.innerText = '🎯 拖拽链接测试区域：尝试将上方链接拖动到此处，拖拽状态将实时显示';
+            }, 3000);
+          });
+        }
+      </script>
     </div>
 
   </div>

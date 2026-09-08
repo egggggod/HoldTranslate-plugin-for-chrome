@@ -4,6 +4,14 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.2] - 2026-09-08
+
+### Fixed
+- **Hyperlink Drag / Super Drag compatibility**: Fixed an issue where HTML5 `dragstart` on hyperlinks (`<a>`) was unintentionally blocked by `e.preventDefault()`, allowing hyperlinks to be slid/dragged open smoothly (supporting native drag-to-tab, drag-to-bookmark, and third-party Super Drag / Mouse Gesture extensions like CrxMouse and smartUp).
+- **Graceful Drag Cancellation**: Seamlessly cancels any pending long-press translation timer and hides progress ring as soon as a drag operation begins, ensuring zero conflict between long-press translation and link dragging.
+
+---
+
 ## [v1.0.1] - 2026-09-08
 
 ### Fixed
