@@ -41,9 +41,25 @@
       <!-- 核心快捷区：语言选择双胶囊栏 (1:1 模仿沉浸式参考图) -->
       <div class="language-card">
         <div class="lang-selector-group">
-          <!-- 源语言胶囊 -->
-          <div class="lang-capsule">
-            <select id="sourceLangSelect" class="lang-select" aria-label="源语言">
+          <!-- 源语言胶囊 (自定义液态毛玻璃下拉) -->
+          <div class="lang-capsule custom-dropdown" id="sourceLangDropdown">
+            <button type="button" class="custom-lang-trigger" id="sourceLangTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <span class="lang-trigger-label" id="sourceLangLabel">自动检测</span>
+              <span class="capsule-arrow">▾</span>
+            </button>
+            <div class="custom-dropdown-menu lang-menu" id="sourceLangMenu" role="listbox">
+              <div class="dropdown-item active" data-value="auto" role="option"><span class="item-text">自动检测</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="en" role="option"><span class="item-text">英语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="zh-CN" role="option"><span class="item-text">简体中文</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="zh-TW" role="option"><span class="item-text">繁体中文</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="ja" role="option"><span class="item-text">日语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="ko" role="option"><span class="item-text">韩语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="fr" role="option"><span class="item-text">法语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="de" role="option"><span class="item-text">德语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="es" role="option"><span class="item-text">西班牙语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="ru" role="option"><span class="item-text">俄语</span><span class="item-check">✓</span></div>
+            </div>
+            <select id="sourceLangSelect" class="visually-hidden" aria-hidden="true" tabindex="-1">
               <option value="auto">自动检测</option>
               <option value="en">英语</option>
               <option value="zh-CN">简体中文</option>
@@ -55,7 +71,6 @@
               <option value="es">西班牙语</option>
               <option value="ru">俄语</option>
             </select>
-            <span class="capsule-arrow">▾</span>
           </div>
 
           <!-- 语言互换按钮 -->
@@ -65,9 +80,25 @@
             </svg>
           </button>
 
-          <!-- 目标语言胶囊 -->
-          <div class="lang-capsule">
-            <select id="targetLangSelect" class="lang-select" aria-label="目标语言">
+          <!-- 目标语言胶囊 (自定义液态毛玻璃下拉) -->
+          <div class="lang-capsule custom-dropdown" id="targetLangDropdown">
+            <button type="button" class="custom-lang-trigger" id="targetLangTrigger" aria-haspopup="listbox" aria-expanded="false">
+              <span class="lang-trigger-label" id="targetLangLabel">简体中文</span>
+              <span class="capsule-arrow">▾</span>
+            </button>
+            <div class="custom-dropdown-menu lang-menu" id="targetLangMenu" role="listbox">
+              <div class="dropdown-item active" data-value="zh-CN" role="option"><span class="item-text">简体中文</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="zh-TW" role="option"><span class="item-text">繁体中文</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="en" role="option"><span class="item-text">英语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="ja" role="option"><span class="item-text">日语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="ko" role="option"><span class="item-text">韩语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="fr" role="option"><span class="item-text">法语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="de" role="option"><span class="item-text">德语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="es" role="option"><span class="item-text">西班牙语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="ru" role="option"><span class="item-text">俄语</span><span class="item-check">✓</span></div>
+              <div class="dropdown-item" data-value="auto" role="option"><span class="item-text">自动选择</span><span class="item-check">✓</span></div>
+            </div>
+            <select id="targetLangSelect" class="visually-hidden" aria-hidden="true" tabindex="-1">
               <option value="zh-CN">简体中文</option>
               <option value="zh-TW">繁体中文</option>
               <option value="en">英语</option>
@@ -79,29 +110,79 @@
               <option value="ru">俄语</option>
               <option value="auto">自动选择</option>
             </select>
-            <span class="capsule-arrow">▾</span>
           </div>
         </div>
       </div>
 
-      <!-- 翻译服务选择晶莹胶囊 (已精简去繁) -->
+      <!-- 翻译服务选择晶莹胶囊 (自定义液态毛玻璃浮动菜单) -->
       <div class="service-capsule-bar">
-        <div class="service-capsule">
-          <div class="service-logo-wrap">
-            <svg class="service-logo" id="serviceLogo" viewBox="0 0 24 24" width="16" height="16">
-              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
-              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
-              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
-            </svg>
+        <div class="custom-dropdown" id="serviceDropdown">
+          <button type="button" class="service-capsule custom-dropdown-trigger" id="serviceDropdownTrigger" aria-haspopup="listbox" aria-expanded="false">
+            <div class="service-logo-wrap">
+              <svg class="service-logo" id="serviceLogo" viewBox="0 0 24 24" width="16" height="16">
+                <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+              </svg>
+            </div>
+            <span class="custom-dropdown-label" id="serviceSelectedLabel">Google 翻译</span>
+            <span class="capsule-arrow">▾</span>
+          </button>
+          
+          <div class="custom-dropdown-menu" id="serviceMenu" role="listbox" aria-label="选择翻译服务">
+            <div class="dropdown-item active" data-value="google" role="option">
+              <div class="item-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                  <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+                  <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+                  <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+                  <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+                </svg>
+              </div>
+              <span class="item-text">Google 翻译</span>
+              <span class="item-check">✓</span>
+            </div>
+            <div class="dropdown-item" data-value="microsoft" role="option">
+              <div class="item-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                  <path fill="#F25022" d="M1 1h10v10H1z"/>
+                  <path fill="#7FBA00" d="M13 1h10v10H13z"/>
+                  <path fill="#00A4EF" d="M1 13h10v10H1z"/>
+                  <path fill="#FFB900" d="M13 13h10v10H13z"/>
+                </svg>
+              </div>
+              <span class="item-text">Microsoft 微软翻译</span>
+              <span class="item-check">✓</span>
+            </div>
+            <div class="dropdown-item" data-value="deepseek" role="option">
+              <div class="item-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                  <circle cx="12" cy="12" r="10" fill="#0284c7"/>
+                  <path fill="#ffffff" d="M8 13c1.5 2 6.5 2 8 0M9 9h.01M15 9h.01" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="item-text">DeepSeek 官方 API</span>
+              <span class="item-check">✓</span>
+            </div>
+            <div class="dropdown-item" data-value="custom" role="option">
+              <div class="item-icon">
+                <svg viewBox="0 0 24 24" width="16" height="16">
+                  <circle cx="12" cy="12" r="10" fill="var(--accent-color)"/>
+                  <path fill="#ffffff" d="M11 7h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
+              </div>
+              <span class="item-text">自定义 OpenAI 兼容</span>
+              <span class="item-check">✓</span>
+            </div>
           </div>
-          <select id="serviceSelect" class="service-select" aria-label="选择翻译服务">
+          
+          <select id="serviceSelect" class="visually-hidden" aria-hidden="true" tabindex="-1">
             <option value="google">Google 翻译 (免配置)</option>
             <option value="microsoft">Microsoft 微软翻译</option>
             <option value="deepseek">DeepSeek 官方 API</option>
             <option value="custom">自定义 OpenAI 兼容</option>
           </select>
-          <span class="capsule-arrow">▾</span>
         </div>
       </div>
 
@@ -120,7 +201,7 @@
             <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
           </svg>
         </button>
-        <span class="bar-version">v1.4.0</span>
+        <span class="bar-version">v1.4.1</span>
         <button type="button" class="bar-icon-btn" id="openTestPageBtn" title="打开测试基准页" aria-label="测试页">
           <svg viewBox="0 0 24 24" width="15" height="15">
             <path fill="currentColor" d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>

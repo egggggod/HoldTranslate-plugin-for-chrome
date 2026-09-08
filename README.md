@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.4.1-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.4.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.4.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.0/holdtranslate-chrome-extension-v1.4.0.zip) (click to download v1.4.0) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.1/holdtranslate-chrome-extension-v1.4.1.zip) (click to download v1.4.1) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -65,6 +65,7 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 - 🌐 **Multi-Engine Translation Architecture**: Switch freely between **Google Translate**, **Microsoft Bing Translator**, **DeepSeek API** (`deepseek-chat`), and **Custom OpenAI-compatible LLMs** (GPT-4o, Claude, SiliconFlow, Ollama).
 - 🪟 **VisionOS Liquid Glass & Frosted Transparency**: High-transparency frosted glass (`backdrop-filter: blur(28px) saturate(190%)`), dynamic multi-color ambient fluid mesh glow, specular edge bevel reflections, and Obsidian dark glass mode.
+- 💧 **VisionOS Floating Popover Dropdowns**: Reconstructed all engine and language selectors into custom floating frosted glass popovers with specular bevels, smooth micro-spring scaling animations, brand SVG logos, and clean active checkmarks (`✓`), completely eliminating clunky OS native dropdowns.
 - 🎛️ **Liquid Glass Independent Switch**: Toggle between glowing frosted Liquid Glass and classic crisp flat cards with a single click in Settings.
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
 - ⚡ **Graphicalized & Decluttered Quick Dashboard**: Pure icon bottom buttons (⚙️ Settings + ↗ Test Page with hover tooltips), minimalist breathing pulse status indicator (`● 就绪`), and clean section iconography (`✨/⏱️/🤖`).
@@ -75,8 +76,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.4.0)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.0/holdtranslate-chrome-extension-v1.4.0.zip))
+1. **Manual Installation (Recommended - latest v1.4.1)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.4.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.4.1/holdtranslate-chrome-extension-v1.4.1.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -109,7 +110,12 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.4.0`
+  - Current Version: `v1.4.1`
+  - `v1.4.1`:
+    - Replaced clunky OS native `<select>` dropdowns with custom Apple VisionOS Liquid Glass floating popovers for both translation service and language selectors.
+    - Designed ultra-clean minimalist option layouts: colorful official brand logos (Google, Microsoft, DeepSeek, Custom API) + soft green checkmark indicators (`✓`).
+    - Added backdrop-blur (28px) frosted glass depth, specular edge highlights, smooth scale-in spring animations, and automatic outside/Escape dismiss.
+    - Full bidirectional synchronization between custom popovers and hidden `<select>` elements, preserving 100% backward compatibility and test coverage.
   - `v1.4.0`:
     - Implemented Apple VisionOS inspired Liquid Glass UI system with high frosted transparency (20%~38% card opacity) and specular bevel highlights.
     - Dynamic multi-color ambient fluid mesh glow behind the frosted glass with real-time theme color refraction.

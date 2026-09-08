@@ -17,6 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const statusCard = document.getElementById('statusCard');
   const statusMessage = document.getElementById('statusMessage');
 
+  // Custom Dropdowns (VisionOS Liquid Glass popovers)
+  const serviceDropdown = document.getElementById('serviceDropdown');
+  const serviceDropdownTrigger = document.getElementById('serviceDropdownTrigger');
+  const serviceSelectedLabel = document.getElementById('serviceSelectedLabel');
+  const serviceMenu = document.getElementById('serviceMenu');
+
+  const sourceLangDropdown = document.getElementById('sourceLangDropdown');
+  const sourceLangTrigger = document.getElementById('sourceLangTrigger');
+  const sourceLangLabel = document.getElementById('sourceLangLabel');
+  const sourceLangMenu = document.getElementById('sourceLangMenu');
+
+  const targetLangDropdown = document.getElementById('targetLangDropdown');
+  const targetLangTrigger = document.getElementById('targetLangTrigger');
+  const targetLangLabel = document.getElementById('targetLangLabel');
+  const targetLangMenu = document.getElementById('targetLangMenu');
+
   // Settings view elements
   const enabledSwitch = document.getElementById('enabledSwitch');
   const liquidGlassSwitch = document.getElementById('liquidGlassSwitch');
@@ -118,6 +134,90 @@ document.addEventListener('DOMContentLoaded', () => {
       `;
     }
   }
+
+  // 1.5 Custom Liquid Glass Dropdown Management
+  function closeAllDropdowns() {
+    document.querySelectorAll('.custom-dropdown.open').forEach((dd) => {
+      dd.classList.remove('open');
+      const trigger = dd.querySelector('[aria-haspopup="listbox"]');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    });
+    document.querySelectorAll('.language-card, .service-capsule-bar').forEach((card) => {
+      card.classList.remove('dropdown-open');
+    });
+  }
+
+  function syncDropdownUI(dropdownEl, selectEl, labelEl) {
+    if (!dropdownEl || !selectEl) return;
+    const val = selectEl.value;
+    const items = dropdownEl.querySelectorAll('.dropdown-item');
+    let matchedText = '';
+    items.forEach((item) => {
+      if (item.dataset.value === val) {
+        item.classList.add('active');
+        const textEl = item.querySelector('.item-text');
+        if (textEl) matchedText = textEl.textContent.trim();
+      } else {
+        item.classList.remove('active');
+      }
+    });
+    if (labelEl && matchedText) {
+      labelEl.textContent = matchedText;
+    }
+  }
+
+  function setupCustomDropdown(dropdownEl, triggerEl, menuEl, selectEl, labelEl, onSelectCallback) {
+    if (!dropdownEl || !triggerEl || !menuEl || !selectEl) return;
+
+    triggerEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = dropdownEl.classList.contains('open');
+      closeAllDropdowns();
+      if (!isOpen) {
+        dropdownEl.classList.add('open');
+        triggerEl.setAttribute('aria-expanded', 'true');
+        const parentCard = dropdownEl.closest('.language-card, .service-capsule-bar');
+        if (parentCard) parentCard.classList.add('dropdown-open');
+      }
+    });
+
+    menuEl.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const item = e.target.closest('.dropdown-item');
+      if (!item) return;
+
+      const val = item.dataset.value;
+      if (val !== undefined) {
+        if (selectEl.value !== val) {
+          selectEl.value = val;
+          selectEl.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        syncDropdownUI(dropdownEl, selectEl, labelEl);
+        if (onSelectCallback) onSelectCallback(val);
+      }
+      closeAllDropdowns();
+    });
+  }
+
+  // Bind custom dropdowns
+  setupCustomDropdown(sourceLangDropdown, sourceLangTrigger, sourceLangMenu, sourceLangSelect, sourceLangLabel);
+  setupCustomDropdown(targetLangDropdown, targetLangTrigger, targetLangMenu, targetLangSelect, targetLangLabel);
+  setupCustomDropdown(serviceDropdown, serviceDropdownTrigger, serviceMenu, serviceSelect, serviceSelectedLabel, (val) => {
+    updateServiceLogo(val);
+  });
+
+  // Global dismiss on click outside or Escape
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.custom-dropdown')) {
+      closeAllDropdowns();
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeAllDropdowns();
+    }
+  });
 
   // 2. Color UI & Logic
   function updateColorUI(hex) {
@@ -244,9 +344,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Language selection
       if (sourceLangSelect) {
         sourceLangSelect.value = res.sourceLang || 'auto';
+        syncDropdownUI(sourceLangDropdown, sourceLangSelect, sourceLangLabel);
       }
       if (targetLangSelect) {
         targetLangSelect.value = res.targetLang || 'zh-CN';
+        syncDropdownUI(targetLangDropdown, targetLangSelect, targetLangLabel);
       }
 
       // Translation Service selection
@@ -254,6 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (serviceSelect) {
         serviceSelect.value = service;
         updateServiceLogo(service);
+        syncDropdownUI(serviceDropdown, serviceSelect, serviceSelectedLabel);
       }
 
       // API Config
@@ -282,6 +385,9 @@ document.addEventListener('DOMContentLoaded', () => {
     updateColorUI(initColor);
     updateDurationUI(500);
     updateConfirmDelayUI(160);
+    if (sourceLangSelect) syncDropdownUI(sourceLangDropdown, sourceLangSelect, sourceLangLabel);
+    if (targetLangSelect) syncDropdownUI(targetLangDropdown, targetLangSelect, targetLangLabel);
+    if (serviceSelect) syncDropdownUI(serviceDropdown, serviceSelect, serviceSelectedLabel);
   }
 
   // 6. Language Swapping
@@ -300,6 +406,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
       sourceLangSelect.value = newSrc;
       targetLangSelect.value = newTgt;
+      syncDropdownUI(sourceLangDropdown, sourceLangSelect, sourceLangLabel);
+      syncDropdownUI(targetLangDropdown, targetLangSelect, targetLangLabel);
 
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({
@@ -312,6 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (sourceLangSelect) {
     sourceLangSelect.addEventListener('change', () => {
+      syncDropdownUI(sourceLangDropdown, sourceLangSelect, sourceLangLabel);
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ sourceLang: sourceLangSelect.value }, showSaved);
       }
@@ -320,6 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (targetLangSelect) {
     targetLangSelect.addEventListener('change', () => {
+      syncDropdownUI(targetLangDropdown, targetLangSelect, targetLangLabel);
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ targetLang: targetLangSelect.value }, showSaved);
       }
@@ -431,6 +541,7 @@ document.addEventListener('DOMContentLoaded', () => {
     serviceSelect.addEventListener('change', () => {
       const service = serviceSelect.value;
       updateServiceLogo(service);
+      syncDropdownUI(serviceDropdown, serviceSelect, serviceSelectedLabel);
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ translateService: service }, showSaved);
       }
