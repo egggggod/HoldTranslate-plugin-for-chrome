@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Settings view elements
   const enabledSwitch = document.getElementById('enabledSwitch');
+  const liquidGlassSwitch = document.getElementById('liquidGlassSwitch');
   const durationSlider = document.getElementById('durationSlider');
   const durationValue = document.getElementById('durationValue');
   const confirmDelaySlider = document.getElementById('confirmDelaySlider');
@@ -72,6 +73,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   if (urlParams.has('color')) {
     updateColorUI(urlParams.get('color'));
+  }
+  if (urlParams.has('classic')) {
+    document.body.classList.remove('liquid-glass');
+    if (liquidGlassSwitch) liquidGlassSwitch.checked = false;
   }
 
   // Save indication
@@ -195,16 +200,18 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isRestricted) {
           if (statusCard) {
             statusCard.className = 'status-card warn';
+            statusCard.title = '暂无权限翻译当前页面（新标签页或浏览器内置页面）';
           }
           if (statusMessage) {
-            statusMessage.textContent = '暂无权限翻译当前页面（新标签页或浏览器特权页面）';
+            statusMessage.textContent = '受限页面';
           }
         } else {
           if (statusCard) {
             statusCard.className = 'status-card ready';
+            statusCard.title = '当前页面已就绪，长按即可翻译';
           }
           if (statusMessage) {
-            statusMessage.textContent = '当前页面已就绪，长按即可翻译';
+            statusMessage.textContent = '就绪';
           }
         }
       });
@@ -220,12 +227,19 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.sync.get([
       'enabled', 'sourceLang', 'targetLang', 'pressDuration', 'confirmDelay',
       'showRing', 'textColor', 'translateService', 'deepseekApiKey',
-      'customApiUrl', 'customApiKey', 'customModel'
+      'customApiUrl', 'customApiKey', 'customModel', 'liquidGlass'
     ], (res) => {
       // Main switches
       const isEnabled = res.enabled !== undefined ? res.enabled : true;
       if (enabledSwitch) enabledSwitch.checked = isEnabled;
       if (quickEnabledSwitch) quickEnabledSwitch.checked = isEnabled;
+
+      // Liquid Glass switch
+      const isLiquidGlass = res.liquidGlass !== undefined ? res.liquidGlass : true;
+      if (!urlParams.has('classic')) {
+        document.body.classList.toggle('liquid-glass', isLiquidGlass);
+        if (liquidGlassSwitch) liquidGlassSwitch.checked = isLiquidGlass;
+      }
 
       // Language selection
       if (sourceLangSelect) {
@@ -260,6 +274,10 @@ document.addEventListener('DOMContentLoaded', () => {
       updateColorUI(initColor);
     });
   } else {
+    const isClassic = urlParams.has('classic');
+    document.body.classList.toggle('liquid-glass', !isClassic);
+    if (liquidGlassSwitch) liquidGlassSwitch.checked = !isClassic;
+
     const initColor = urlParams.get('color') || '#86a003';
     updateColorUI(initColor);
     updateDurationUI(500);
@@ -437,6 +455,16 @@ document.addEventListener('DOMContentLoaded', () => {
     ringSwitch.addEventListener('change', () => {
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ showRing: ringSwitch.checked }, showSaved);
+      }
+    });
+  }
+
+  if (liquidGlassSwitch) {
+    liquidGlassSwitch.addEventListener('change', () => {
+      const isLiquidGlass = liquidGlassSwitch.checked;
+      document.body.classList.toggle('liquid-glass', isLiquidGlass);
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ liquidGlass: isLiquidGlass }, showSaved);
       }
     });
   }
