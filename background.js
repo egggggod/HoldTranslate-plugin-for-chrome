@@ -4,8 +4,8 @@
 const translationCache = new Map();
 const MAX_CACHE_SIZE = 300;
 
-function getCacheKey(text, targetLang) {
-  return `${targetLang}:::${text.trim()}`;
+function getCacheKey(text, sourceLang, targetLang) {
+  return `${sourceLang || 'auto'}->${targetLang}:::${text.trim()}`;
 }
 
 function addToCache(key, data) {
@@ -49,6 +49,7 @@ async function translateText(text, options = {}) {
   }
 
   const {
+    sourceLang = 'auto',
     targetLang = 'auto',
     translateChinese = false,      // 默认中文不翻译
     translateTraditional = true    // 默认繁体中文翻译为简体中文
@@ -92,7 +93,8 @@ async function translateText(text, options = {}) {
     }
   }
 
-  const cacheKey = getCacheKey(trimmed, actualTargetLang);
+  const actualSourceLang = sourceLang || 'auto';
+  const cacheKey = getCacheKey(trimmed, actualSourceLang, actualTargetLang);
   if (translationCache.has(cacheKey)) {
     return { ...translationCache.get(cacheKey), fromCache: true };
   }
@@ -103,9 +105,9 @@ async function translateText(text, options = {}) {
 
   for (const client of clientTypes) {
     try {
-      const url = `https://translate.googleapis.com/translate_a/single?client=${client}&sl=auto&tl=${encodeURIComponent(
-        actualTargetLang
-      )}&dt=t&dt=bd&dj=1&q=${encodeURIComponent(trimmed)}`;
+      const url = `https://translate.googleapis.com/translate_a/single?client=${client}&sl=${encodeURIComponent(
+        actualSourceLang
+      )}&tl=${encodeURIComponent(actualTargetLang)}&dt=t&dt=bd&dj=1&q=${encodeURIComponent(trimmed)}`;
 
       const response = await fetch(url, {
         method: 'GET',

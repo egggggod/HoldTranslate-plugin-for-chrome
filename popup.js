@@ -1,10 +1,24 @@
-// HoldTranslate - Popup Settings Script (Immersive Mode)
+// HoldTranslate - Modern Adaptive Dual-View Popup Script
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Navigation elements
+  const viewsWrapper = document.getElementById('viewsWrapper');
+  const openSettingsBtn = document.getElementById('openSettingsBtn');
+  const backToQuickBtn = document.getElementById('backToQuickBtn');
+  const openTestPageBtn = document.getElementById('openTestPageBtn');
+
+  // Quick view elements
+  const quickEnabledSwitch = document.getElementById('quickEnabledSwitch');
+  const sourceLangSelect = document.getElementById('sourceLangSelect');
+  const targetLangSelect = document.getElementById('targetLangSelect');
+  const swapLangBtn = document.getElementById('swapLangBtn');
+  const statusCard = document.getElementById('statusCard');
+  const statusMessage = document.getElementById('statusMessage');
+
+  // Settings view elements
   const enabledSwitch = document.getElementById('enabledSwitch');
   const translateChineseSwitch = document.getElementById('translateChineseSwitch');
   const translateTraditionalSwitch = document.getElementById('translateTraditionalSwitch');
-  const targetLangSelect = document.getElementById('targetLangSelect');
   const durationSlider = document.getElementById('durationSlider');
   const durationValue = document.getElementById('durationValue');
   const confirmDelaySlider = document.getElementById('confirmDelaySlider');
@@ -23,29 +37,54 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let currentColor = '#86a003';
 
+  // 1. Dual View Navigation
+  if (openSettingsBtn && viewsWrapper) {
+    openSettingsBtn.addEventListener('click', () => {
+      viewsWrapper.classList.add('show-settings');
+    });
+  }
+
+  if (backToQuickBtn && viewsWrapper) {
+    backToQuickBtn.addEventListener('click', () => {
+      viewsWrapper.classList.remove('show-settings');
+    });
+  }
+
+  if (openTestPageBtn) {
+    openTestPageBtn.addEventListener('click', () => {
+      if (typeof chrome !== 'undefined' && chrome.tabs && chrome.tabs.create) {
+        chrome.tabs.create({ url: chrome.runtime.getURL('test.html') });
+      }
+    });
+  }
+
+  // Save indication
   function showSaved() {
-    savedHint.classList.add('visible');
+    if (!savedHint) return;
+    savedHint.classList.add('show');
     clearTimeout(window.__savedTimer);
     window.__savedTimer = setTimeout(() => {
-      savedHint.classList.remove('visible');
+      savedHint.classList.remove('show');
     }, 1200);
   }
 
+  // 2. Color UI & Logic
   function updateColorUI(hex) {
     currentColor = hex;
-    colorPicker.value = hex;
-    colorHex.value = hex.toUpperCase();
-    previewTranslation.style.color = hex;
+    if (colorPicker) colorPicker.value = hex;
+    if (colorHex) colorHex.value = hex.toUpperCase();
+    if (previewTranslation) previewTranslation.style.color = hex;
 
-    // Highlight active chip if matches
-    const chips = colorPalette.querySelectorAll('.color-chip');
-    chips.forEach((chip) => {
-      if (chip.dataset.color.toLowerCase() === hex.toLowerCase()) {
-        chip.classList.add('active');
-      } else {
-        chip.classList.remove('active');
-      }
-    });
+    if (colorPalette) {
+      const chips = colorPalette.querySelectorAll('.color-chip');
+      chips.forEach((chip) => {
+        if (chip.dataset.color.toLowerCase() === hex.toLowerCase()) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+    }
   }
 
   function saveColor(hex) {
@@ -55,53 +94,99 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // 3. Slider UI
   function updateDurationUI(val) {
     const num = Math.min(800, Math.max(100, Math.round(Number(val) / 100) * 100));
-    durationSlider.value = num;
-    durationValue.textContent = `${num} ms`;
+    if (durationSlider) durationSlider.value = num;
+    if (durationValue) durationValue.textContent = `${num} ms`;
   }
 
   function updateConfirmDelayUI(val) {
     const num = Number(val);
-    confirmDelaySlider.value = num;
-    confirmDelayValue.textContent = num === 0 ? '0 ms (即刻出圈)' : `${num} ms`;
+    if (confirmDelaySlider) confirmDelaySlider.value = num;
+    if (confirmDelayValue) {
+      confirmDelayValue.textContent = num === 0 ? '0 ms (即刻出圈)' : `${num} ms`;
+    }
   }
 
-  // Load saved settings
+  // 4. Current Tab Status Detection
+  function detectCurrentTabStatus() {
+    if (typeof chrome === 'undefined' || !chrome.tabs || !chrome.tabs.query) {
+      return;
+    }
+
+    try {
+      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        if (!tabs || !tabs[0] || !tabs[0].url) return;
+        const url = tabs[0].url.toLowerCase();
+        const isRestricted = (
+          url.startsWith('chrome://') ||
+          url.startsWith('chrome-extension://') ||
+          url.startsWith('edge://') ||
+          url.startsWith('about:') ||
+          url.startsWith('view-source:') ||
+          url.includes('chrome.google.com/webstore') ||
+          url.includes('chromewebstore.google.com')
+        );
+
+        if (isRestricted) {
+          if (statusCard) {
+            statusCard.className = 'status-card warn';
+          }
+          if (statusMessage) {
+            statusMessage.textContent = '暂无权限翻译当前页面（新标签页或浏览器特权页面）';
+          }
+        } else {
+          if (statusCard) {
+            statusCard.className = 'status-card ready';
+          }
+          if (statusMessage) {
+            statusMessage.textContent = '当前页面已就绪，长按即可翻译';
+          }
+        }
+      });
+    } catch (e) {
+      // Ignore tab query errors
+    }
+  }
+
+  detectCurrentTabStatus();
+
+  // 5. Load Saved Settings
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.get([
-      'enabled', 'pressDuration', 'confirmDelay', 'targetLang', 'showRing', 'textColor',
-      'translateChinese', 'translateTraditional'
+      'enabled', 'sourceLang', 'targetLang', 'pressDuration', 'confirmDelay',
+      'showRing', 'textColor', 'translateChinese', 'translateTraditional'
     ], (res) => {
-      if (res.enabled !== undefined) {
-        enabledSwitch.checked = res.enabled;
+      // Main switches
+      const isEnabled = res.enabled !== undefined ? res.enabled : true;
+      if (enabledSwitch) enabledSwitch.checked = isEnabled;
+      if (quickEnabledSwitch) quickEnabledSwitch.checked = isEnabled;
+
+      // Language selection
+      if (sourceLangSelect) {
+        sourceLangSelect.value = res.sourceLang || 'auto';
       }
-      if (res.translateChinese !== undefined) {
-        translateChineseSwitch.checked = res.translateChinese;
-      } else {
-        translateChineseSwitch.checked = false; // 默认中文不翻译
+      if (targetLangSelect) {
+        targetLangSelect.value = res.targetLang || 'zh-CN';
       }
-      if (res.translateTraditional !== undefined) {
-        translateTraditionalSwitch.checked = res.translateTraditional;
-      } else {
-        translateTraditionalSwitch.checked = true; // 默认繁体转简体
+
+      // Chinese filtering
+      if (translateChineseSwitch) {
+        translateChineseSwitch.checked = res.translateChinese !== undefined ? res.translateChinese : false;
       }
-      if (res.targetLang !== undefined) {
-        targetLangSelect.value = res.targetLang;
+      if (translateTraditionalSwitch) {
+        translateTraditionalSwitch.checked = res.translateTraditional !== undefined ? res.translateTraditional : true;
       }
-      if (res.pressDuration !== undefined) {
-        updateDurationUI(res.pressDuration);
-      } else {
-        updateDurationUI(500);
+
+      // Sliders & Ring
+      updateDurationUI(res.pressDuration !== undefined ? res.pressDuration : 500);
+      updateConfirmDelayUI(res.confirmDelay !== undefined ? res.confirmDelay : 160);
+      if (ringSwitch) {
+        ringSwitch.checked = res.showRing !== undefined ? res.showRing : true;
       }
-      if (res.confirmDelay !== undefined) {
-        updateConfirmDelayUI(res.confirmDelay);
-      } else {
-        updateConfirmDelayUI(160);
-      }
-      if (res.showRing !== undefined) {
-        ringSwitch.checked = res.showRing;
-      }
+
+      // Color
       if (res.textColor) {
         updateColorUI(res.textColor);
       } else {
@@ -114,93 +199,165 @@ document.addEventListener('DOMContentLoaded', () => {
     updateConfirmDelayUI(160);
   }
 
-  // Duration Slider Events
-  durationSlider.addEventListener('input', () => {
-    durationValue.textContent = `${durationSlider.value} ms`;
-  });
+  // 6. Language Swapping
+  if (swapLangBtn && sourceLangSelect && targetLangSelect) {
+    swapLangBtn.addEventListener('click', () => {
+      const currentSrc = sourceLangSelect.value;
+      const currentTgt = targetLangSelect.value;
 
-  durationSlider.addEventListener('change', () => {
-    const val = Number(durationSlider.value);
+      let newSrc = currentTgt;
+      let newTgt = currentSrc;
+
+      if (currentSrc === 'auto') {
+        newSrc = currentTgt;
+        newTgt = currentTgt === 'zh-CN' ? 'en' : 'zh-CN';
+      }
+
+      sourceLangSelect.value = newSrc;
+      targetLangSelect.value = newTgt;
+
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({
+          sourceLang: newSrc,
+          targetLang: newTgt
+        }, showSaved);
+      }
+    });
+  }
+
+  if (sourceLangSelect) {
+    sourceLangSelect.addEventListener('change', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ sourceLang: sourceLangSelect.value }, showSaved);
+      }
+    });
+  }
+
+  if (targetLangSelect) {
+    targetLangSelect.addEventListener('change', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ targetLang: targetLangSelect.value }, showSaved);
+      }
+    });
+  }
+
+  // 7. Master Switch Sync
+  function setMasterEnabled(checked) {
+    if (enabledSwitch) enabledSwitch.checked = checked;
+    if (quickEnabledSwitch) quickEnabledSwitch.checked = checked;
     if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-      chrome.storage.sync.set({ pressDuration: val }, showSaved);
+      chrome.storage.sync.set({ enabled: checked }, showSaved);
     }
-  });
+  }
 
-  // Confirm Delay Slider Events
-  confirmDelaySlider.addEventListener('input', () => {
-    const num = Number(confirmDelaySlider.value);
-    confirmDelayValue.textContent = num === 0 ? '0 ms (即刻出圈)' : `${num} ms`;
-  });
+  if (quickEnabledSwitch) {
+    quickEnabledSwitch.addEventListener('change', () => {
+      setMasterEnabled(quickEnabledSwitch.checked);
+    });
+  }
 
-  confirmDelaySlider.addEventListener('change', () => {
-    const val = Number(confirmDelaySlider.value);
-    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-      chrome.storage.sync.set({ confirmDelay: val }, showSaved);
-    }
-  });
+  if (enabledSwitch) {
+    enabledSwitch.addEventListener('change', () => {
+      setMasterEnabled(enabledSwitch.checked);
+    });
+  }
 
-  // Palette chip click
-  colorPalette.addEventListener('click', (e) => {
-    const chip = e.target.closest('.color-chip');
-    if (chip && chip.dataset.color) {
-      saveColor(chip.dataset.color);
-    }
-  });
+  // 8. Sliders
+  if (durationSlider) {
+    durationSlider.addEventListener('input', () => {
+      if (durationValue) durationValue.textContent = `${durationSlider.value} ms`;
+    });
+    durationSlider.addEventListener('change', () => {
+      const val = Number(durationSlider.value);
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ pressDuration: val }, showSaved);
+      }
+    });
+  }
 
-  // Native color picker input
-  colorPicker.addEventListener('input', (e) => {
-    updateColorUI(e.target.value);
-  });
-  colorPicker.addEventListener('change', (e) => {
-    saveColor(e.target.value);
-  });
+  if (confirmDelaySlider) {
+    confirmDelaySlider.addEventListener('input', () => {
+      const num = Number(confirmDelaySlider.value);
+      if (confirmDelayValue) {
+        confirmDelayValue.textContent = num === 0 ? '0 ms (即刻出圈)' : `${num} ms`;
+      }
+    });
+    confirmDelaySlider.addEventListener('change', () => {
+      const val = Number(confirmDelaySlider.value);
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ confirmDelay: val }, showSaved);
+      }
+    });
+  }
 
-  // Hex input
-  colorHex.addEventListener('change', (e) => {
-    let val = e.target.value.trim();
-    if (!val.startsWith('#')) val = '#' + val;
-    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
-      saveColor(val);
-    } else {
-      colorHex.value = currentColor.toUpperCase();
-    }
-  });
+  // 9. Color Palette & Pickers
+  if (colorPalette) {
+    colorPalette.addEventListener('click', (e) => {
+      const chip = e.target.closest('.color-chip');
+      if (chip && chip.dataset.color) {
+        saveColor(chip.dataset.color);
+      }
+    });
+  }
 
-  // Preview theme toggle
-  previewThemeDark.addEventListener('click', () => {
-    previewThemeDark.classList.add('active');
-    previewThemeLight.classList.remove('active');
-    previewBox.className = 'preview-box dark';
-  });
+  if (colorPicker) {
+    colorPicker.addEventListener('input', (e) => {
+      updateColorUI(e.target.value);
+    });
+    colorPicker.addEventListener('change', (e) => {
+      saveColor(e.target.value);
+    });
+  }
 
-  previewThemeLight.addEventListener('click', () => {
-    previewThemeLight.classList.add('active');
-    previewThemeDark.classList.remove('active');
-    previewBox.className = 'preview-box light';
-  });
+  if (colorHex) {
+    colorHex.addEventListener('change', (e) => {
+      let val = e.target.value.trim();
+      if (!val.startsWith('#')) val = '#' + val;
+      if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+        saveColor(val);
+      } else {
+        colorHex.value = currentColor.toUpperCase();
+      }
+    });
+  }
 
-  // Save on main switch change
-  enabledSwitch.addEventListener('change', () => {
-    chrome.storage.sync.set({ enabled: enabledSwitch.checked }, showSaved);
-  });
+  // 10. Live Preview Theme Toggle
+  if (previewThemeDark && previewThemeLight && previewBox) {
+    previewThemeDark.addEventListener('click', () => {
+      previewThemeDark.classList.add('active');
+      previewThemeLight.classList.remove('active');
+      previewBox.className = 'preview-box dark';
+    });
 
-  // Save on Chinese translation switch change
-  translateChineseSwitch.addEventListener('change', () => {
-    chrome.storage.sync.set({ translateChinese: translateChineseSwitch.checked }, showSaved);
-  });
+    previewThemeLight.addEventListener('click', () => {
+      previewThemeLight.classList.add('active');
+      previewThemeDark.classList.remove('active');
+      previewBox.className = 'preview-box light';
+    });
+  }
 
-  // Save on Traditional Chinese translation switch change
-  translateTraditionalSwitch.addEventListener('change', () => {
-    chrome.storage.sync.set({ translateTraditional: translateTraditionalSwitch.checked }, showSaved);
-  });
+  // 11. Secondary Toggles
+  if (translateChineseSwitch) {
+    translateChineseSwitch.addEventListener('change', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ translateChinese: translateChineseSwitch.checked }, showSaved);
+      }
+    });
+  }
 
-  // Save on target language change
-  targetLangSelect.addEventListener('change', () => {
-    chrome.storage.sync.set({ targetLang: targetLangSelect.value }, showSaved);
-  });
+  if (translateTraditionalSwitch) {
+    translateTraditionalSwitch.addEventListener('change', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ translateTraditional: translateTraditionalSwitch.checked }, showSaved);
+      }
+    });
+  }
 
-  // Save on ring switch change
-  ringSwitch.addEventListener('change', () => {
-    chrome.storage.sync.set({ showRing: ringSwitch.checked }, showSaved);
-  });
+  if (ringSwitch) {
+    ringSwitch.addEventListener('change', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ showRing: ringSwitch.checked }, showSaved);
+      }
+    });
+  }
 });

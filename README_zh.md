@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.0.2-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.0.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.1.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.2/holdtranslate-chrome-extension-v1.0.2.zip) (v1.0.2)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.1.0/holdtranslate-chrome-extension-v1.1.0.zip) (v1.1.0)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -60,17 +60,18 @@ HoldTranslate-plugin-for-chrome/
 ## 浏览器扩展特性 (Features)
 
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
+- 🪟 **现代双视图极简控制面板**：对齐现代翻译设计美学，提供快捷面板（源/目标语言双胶囊下拉栏、语言一键互换、服务状态与实时页面权限检测），底部设置按键可平滑推拉切换至完整偏好设置。
 - 🔄 **长按即时翻译 & 平滑还原**：长按任意段落即可嵌入译文，再次长按原段落或译文即可平滑淡出移除，恢复初始网页排版。
 - ⚡ **滑块定制与防误触机制**：提供长按触发时间滑条（100ms~800ms）与确认时间滑条，搭配 16px 防抖容差，彻底避免浏览与点击链接时的误触发。
-- 🪟 **超链接滑动/手势完美兼容**：全面兼容鼠标左键滑动/拖拽超链接（支持拖拽至标签页、书签栏打开，以及 CrxMouse、smartUp 等超级拖拽插件与鼠标手势），长按翻译与滑动打开互不干扰。
+- 🖱️ **超链接滑动/手势完美兼容**：全面兼容鼠标左键滑动/拖拽超链接（支持拖拽至标签页、书签栏打开，以及 CrxMouse、smartUp 等超级拖拽插件与鼠标手势），长按翻译与滑动打开互不干扰。
 - 📋 **段落与划词双模式**：直接长按翻译整段文本；先划选高亮文字再长按仅翻译选定内容。
 - 🛡️ **智能语言过滤**：自动跳过纯中文或已翻译内容，防止重复翻译；提供繁体中文翻译独立开关。
-- 🎨 **纯净沉浸美感**：背景 100% 透明自适应，内置 7 色护眼预设（默认沉浸橄榄绿 `#86a003`），支持自定义 Hex 色值与深浅色模式实时预览。
+- 🎨 **自适应深浅双色美感**：根据系统与浏览器主题自动切换纯净浅白或沉浸深黑，内置 7 色护眼预设（默认沉浸橄榄绿 `#86a003`），支持自定义 Hex 色值与深浅色模式实时预览。
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.0.2）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.0.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.0.2/holdtranslate-chrome-extension-v1.0.2.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.1.0）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.1.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.1.0/holdtranslate-chrome-extension-v1.1.0.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
@@ -85,7 +86,7 @@ HoldTranslate-plugin-for-chrome/
 ### 🎉 开始使用 (Getting Started)
 
 安装完成后：
-1. 点击 Chrome 工具栏中的 **HoldTranslate** 图标，打开设置面板调整您喜欢的译文颜色、触发时间或确认时间；
+1. 点击 Chrome 工具栏中的 **HoldTranslate** 图标，打开快捷面板直接点选源语言/目标语言，或点击下方“设置”调整您喜欢的译文颜色、触发时间或确认时间；
 2. 访问任意英文或外语网页（也可在 Chrome 中直接打开项目内的 [`test.html`](test.html) 本地测试页）；
 3. 在任意文本段落上**长按鼠标左键**约 500ms；
 4. 译文将如同原生双语字幕般平滑出现在原文下方；
@@ -102,8 +103,13 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.0.2`
-  - `v1.0.2` 更新重点：
+  - 当前版本：`v1.1.0`
+  - `v1.1.0` 更新重点：
+    - 全新重构双视图弹窗：极简紧凑快捷面板 + 平滑推拉切换至完整设置；
+    - 快捷界面新增源/目标语言双胶囊下拉框与一键互换（无需进设置即可瞬时切换翻译语种）；
+    - 新增翻译服务指示与当前页面特权状态动态检测；
+    - 全面适配系统/浏览器级深浅色自适应主题。
+  - `v1.0.2`：
     - 修复因拦截 `dragstart` 导致超链接无法滑动/拖拽打开的问题（完美兼容原生标签拖拽及 smartUp、CrxMouse 等超级拖拽手势扩展）；
     - 增加拖拽启动即时熔断：一旦用户滑动拖拽超链接，立刻取消长按计时器并收起进度环，彻底杜绝拖拽与翻译冲突。
   - `v1.0.1`：

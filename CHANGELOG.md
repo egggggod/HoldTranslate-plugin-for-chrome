@@ -4,6 +4,16 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.0] - 2026-09-08
+
+### Added
+- **Modern Dual-View Popup Redesign**: Redesigned popup UI inspired by Immersive Translate aesthetics, featuring a lightweight, compact Quick Dashboard (`#quickView`) and a full Settings Panel (`#settingsView`) with smooth in-popup slide transitions.
+- **Instant Language Selector & Swap**: Prominent dual-capsule language dropdowns (`[Source Lang] ⇄ [Target Lang]`) on the quick panel, enabling 1-click source/target language selection and swapping without opening settings.
+- **Service Bar & Page Status Detection**: Shows active translation service and dynamically inspects current tab permissions (indicating ready state on normal websites or restricted state on browser privileged pages).
+- **System Adaptive Light/Dark Theming**: Full `@media (prefers-color-scheme: dark)` support, providing crisp, clean light styling and deep, comfortable dark styling.
+
+---
+
 ## [v1.0.2] - 2026-09-08
 
 ### Fixed

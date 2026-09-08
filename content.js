@@ -13,6 +13,7 @@
     enabled: true,
     pressDuration: 500, // ms
     confirmDelay: 160,  // ms, 意图确认延迟 (0-300ms)
+    sourceLang: 'auto',
     targetLang: 'auto',
     showRing: true,
     textColor: '#86a003',        // Default: screenshot olive green
@@ -55,13 +56,14 @@
   if (isExtensionValid() && chrome.storage && chrome.storage.sync) {
     try {
       chrome.storage.sync.get([
-        'enabled', 'pressDuration', 'confirmDelay', 'targetLang', 'showRing', 'textColor',
+        'enabled', 'pressDuration', 'confirmDelay', 'sourceLang', 'targetLang', 'showRing', 'textColor',
         'translateChinese', 'translateTraditional'
       ], (res) => {
         if (!isExtensionValid() || (chrome.runtime && chrome.runtime.lastError)) return;
         if (res.enabled !== undefined) config.enabled = res.enabled;
         if (res.pressDuration !== undefined) config.pressDuration = Number(res.pressDuration);
         if (res.confirmDelay !== undefined) config.confirmDelay = Number(res.confirmDelay);
+        if (res.sourceLang !== undefined) config.sourceLang = res.sourceLang;
         if (res.targetLang !== undefined) config.targetLang = res.targetLang;
         if (res.showRing !== undefined) config.showRing = res.showRing;
         if (res.textColor) config.textColor = res.textColor;
@@ -78,6 +80,7 @@
           if (changes.enabled) config.enabled = changes.enabled.newValue;
           if (changes.pressDuration) config.pressDuration = Number(changes.pressDuration.newValue);
           if (changes.confirmDelay !== undefined) config.confirmDelay = Number(changes.confirmDelay.newValue);
+          if (changes.sourceLang) config.sourceLang = changes.sourceLang.newValue;
           if (changes.targetLang) config.targetLang = changes.targetLang.newValue;
           if (changes.showRing) config.showRing = changes.showRing.newValue;
           if (changes.translateChinese !== undefined) config.translateChinese = changes.translateChinese.newValue;
@@ -584,6 +587,7 @@
         {
           action: 'TRANSLATE',
           text: text,
+          sourceLang: config.sourceLang || 'auto',
           targetLang: config.targetLang,
           translateChinese: config.translateChinese,
           translateTraditional: config.translateTraditional

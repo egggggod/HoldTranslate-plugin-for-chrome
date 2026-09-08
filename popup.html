@@ -3,169 +3,264 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HoldTranslate 设置</title>
+  <title>HoldTranslate</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header class="header">
-      <div class="brand">
-        <svg class="brand-icon" viewBox="0 0 24 24">
-          <path fill="#86a003" d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
-        </svg>
-        <h1 class="brand-title">HoldTranslate 沉浸翻译</h1>
-      </div>
-      <span class="version-tag">v1.2.0</span>
-    </header>
+  <div class="views-wrapper" id="viewsWrapper">
 
-    <!-- Main Switch -->
-    <div class="setting-item toggle-row">
-      <div class="setting-info">
-        <label class="setting-label" for="enabledSwitch">启用长按翻译</label>
-        <span class="setting-desc">长按左键在正下方插入译文/还原</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="enabledSwitch" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <!-- Language Filter Section -->
-    <div class="section-title">语种识别与过滤</div>
-
-    <!-- Translate Chinese Toggle -->
-    <div class="setting-item toggle-row">
-      <div class="setting-info">
-        <label class="setting-label" for="translateChineseSwitch">中文翻译为英文</label>
-        <span class="setting-desc">默认关闭 (中文不翻译)；开启后中文翻为英文</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="translateChineseSwitch">
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <!-- Translate Traditional Chinese Toggle -->
-    <div class="setting-item toggle-row">
-      <div class="setting-info">
-        <label class="setting-label" for="translateTraditionalSwitch">繁体中文翻译为简体</label>
-        <span class="setting-desc">默认开启；开启后繁体中文自动转换为简体</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="translateTraditionalSwitch" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <!-- Target Language -->
-    <div class="setting-item">
-      <div class="setting-info">
-        <label class="setting-label" for="targetLangSelect">外语目标翻译语言</label>
-        <span class="setting-desc">外语默认自动检测并翻译为简体中文</span>
-      </div>
-      <select id="targetLangSelect" class="styled-select">
-        <option value="auto">自动检测 → 简体中文 (默认)</option>
-        <option value="zh-TW">中文(繁体) (zh-TW)</option>
-        <option value="en">英语 (English)</option>
-        <option value="ja">日语 (日本語)</option>
-        <option value="ko">韩语 (한국어)</option>
-        <option value="fr">法语 (Français)</option>
-        <option value="de">德语 (Deutsch)</option>
-        <option value="es">西班牙语 (Español)</option>
-        <option value="ru">俄语 (Русский)</option>
-      </select>
-    </div>
-
-    <!-- Translation Text Color Setting -->
-    <div class="setting-item">
-      <div class="setting-info">
-        <label class="setting-label">译文字体颜色</label>
-        <span class="setting-desc">字号自动与原文 100% 同步</span>
-      </div>
-      <div class="color-picker-container">
-        <div class="palette" id="colorPalette">
-          <button type="button" class="color-chip active" data-color="#86a003" style="background-color: #86a003;" title="橄榄青绿 (默认)"></button>
-          <button type="button" class="color-chip" data-color="#38bdf8" style="background-color: #38bdf8;" title="天湖明蓝"></button>
-          <button type="button" class="color-chip" data-color="#f59e0b" style="background-color: #f59e0b;" title="琥珀暖金"></button>
-          <button type="button" class="color-chip" data-color="#a855f7" style="background-color: #a855f7;" title="优雅浅紫"></button>
-          <button type="button" class="color-chip" data-color="#10b981" style="background-color: #10b981;" title="清透翡翠"></button>
-          <button type="button" class="color-chip" data-color="#fb7185" style="background-color: #fb7185;" title="珊瑚柔粉"></button>
-          <button type="button" class="color-chip" data-color="#94a3b8" style="background-color: #94a3b8;" title="中性银灰"></button>
+    <!-- View 1: 快捷主界面 (Quick Panel) -->
+    <div class="view-panel" id="quickView">
+      <!-- 顶部 Header: 品牌 + 状态与主开关 -->
+      <header class="header">
+        <div class="brand">
+          <div class="brand-avatar">
+            <svg viewBox="0 0 24 24" width="20" height="20">
+              <path fill="currentColor" d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">HoldTranslate</span>
+            <span class="brand-sub">沉浸式长按翻译</span>
+          </div>
         </div>
-        <div class="custom-color-input-row">
-          <input type="color" id="colorPicker" value="#86a003">
-          <input type="text" id="colorHex" value="#86a003" maxlength="7" spellcheck="false">
+        <div class="header-action">
+          <label class="switch" title="开启/关闭长按翻译">
+            <input type="checkbox" id="quickEnabledSwitch" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+      </header>
+
+      <!-- 核心快捷区：语言选择双胶囊栏 (1:1 模仿沉浸式参考图) -->
+      <div class="language-card">
+        <div class="lang-selector-group">
+          <!-- 源语言胶囊 -->
+          <div class="lang-capsule">
+            <select id="sourceLangSelect" class="lang-select" aria-label="源语言">
+              <option value="auto">自动检测</option>
+              <option value="en">英语</option>
+              <option value="zh-CN">简体中文</option>
+              <option value="zh-TW">繁体中文</option>
+              <option value="ja">日语</option>
+              <option value="ko">韩语</option>
+              <option value="fr">法语</option>
+              <option value="de">德语</option>
+              <option value="es">西班牙语</option>
+              <option value="ru">俄语</option>
+            </select>
+            <span class="capsule-arrow">▾</span>
+          </div>
+
+          <!-- 语言互换按钮 -->
+          <button type="button" class="swap-btn" id="swapLangBtn" title="互换源语言与目标语言" aria-label="互换语言">
+            <svg viewBox="0 0 24 24" width="16" height="16">
+              <path fill="currentColor" d="M6.99 11L3 15l3.99 4v-3H14v-2H6.99v-3zM21 9l-3.99-4v3H10v2h7.01v3L21 9z"/>
+            </svg>
+          </button>
+
+          <!-- 目标语言胶囊 -->
+          <div class="lang-capsule">
+            <select id="targetLangSelect" class="lang-select" aria-label="目标语言">
+              <option value="zh-CN">简体中文</option>
+              <option value="zh-TW">繁体中文</option>
+              <option value="en">英语</option>
+              <option value="ja">日语</option>
+              <option value="ko">韩语</option>
+              <option value="fr">法语</option>
+              <option value="de">德语</option>
+              <option value="es">西班牙语</option>
+              <option value="ru">俄语</option>
+              <option value="auto">自动选择</option>
+            </select>
+            <span class="capsule-arrow">▾</span>
+          </div>
         </div>
       </div>
+
+      <!-- 翻译服务选择栏 -->
+      <div class="service-bar">
+        <div class="service-label">
+          <svg class="google-icon" viewBox="0 0 24 24" width="16" height="16">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.34 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.14-1.55.38-2.27V6.58H1.25C.45 8.18 0 9.99 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.34 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span class="service-text">翻译服务：</span>
+        </div>
+        <div class="service-badge">谷歌翻译 (免配置极速)</div>
+      </div>
+
+      <!-- 页面环境状态指示条 (对齐参考图中的提示卡片) -->
+      <div class="status-card ready" id="statusCard">
+        <span class="status-dot"></span>
+        <span class="status-message" id="statusMessage">当前页面已就绪，长按即可翻译</span>
+      </div>
+
+      <!-- 底部操作栏 (参照参考图: 设置 | 版本号 | 更多) -->
+      <footer class="bottom-bar">
+        <button type="button" class="bar-btn" id="openSettingsBtn" title="打开详细偏好设置">
+          <svg viewBox="0 0 24 24" width="15" height="15">
+            <path fill="currentColor" d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+          </svg>
+          <span>设置</span>
+        </button>
+        <span class="bar-version">v1.1.0</span>
+        <button type="button" class="bar-btn right" id="openTestPageBtn" title="打开本地测试基准页">
+          <span>测试页</span>
+          <svg viewBox="0 0 24 24" width="13" height="13">
+            <path fill="currentColor" d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+          </svg>
+        </button>
+      </footer>
     </div>
 
-    <!-- Live Preview Box -->
-    <div class="preview-section">
-      <div class="preview-header">
-        <span class="preview-title">实时预览</span>
-        <div class="preview-theme-toggle">
-          <button type="button" id="previewThemeDark" class="theme-btn active">深色</button>
-          <button type="button" id="previewThemeLight" class="theme-btn">浅色</button>
+    <!-- View 2: 详细设置面板 (Full Settings Panel) -->
+    <div class="view-panel" id="settingsView">
+      <!-- 顶部返回导航 -->
+      <header class="header settings-header">
+        <button type="button" class="back-btn" id="backToQuickBtn" title="返回主界面" aria-label="返回">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+          </svg>
+          <span>返回</span>
+        </button>
+        <h2 class="settings-title">偏好设置</h2>
+        <span class="saved-hint" id="savedHint">已保存</span>
+      </header>
+
+      <div class="settings-content">
+        <!-- 启用长按翻译主开关 -->
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="enabledSwitch">启用长按翻译</label>
+            <span class="setting-desc">长按鼠标左键在正下方插入译文/还原</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="enabledSwitch" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- 语种识别与过滤 -->
+        <div class="section-title">语种过滤策略</div>
+
+        <!-- 中文翻译为英文开关 -->
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="translateChineseSwitch">中文翻译为英文</label>
+            <span class="setting-desc">默认关闭 (中文不翻译)；开启后中文翻为英文</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="translateChineseSwitch">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- 繁体中文转简体开关 -->
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="translateTraditionalSwitch">繁体中文翻译为简体</label>
+            <span class="setting-desc">默认开启；开启后繁体中文自动转换为简体</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="translateTraditionalSwitch" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <!-- 译文字体颜色设置 -->
+        <div class="setting-item">
+          <div class="setting-info">
+            <label class="setting-label">译文字体颜色</label>
+            <span class="setting-desc">字号、粗体、斜体自动与原文 100% 同步</span>
+          </div>
+          <div class="color-picker-container">
+            <div class="palette" id="colorPalette">
+              <button type="button" class="color-chip active" data-color="#86a003" style="background-color: #86a003;" title="橄榄青绿 (默认)"></button>
+              <button type="button" class="color-chip" data-color="#38bdf8" style="background-color: #38bdf8;" title="天湖明蓝"></button>
+              <button type="button" class="color-chip" data-color="#f59e0b" style="background-color: #f59e0b;" title="琥珀暖金"></button>
+              <button type="button" class="color-chip" data-color="#a855f7" style="background-color: #a855f7;" title="优雅浅紫"></button>
+              <button type="button" class="color-chip" data-color="#10b981" style="background-color: #10b981;" title="清透翡翠"></button>
+              <button type="button" class="color-chip" data-color="#fb7185" style="background-color: #fb7185;" title="珊瑚柔粉"></button>
+              <button type="button" class="color-chip" data-color="#94a3b8" style="background-color: #94a3b8;" title="中性银灰"></button>
+            </div>
+            <div class="custom-color-input-row">
+              <input type="color" id="colorPicker" value="#86a003">
+              <input type="text" id="colorHex" value="#86a003" maxlength="7" spellcheck="false">
+            </div>
+          </div>
+        </div>
+
+        <!-- 实时预览区 -->
+        <div class="preview-section">
+          <div class="preview-header">
+            <span class="preview-title">实时双色预览</span>
+            <div class="preview-theme-toggle">
+              <button type="button" id="previewThemeDark" class="theme-btn active">深色</button>
+              <button type="button" id="previewThemeLight" class="theme-btn">浅色</button>
+            </div>
+          </div>
+          <div class="preview-box dark" id="previewBox">
+            <div class="preview-original">Because you suck!! Fred Vasseur suck...</div>
+            <div class="preview-translation" id="previewTranslation">因为你太烂了！！ 弗雷德·瓦瑟尔烂透了...</div>
+          </div>
+        </div>
+
+        <!-- 长按触发时长滑条 (100ms - 800ms) -->
+        <div class="setting-item">
+          <div class="setting-info duration-header">
+            <label class="setting-label" for="durationSlider">长按触发时长</label>
+            <span class="duration-badge" id="durationValue">500 ms</span>
+          </div>
+          <div class="slider-wrapper">
+            <input type="range" id="durationSlider" min="100" max="800" step="100" value="500" class="range-slider">
+            <div class="slider-ticks">
+              <span>100ms (极速)</span>
+              <span>500ms (推荐)</span>
+              <span>800ms (稳健)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 意图确认时间滑条 (0ms - 300ms) -->
+        <div class="setting-item">
+          <div class="setting-info duration-header">
+            <label class="setting-label" for="confirmDelaySlider">意图确认时间 (出圈延迟)</label>
+            <span class="duration-badge" id="confirmDelayValue">160 ms</span>
+          </div>
+          <div class="setting-desc help-tip">
+            💡 <strong>含义说明</strong>：按下鼠标后延迟多久才显示进度圆圈。普通点击通常在 50~100ms 内松开，在此延迟期内松开<strong>绝不转圈</strong>；按住超过此时间才确认有长按意图并显示圆圈。设为 0ms 则按下鼠标立即出圈。
+          </div>
+          <div class="slider-wrapper">
+            <input type="range" id="confirmDelaySlider" min="0" max="300" step="20" value="160" class="range-slider">
+            <div class="slider-ticks">
+              <span>0ms (即刻出圈)</span>
+              <span>160ms (推荐)</span>
+              <span>300ms (深度防误触)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 显示圆圈开关 -->
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="ringSwitch">长按光标指示环</label>
+            <span class="setting-desc">按住时在光标处显示圆环旋转进度</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="ringSwitch" checked>
+            <span class="slider"></span>
+          </label>
         </div>
       </div>
-      <div class="preview-box dark" id="previewBox">
-        <div class="preview-original">Because you suck!! Fred Vasseur suck...</div>
-        <div class="preview-translation" id="previewTranslation">因为你太烂了！！ 弗雷德·瓦瑟尔烂透了...</div>
-      </div>
+
+      <footer class="footer settings-footer">
+        <span>长按原文或译文一键还原</span>
+      </footer>
     </div>
 
-    <!-- Duration Setting (Slider 100ms - 800ms, step 100ms) -->
-    <div class="setting-item">
-      <div class="setting-info duration-header">
-        <label class="setting-label" for="durationSlider">长按触发时长</label>
-        <span class="duration-badge" id="durationValue">500 ms</span>
-      </div>
-      <div class="slider-wrapper">
-        <input type="range" id="durationSlider" min="100" max="800" step="100" value="500" class="range-slider">
-        <div class="slider-ticks">
-          <span>100ms (极速)</span>
-          <span>500ms (推荐)</span>
-          <span>800ms (稳健)</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Confirm Delay Setting (Slider 0ms - 300ms, step 20ms) -->
-    <div class="setting-item">
-      <div class="setting-info duration-header">
-        <label class="setting-label" for="confirmDelaySlider">意图确认时间 (出圈延迟)</label>
-        <span class="duration-badge" id="confirmDelayValue">160 ms</span>
-      </div>
-      <div class="setting-desc help-tip">
-        💡 <strong>含义说明</strong>：按下鼠标后延迟多久才显示进度圆圈。普通点击通常在 50~100ms 内松开，在此延迟期内松开<strong>绝不转圈</strong>；按住超过此时间才确认有长按意图并显示圆圈。设为 0ms 则按下鼠标立即出圈。
-      </div>
-      <div class="slider-wrapper">
-        <input type="range" id="confirmDelaySlider" min="0" max="300" step="20" value="160" class="range-slider">
-        <div class="slider-ticks">
-          <span>0ms (即刻出圈)</span>
-          <span>160ms (推荐)</span>
-          <span>300ms (深度防误触)</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Show Ring Toggle -->
-    <div class="setting-item toggle-row">
-      <div class="setting-info">
-        <label class="setting-label" for="ringSwitch">长按光标指示环</label>
-        <span class="setting-desc">按住时在光标处显示圆环进度</span>
-      </div>
-      <label class="switch">
-        <input type="checkbox" id="ringSwitch" checked>
-        <span class="slider"></span>
-      </label>
-    </div>
-
-    <footer class="footer">
-      <span>长按原文或译文一键还原</span>
-      <span class="saved-hint" id="savedHint">已保存</span>
-    </footer>
   </div>
 
   <script src="popup.js"></script>
