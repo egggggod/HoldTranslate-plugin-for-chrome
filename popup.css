@@ -1,48 +1,83 @@
-/* HoldTranslate - Modern Adaptive Dual-View Popup */
+/* HoldTranslate - Apple VisionOS Inspired Liquid Glass UI (Liquid Glassmorphism) */
 
 :root {
-  /* Light theme (default, mirrors reference UI) */
-  --bg-page: #ffffff;
-  --bg-card: #f8fafc;
-  --bg-capsule: #f1f5f9;
-  --bg-capsule-hover: #e2e8f0;
-  --border-color: #e2e8f0;
-  --border-subtle: #f1f5f9;
+  /* Dynamic accent theme (overridden by storage) */
+  --accent-color: #86a003;
+  --accent-hover: #6e8402;
+  --accent-glow: color-mix(in srgb, var(--accent-color) 35%, transparent);
+  --accent-subtle: color-mix(in srgb, var(--accent-color) 12%, transparent);
+
+  /* Light Liquid Glass System */
+  --bg-canvas: #f8fafc;
+  --glass-surface: rgba(255, 255, 255, 0.68);
+  --glass-surface-hover: rgba(255, 255, 255, 0.82);
+  --glass-card: rgba(255, 255, 255, 0.58);
+  --glass-card-hover: rgba(255, 255, 255, 0.76);
+  --glass-capsule: rgba(255, 255, 255, 0.72);
+  --glass-capsule-hover: rgba(255, 255, 255, 0.92);
+  --glass-input: rgba(255, 255, 255, 0.55);
+  --glass-input-focus: rgba(255, 255, 255, 0.9);
+
+  /* Specular Borders & Highlights */
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-border-subtle: rgba(255, 255, 255, 0.45);
+  --glass-border-focus: var(--accent-color);
+  --glass-inner-bevel: inset 0 1px 1px 0 rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 8px 30px -4px rgba(15, 23, 42, 0.07), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --glass-card-shadow: 0 4px 18px -2px rgba(15, 23, 42, 0.05), inset 0 1px 1px 0 rgba(255, 255, 255, 0.75);
+
+  /* Typography */
   --text-primary: #0f172a;
   --text-secondary: #475569;
   --text-muted: #94a3b8;
-  --accent-color: #86a003;
-  --accent-hover: #6e8402;
-  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05), 0 6px 12px -3px rgba(0, 0, 0, 0.04);
-  --status-ready-bg: rgba(34, 197, 94, 0.08);
-  --status-ready-border: rgba(34, 197, 94, 0.25);
+
+  /* Status Colors */
+  --status-ready-bg: rgba(34, 197, 94, 0.09);
+  --status-ready-border: rgba(34, 197, 94, 0.28);
   --status-ready-text: #15803d;
-  --status-warn-bg: rgba(239, 68, 68, 0.08);
-  --status-warn-border: rgba(239, 68, 68, 0.25);
+  --status-ready-glow: rgba(34, 197, 94, 0.2);
+
+  --status-warn-bg: rgba(239, 68, 68, 0.09);
+  --status-warn-border: rgba(239, 68, 68, 0.28);
   --status-warn-text: #b91c1c;
+  --status-warn-glow: rgba(239, 68, 68, 0.2);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Dark theme adaptive */
-    --bg-page: #0f172a;
-    --bg-card: #1e293b;
-    --bg-capsule: #293548;
-    --bg-capsule-hover: #334155;
-    --border-color: #334155;
-    --border-subtle: #1e293b;
+    /* Dark Obsidian Glass System */
+    --bg-canvas: #090d16;
+    --glass-surface: rgba(18, 26, 43, 0.72);
+    --glass-surface-hover: rgba(26, 37, 60, 0.82);
+    --glass-card: rgba(24, 34, 54, 0.6);
+    --glass-card-hover: rgba(32, 45, 72, 0.75);
+    --glass-capsule: rgba(30, 42, 68, 0.7);
+    --glass-capsule-hover: rgba(42, 58, 92, 0.85);
+    --glass-input: rgba(15, 22, 38, 0.65);
+    --glass-input-focus: rgba(20, 30, 52, 0.9);
+
+    /* Specular Borders & Highlights */
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --glass-border-subtle: rgba(255, 255, 255, 0.07);
+    --glass-inner-bevel: inset 0 1px 1px 0 rgba(255, 255, 255, 0.15);
+    --glass-shadow: 0 14px 38px -4px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.35);
+    --glass-card-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.4), inset 0 1px 1px 0 rgba(255, 255, 255, 0.1);
+
+    /* Typography */
     --text-primary: #f8fafc;
     --text-secondary: #94a3b8;
     --text-muted: #64748b;
-    --accent-color: #86a003;
-    --accent-hover: #9bb705;
-    --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.35);
-    --status-ready-bg: rgba(34, 197, 94, 0.12);
-    --status-ready-border: rgba(34, 197, 94, 0.3);
+
+    /* Status Colors */
+    --status-ready-bg: rgba(34, 197, 94, 0.14);
+    --status-ready-border: rgba(34, 197, 94, 0.35);
     --status-ready-text: #4ade80;
-    --status-warn-bg: rgba(239, 68, 68, 0.12);
-    --status-warn-border: rgba(239, 68, 68, 0.3);
+    --status-ready-glow: rgba(34, 197, 94, 0.3);
+
+    --status-warn-bg: rgba(239, 68, 68, 0.14);
+    --status-warn-border: rgba(239, 68, 68, 0.35);
     --status-warn-text: #f87171;
+    --status-warn-glow: rgba(239, 68, 68, 0.3);
   }
 }
 
@@ -54,20 +89,89 @@
 
 body {
   width: 340px;
-  background-color: var(--bg-page);
+  min-height: 290px;
+  background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   font-size: 13.5px;
   line-height: 1.5;
   overflow-x: hidden;
   user-select: none;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Dual View Sliding Wrapper */
+/* =========================================================
+   1. VisionOS Ambient Fluid Glow Container
+   ========================================================= */
+.ambient-fluid-container {
+  position: fixed;
+  inset: -20px;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.fluid-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(52px);
+  pointer-events: none;
+  opacity: 0.65;
+  transition: background 0.4s ease;
+  will-change: transform, opacity;
+}
+
+.orb-primary {
+  width: 220px;
+  height: 220px;
+  top: -40px;
+  right: -50px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  animation: orbFloat1 10s infinite alternate ease-in-out;
+}
+
+.orb-secondary {
+  width: 200px;
+  height: 200px;
+  bottom: -40px;
+  left: -40px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.22) 0%, transparent 70%);
+  animation: orbFloat2 12s infinite alternate ease-in-out;
+}
+
+.orb-tertiary {
+  width: 170px;
+  height: 170px;
+  top: 45%;
+  left: 30%;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+  animation: orbFloat3 14s infinite alternate ease-in-out;
+}
+
+@keyframes orbFloat1 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-15px, 20px) scale(1.08); }
+}
+
+@keyframes orbFloat2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(20px, -15px) scale(1.05); }
+}
+
+@keyframes orbFloat3 {
+  0% { transform: translate(0, 0) scale(0.95); opacity: 0.3; }
+  100% { transform: translate(-10px, -20px) scale(1.1); opacity: 0.6; }
+}
+
+/* =========================================================
+   2. Dual View Sliding Wrapper
+   ========================================================= */
 .views-wrapper {
   position: relative;
   width: 100%;
   overflow: hidden;
+  z-index: 1;
 }
 
 .view-panel {
@@ -75,7 +179,7 @@ body {
   padding: 16px 18px 14px;
   display: flex;
   flex-direction: column;
-  transition: transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.2s ease;
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease;
 }
 
 #quickView {
@@ -112,7 +216,9 @@ body {
   position: relative;
 }
 
-/* Header */
+/* =========================================================
+   3. Header & Brand Styling
+   ========================================================= */
 .header {
   display: flex;
   justify-content: space-between;
@@ -127,15 +233,24 @@ body {
 }
 
 .brand-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: var(--glass-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-inner-bevel), 0 4px 12px rgba(0, 0, 0, 0.04);
   color: var(--accent-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+}
+
+.brand:hover .brand-avatar {
+  transform: scale(1.05);
+  box-shadow: var(--glass-inner-bevel), 0 0 16px var(--accent-glow);
 }
 
 .brand-text {
@@ -144,10 +259,10 @@ body {
 }
 
 .brand-title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.2px;
   color: var(--text-primary);
-  line-height: 1.2;
 }
 
 .brand-sub {
@@ -155,7 +270,9 @@ body {
   color: var(--text-muted);
 }
 
-/* iOS Style Switch */
+/* =========================================================
+   4. Liquid Glass Master Switch
+   ========================================================= */
 .switch {
   position: relative;
   display: inline-block;
@@ -173,11 +290,17 @@ body {
 .slider {
   position: absolute;
   cursor: pointer;
-  inset: 0;
-  background-color: var(--bg-capsule-hover);
-  border: 1px solid var(--border-color);
-  transition: 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(148, 163, 184, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border-subtle);
   border-radius: 24px;
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .slider:before {
@@ -188,28 +311,39 @@ body {
   left: 2px;
   bottom: 2px;
   background-color: #ffffff;
-  transition: 0.25s cubic-bezier(0.2, 0.9, 0.3, 1);
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 input:checked + .slider {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
+  box-shadow: 0 0 14px var(--accent-glow);
 }
 
 input:checked + .slider:before {
   transform: translateX(20px);
 }
 
-/* Language Selection Card (Mirrors Reference) */
+/* =========================================================
+   5. Quick View: Language Selection Floating Glass Card
+   ========================================================= */
 .language-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 12px 14px;
-  box-shadow: var(--shadow-card);
+  background: var(--glass-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 18px;
+  padding: 8px 10px;
   margin-bottom: 12px;
+  box-shadow: var(--glass-inner-bevel), var(--glass-card-shadow);
+  transition: all 0.2s ease;
+}
+
+.language-card:hover {
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-inner-bevel), var(--glass-shadow);
 }
 
 .lang-selector-group {
@@ -221,29 +355,41 @@ input:checked + .slider:before {
 .lang-capsule {
   flex: 1;
   position: relative;
-  background: var(--bg-capsule);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  transition: background 0.18s, border-color 0.18s;
+  background: var(--glass-capsule);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 14px;
+  padding: 6px 26px 6px 12px;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.4);
 }
 
 .lang-capsule:hover {
-  background: var(--bg-capsule-hover);
+  background: var(--glass-capsule-hover);
   border-color: var(--accent-color);
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.6), 0 2px 8px var(--accent-subtle);
 }
 
 .lang-select {
   width: 100%;
-  padding: 8px 24px 8px 12px;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-primary);
-  background: transparent;
   border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 500;
   outline: none;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.lang-select option {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
 }
 
 .capsule-arrow {
@@ -260,179 +406,210 @@ input:checked + .slider:before {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: var(--bg-capsule);
+  border: 1px solid var(--glass-border-subtle);
+  background: var(--glass-capsule);
   color: var(--text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: inset 0 1px 0.5px rgba(255, 255, 255, 0.4);
   flex-shrink: 0;
-  transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .swap-btn:hover {
-  background: var(--bg-capsule-hover);
+  background: var(--glass-capsule-hover);
   color: var(--accent-color);
   border-color: var(--accent-color);
   transform: rotate(180deg) scale(1.08);
+  box-shadow: 0 0 12px var(--accent-glow);
 }
 
-/* Service Bar */
-.service-bar {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 8px 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.swap-btn:active {
+  transform: rotate(180deg) scale(0.95);
+}
+
+/* =========================================================
+   6. Quick View: Translation Service Pill (精简去繁)
+   ========================================================= */
+.service-capsule-bar {
   margin-bottom: 12px;
-}
-
-.service-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.service-logo {
-  flex-shrink: 0;
-}
-
-.service-text {
-  font-size: 12.5px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  width: 100%;
 }
 
 .service-capsule {
+  width: 100%;
   position: relative;
-  background: var(--bg-capsule);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  transition: background 0.18s, border-color 0.18s;
+  background: var(--glass-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 7px 30px 7px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+  box-shadow: var(--glass-inner-bevel), var(--glass-card-shadow);
 }
 
 .service-capsule:hover {
-  background: var(--bg-capsule-hover);
+  background: var(--glass-card-hover);
   border-color: var(--accent-color);
+  box-shadow: var(--glass-inner-bevel), 0 4px 16px var(--accent-subtle);
+}
+
+.service-logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .service-select {
-  padding: 5px 22px 5px 10px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-primary);
-  background: transparent;
+  flex: 1;
   border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12.5px;
+  font-weight: 500;
   outline: none;
   cursor: pointer;
   appearance: none;
   -webkit-appearance: none;
 }
 
-/* Status Card */
-.status-card {
-  border-radius: 10px;
-  padding: 10px 12px;
+.service-select option {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   7. Quick View: Status Micro-Pill (微光状态药丸)
+   ========================================================= */
+.status-pill-wrap {
   display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.status-card {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 7px;
+  border-radius: 30px;
+  padding: 5px 14px;
+  font-size: 11.5px;
   font-weight: 500;
-  margin-bottom: 14px;
-  transition: background 0.2s, border-color 0.2s;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .status-card.ready {
   background: var(--status-ready-bg);
   border: 1px solid var(--status-ready-border);
   color: var(--status-ready-text);
+  box-shadow: 0 2px 12px var(--status-ready-glow), inset 0 1px 0.5px rgba(255, 255, 255, 0.5);
 }
 
 .status-card.warn {
   background: var(--status-warn-bg);
   border: 1px solid var(--status-warn-border);
   color: var(--status-warn-text);
+  box-shadow: 0 2px 12px var(--status-warn-glow), inset 0 1px 0.5px rgba(255, 255, 255, 0.5);
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background-color: currentColor;
-  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+  animation: pulseDot 2.2s infinite ease-in-out;
 }
 
-.status-message {
-  line-height: 1.35;
+@keyframes pulseDot {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.35); opacity: 0.5; }
 }
 
-/* Bottom Bar */
+/* =========================================================
+   8. Bottom Bar
+   ========================================================= */
 .bottom-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 10px;
-  border-top: 1px solid var(--border-color);
-  margin-top: 6px;
+  border-top: 1px solid var(--glass-border-subtle);
 }
 
 .bar-btn {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
+  border: 1px solid transparent;
   background: transparent;
-  border: none;
-  font-size: 12.5px;
-  font-weight: 500;
   color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px;
+  border-radius: 10px;
   cursor: pointer;
-  padding: 5px 8px;
-  border-radius: 6px;
-  transition: background 0.15s, color 0.15s;
+  transition: all 0.2s ease;
 }
 
 .bar-btn:hover {
-  background: var(--bg-capsule);
-  color: var(--text-primary);
+  background: var(--glass-capsule-hover);
+  border-color: var(--glass-border-subtle);
+  color: var(--accent-color);
+  box-shadow: var(--glass-inner-bevel), 0 2px 8px var(--accent-subtle);
 }
 
 .bar-version {
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--text-muted);
+  font-family: SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
 }
 
-/* Settings View Styles */
+/* =========================================================
+   9. Settings View: Header & Navigation
+   ========================================================= */
 .settings-header {
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 10px;
-  margin-bottom: 10px;
+  position: relative;
+  margin-bottom: 12px;
 }
 
 .back-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  border: none;
-  background: transparent;
-  font-size: 13.5px;
-  font-weight: 600;
+  background: var(--glass-capsule);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border-subtle);
   color: var(--accent-color);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 5px 10px 5px 8px;
+  border-radius: 12px;
   cursor: pointer;
-  padding: 4px 6px;
-  border-radius: 6px;
-  transition: background 0.15s;
+  transition: all 0.2s ease;
+  box-shadow: var(--glass-inner-bevel);
 }
 
 .back-btn:hover {
-  background: var(--bg-capsule);
+  background: var(--glass-capsule-hover);
+  border-color: var(--accent-color);
+  transform: translateX(-2px);
+  box-shadow: var(--glass-inner-bevel), 0 2px 10px var(--accent-glow);
 }
 
 .settings-title {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14.5px;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -441,21 +618,24 @@ input:checked + .slider:before {
   color: #22c55e;
   font-weight: 500;
   opacity: 0;
-  transition: opacity 0.2s ease-in-out;
+  transition: opacity 0.2s ease;
 }
 
 .saved-hint.show {
   opacity: 1;
 }
 
+/* =========================================================
+   10. Settings Content Scroll Area
+   ========================================================= */
 .settings-content {
-  max-height: 440px;
+  max-height: 460px;
   overflow-y: auto;
   padding-right: 4px;
 }
 
 .settings-content::-webkit-scrollbar {
-  width: 5px;
+  width: 4px;
 }
 
 .settings-content::-webkit-scrollbar-track {
@@ -463,29 +643,40 @@ input:checked + .slider:before {
 }
 
 .settings-content::-webkit-scrollbar-thumb {
-  background: var(--border-color);
+  background: var(--glass-border);
   border-radius: 4px;
 }
 
 .section-title {
-  font-size: 11.5px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   color: var(--text-muted);
-  margin: 14px 0 6px 0;
+  margin: 16px 0 8px 2px;
 }
 
+/* =========================================================
+   11. Setting Item Cards
+   ========================================================= */
 .setting-item {
-  padding: 10px 0;
-  border-bottom: 1px dashed var(--border-color);
+  background: var(--glass-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 10px;
+  box-shadow: var(--glass-inner-bevel), var(--glass-card-shadow);
+  transition: all 0.2s ease;
 }
 
-.setting-item:last-child {
-  border-bottom: none;
+.setting-item:hover {
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-inner-bevel), var(--glass-shadow);
 }
 
-.toggle-row {
+.setting-item.toggle-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -497,153 +688,132 @@ input:checked + .slider:before {
 }
 
 .setting-label {
+  font-size: 13px;
   font-weight: 600;
-  font-size: 13.5px;
   color: var(--text-primary);
+  margin-bottom: 2px;
 }
 
 .setting-desc {
   font-size: 11.5px;
   color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.help-tip {
-  margin-top: 4px;
   line-height: 1.4;
-  color: var(--text-secondary);
 }
 
-/* Palette */
+/* =========================================================
+   12. Color Palette & Zero-Clipping Halo Ring
+   ========================================================= */
 .color-picker-container {
   margin-top: 10px;
-  overflow: visible;
 }
 
+/* Generous breathing room & visible overflow prevents any leftmost clipping */
 .palette {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
+  gap: 7px;
   padding: 8px 10px;
-  margin-bottom: 8px;
   overflow: visible;
+  position: relative;
+  background: var(--glass-capsule);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 18px;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .color-chip {
-  width: 25px;
-  height: 25px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   position: relative;
-  transition: transform 0.15s ease, box-shadow 0.18s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0;
+  outline: none;
 }
 
 .color-chip:hover {
-  transform: scale(1.1);
+  transform: scale(1.18);
+  z-index: 2;
 }
 
-/* 选中态：双层光环，2.5px卡片背景留白 + 2px主题色外环，彻底避免遮挡色块本身 */
+/* Double-ring breathing halo: inner card gap + outer theme ring */
 .color-chip.active {
-  box-shadow: 0 0 0 2.5px var(--bg-card), 0 0 0 4.5px var(--accent-color);
-  transform: scale(1.04);
+  transform: scale(1.15);
+  box-shadow: 0 0 0 2.5px var(--glass-card), 0 0 0 4.5px var(--accent-color), 0 0 12px var(--accent-glow);
+  z-index: 3;
 }
 
-/* 调色盘自选圆钮 */
+/* Palette chip icon button */
 .palette-chip {
-  background: var(--bg-capsule);
-  border: 1px dashed var(--border-color);
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.palette-chip:hover {
-  background: var(--bg-capsule-hover);
-  border-color: var(--accent-color);
-}
-
-.palette-chip.active {
-  box-shadow: 0 0 0 2.5px var(--bg-card), 0 0 0 4.5px var(--accent-color);
-  border-style: solid;
-  border-color: transparent;
-  transform: scale(1.04);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(241, 245, 249, 0.7));
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .palette-chip-icon {
   font-size: 13px;
   line-height: 1;
-  pointer-events: none;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 }
 
 .palette-chip input[type="color"] {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 200%;
-  height: 200%;
   opacity: 0;
+  width: 100%;
+  height: 100%;
   cursor: pointer;
-  transform: translate(-25%, -25%);
-  margin: 0;
-  padding: 0;
-  border: none;
 }
 
 .custom-color-input-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 2px 4px 0;
+  margin-top: 10px;
+  padding: 0 2px;
 }
 
 .hex-label {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 11.5px;
   color: var(--text-muted);
-  letter-spacing: 0.5px;
 }
 
 #colorHex {
-  width: 86px;
-  background-color: var(--bg-capsule);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
+  width: 82px;
+  background: var(--glass-input);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 10px;
   padding: 4px 8px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-family: SFMono-Regular, Consolas, monospace;
   color: var(--text-primary);
-  outline: none;
   text-align: center;
-  text-transform: uppercase;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
 #colorHex:focus {
+  background: var(--glass-input-focus);
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
 }
 
-/* Live Preview */
+/* =========================================================
+   13. Live Dual-Theme Preview
+   ========================================================= */
 .preview-section {
-  margin: 12px 0;
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 10px 12px;
+  background: var(--glass-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: var(--glass-inner-bevel), var(--glass-card-shadow);
 }
 
 .preview-header {
@@ -654,68 +824,73 @@ input:checked + .slider:before {
 }
 
 .preview-title {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-primary);
 }
 
 .preview-theme-toggle {
   display: flex;
-  background-color: var(--bg-capsule);
-  border-radius: 6px;
+  background: var(--glass-capsule);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 12px;
   padding: 2px;
 }
 
 .theme-btn {
-  background: none;
   border: none;
-  padding: 3px 8px;
-  font-size: 11px;
+  background: transparent;
   color: var(--text-muted);
-  border-radius: 4px;
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .theme-btn.active {
-  background-color: var(--bg-page);
+  background: var(--glass-surface-hover);
   color: var(--text-primary);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .preview-box {
+  border-radius: 12px;
   padding: 10px 12px;
-  border-radius: 8px;
-  transition: background-color 0.2s, color 0.2s;
+  font-size: 12px;
+  line-height: 1.45;
+  transition: all 0.25s ease;
+  border: 1px solid var(--glass-border-subtle);
 }
 
 .preview-box.dark {
   background-color: #0f172a;
-  color: #cbd5e1;
+  color: #f8fafc;
 }
 
 .preview-box.light {
-  background-color: #f1f5f9;
-  color: #1e293b;
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: rgba(0, 0, 0, 0.08);
 }
 
 .preview-original {
-  font-size: 12.5px;
   opacity: 0.85;
+  margin-bottom: 4px;
+  font-size: 11.5px;
 }
 
 .preview-translation {
-  font-size: 12.5px;
   font-weight: 600;
-  color: #86a003;
-  margin-top: 4px;
-  transition: color 0.15s ease;
+  color: var(--accent-color);
+  font-size: 12px;
 }
 
-/* Sliders */
+/* =========================================================
+   14. Sliders & Timing Parameters
+   ========================================================= */
 .duration-header {
-  display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -723,26 +898,36 @@ input:checked + .slider:before {
 }
 
 .duration-badge {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11.5px;
+  font-weight: 600;
   color: var(--accent-color);
-  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
+  background: var(--accent-subtle);
   padding: 2px 7px;
-  border-radius: 6px;
+  border-radius: 8px;
+}
+
+.help-tip {
+  margin-bottom: 8px;
+  color: var(--text-muted);
+  font-size: 11px;
 }
 
 .slider-wrapper {
-  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .range-slider {
-  -webkit-appearance: none;
   width: 100%;
-  height: 6px;
-  border-radius: 3px;
-  background: var(--bg-capsule-hover);
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: rgba(148, 163, 184, 0.22);
+  border-radius: 4px;
   outline: none;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .range-slider::-webkit-slider-thumb {
@@ -752,63 +937,79 @@ input:checked + .slider:before {
   height: 18px;
   border-radius: 50%;
   background: var(--accent-color);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px var(--accent-glow), 0 2px 5px rgba(0, 0, 0, 0.2);
   cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .range-slider::-webkit-slider-thumb:hover {
   transform: scale(1.15);
+  box-shadow: 0 0 16px var(--accent-color);
 }
 
 .slider-ticks {
   display: flex;
   justify-content: space-between;
-  margin-top: 4px;
-  font-size: 10.5px;
+  font-size: 10px;
   color: var(--text-muted);
+  padding: 0 2px;
 }
 
-/* API Config Cards */
+/* =========================================================
+   15. API Configuration Cards
+   ========================================================= */
 .api-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 10px 12px;
+  background: var(--glass-card);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 12px 14px;
   margin-bottom: 10px;
+  box-shadow: var(--glass-inner-bevel), var(--glass-card-shadow);
+  transition: all 0.2s ease;
+}
+
+.api-card:hover {
+  border-color: var(--glass-border);
+  box-shadow: var(--glass-inner-bevel), var(--glass-shadow);
 }
 
 .api-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .api-title {
-  font-size: 12.5px;
-  font-weight: 700;
+  font-size: 13px;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
 .api-tag {
   font-size: 10.5px;
   font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: var(--accent-subtle);
   color: var(--accent-color);
-  background: color-mix(in srgb, var(--accent-color) 15%, transparent);
-  padding: 1px 6px;
-  border-radius: 4px;
 }
 
 .api-desc {
   font-size: 11px;
   color: var(--text-muted);
-  margin-bottom: 8px;
-  line-height: 1.35;
+  margin-bottom: 10px;
+  line-height: 1.4;
 }
 
 .input-group {
-  margin-bottom: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
 }
 
 .input-group:last-child {
@@ -816,34 +1017,33 @@ input:checked + .slider:before {
 }
 
 .input-label {
-  display: block;
-  font-size: 10.5px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 3px;
 }
 
 .api-input {
   width: 100%;
-  background-color: var(--bg-capsule);
-  border: 1px solid var(--border-color);
-  border-radius: 6px;
-  padding: 5px 8px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 11.5px;
+  background: var(--glass-input);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 10px;
+  padding: 7px 10px;
+  font-size: 12px;
   color: var(--text-primary);
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.04);
 }
 
 .api-input:focus {
+  background: var(--glass-input-focus);
   border-color: var(--accent-color);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-color) 25%, transparent);
+  box-shadow: 0 0 0 2px var(--accent-subtle);
 }
 
 .settings-footer {
   padding-top: 10px;
-  border-top: 1px solid var(--border-color);
+  border-top: 1px solid var(--glass-border-subtle);
   margin-top: 10px;
   font-size: 11.5px;
   color: var(--text-muted);
