@@ -26,6 +26,9 @@ Here is a demo of using the latest [HoldTranslate Chrome extension](https://gith
 ### 2. Dark Mode & Nested Video Titles (e.g. YouTube Video Titles)
 ![Dark Mode Demo](assets/demo-dark.png)
 
+### 3. YouTube Native Video Subtitle Translation (Zero-Latency Bilingual Display)
+![YouTube Subtitles Demo](assets/demo-subtitles.png)
+
 ## Overview
 
 This project consists of three core pillars:
@@ -40,7 +43,8 @@ This project consists of three core pillars:
 HoldTranslate-plugin-for-chrome/
 ├── assets/             # Demo screenshots and previews
 │   ├── demo-light.png
-│   └── demo-dark.png
+│   ├── demo-dark.png
+│   └── demo-subtitles.png
 ├── icons/              # Extension icons (16x16, 48x48, 128x128)
 ├── manifest.json       # Chrome Manifest V3 configuration
 ├── background.js       # Multi-service worker (Google, Microsoft, DeepSeek, Custom LLM)

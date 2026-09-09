@@ -20,3 +20,13 @@ yarn-error.log*
 *.bak
 *.zip
 *.webm
+
+# Frame extraction scratch files
+extract_frames.js
+extracted_frames/
+extracted_frames_cv/
+video-player.html
+
+# Promotional cover designs
+assets/cover*
+

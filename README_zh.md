@@ -26,6 +26,9 @@
 ### 2. 深色模式与嵌套标题适配（如 YouTube 视频标题）
 ![深色模式演示](assets/demo-dark.png)
 
+### 3. YouTube 原生视频字幕实时翻译（0 延迟双语对照）
+![YouTube 视频字幕演示](assets/demo-subtitles.png)
+
 ## 项目概览 (Overview)
 
 本项目由三大核心模块构成：
@@ -40,7 +43,8 @@
 HoldTranslate-plugin-for-chrome/
 ├── assets/             # 效果演示截图与预览素材
 │   ├── demo-light.png
-│   └── demo-dark.png
+│   ├── demo-dark.png
+│   └── demo-subtitles.png
 ├── icons/              # 扩展图标 (16x16, 48x48, 128x128)
 ├── manifest.json       # Chrome 扩展配置文件 (Manifest V3)
 ├── background.js       # 多服务后台 Service Worker (Google, 微软, DeepSeek, 自定义 LLM)
