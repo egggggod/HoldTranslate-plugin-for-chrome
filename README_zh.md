@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.6.1-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.6.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.6.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.0/holdtranslate-chrome-extension-v1.6.0.zip) (v1.6.0)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.1/holdtranslate-chrome-extension-v1.6.1.zip) (v1.6.1)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -59,11 +59,11 @@ HoldTranslate-plugin-for-chrome/
 
 ## 浏览器扩展特性 (Features)
 
-- 🎬 **实时视频字幕智能翻译（YouTube 与 X 优先适配）**：智能监听并拦截 YouTube（`.caption-window`）及 X/Twitter（HTML5 `textTracks` 与播放器容器）字幕流。提供**双语对照**（上方原文字幕 + 下方自定义强调色译文）与**仅译文**（纯译文展示）两种显示模式自由切换；内置 600 条高性能 LRU 高速缓存，连续播放免重复调用 API。
-- 🪟 **Apple 16px 弧形倒角四角美学 (16px Curved Corners)**：弹出窗口四角全面升级为苹果 VisionOS / iOS 标准的 **16px 弧形倒角**，搭配 1px 晶莹微光边框与环境高光微阴影，视觉体验温润饱满。
+- 🎬 **YouTube 原生字幕无缝贴合双语/单语翻译引擎**：重构并彻底打通后台大小写消息通道与 YouTube 原生字幕 Flex 容器弹性展开；紧贴原生黑曜石字幕气泡下方，完美呈现高对比强调色译文；默认开箱即用（`true`），支持双语对照与仅译文自由切换，配备 600 条 LRU 高速缓存。
+- 🪟 **Apple VisionOS 22px 悬浮玻璃岛四角美学 (22px Floating Glass Island)**：彻底解决 Windows 浏览器原生方角裁切，窗口预留 6px 留白间隙与外扩散立体阴影，主体升级为饱满温润的 **22px 苹果大弧度**，晶莹微光双层轮廓在任何操作系统下均清晰独立浮现。
 - 📱 **Apple iOS 紧凑平滑滑动子页面架构（选择语言零变长、恒定 225px）**：彻底推翻向下展开菜单拉长界面的旧逻辑，采用苹果 iOS 设置级水平推拉子页面架构（`.show-subpage #subpageView`）。无论选择源语言、目标语言还是翻译服务，弹窗开窗高度**绝对严格锁定在 225px**，彻底消除界面抖动与上下拉长变形。
 - ⚡ **120ms 触觉确认平滑回弹流**：点击任意语言或服务选项，立即点亮精致绿勾（`✓`）与柔和胶囊底色提供即时触觉确认，随后经 120ms 平滑滑动自动返回主面板；左上角 `← 返回` 胶囊按钮与键盘 ESC 键随时可手动返回。
-- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.6.0]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
+- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.6.1]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
 - 🌐 **极简纯英服务标识 (Minimal English Services)**：主界面翻译服务全面取消冗余中文字样，统一采用标准英文品牌名称（**Google Translate**、**Microsoft Translator**、**DeepSeek API**、**Custom API**），语言选择器保留地道中文以符合直觉。
 - 🎛️ **去冗余纯净设置体系**：偏好设置内新增「🎬 视频字幕」专属配置卡片，包含总开关与 Apple 风格分段选择器（`[双语对照]` / `[仅译文]`），快捷主面板维持 225px 黄金高度不变。
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
@@ -74,8 +74,8 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.6.0）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.6.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.0/holdtranslate-chrome-extension-v1.6.0.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.6.1）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.6.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.1/holdtranslate-chrome-extension-v1.6.1.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；
@@ -107,10 +107,12 @@ HoldTranslate-plugin-for-chrome/
 
 - **Release 发布页面**：请访问 **[GitHub Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** 获取各版本的更新日志（Changelog）与编译好的打包文件。
 - **版本规范**：严格遵循 [语义化版本 (SemVer)](https://semver.org/lang/zh-CN/) 规范（`vMAJOR.MINOR.PATCH`）。
-  - 当前版本：`v1.6.0`
+  - 当前版本：`v1.6.1`
+  - `v1.6.1` 更新重点：
+    - **YouTube 原生字幕无缝贴合翻译**：修复消息通信断连与容器截断 Bug，采用 Flex 纵向自适应堆叠，高亮强调色译文紧贴在原生字幕正下方，默认开箱即用；
+    - **22px 悬浮玻璃岛美学**：采用 6px 留白间隙与 22px 饱满大圆角，彻底消除 Windows 浏览器外框方角裁切，悬浮质感呼之欲出。
   - `v1.6.0` 更新重点：
     - **实时视频字幕智能翻译引擎**：重磅上线 YouTube 与 X (Twitter) 视频字幕实时翻译，支持「双语对照」（上方原文+下方强调色译文）与「仅译文」自由切换；
-    - **Apple 16px 弧形倒角美学**：弹窗外框全面升级为 16px VisionOS 弧形圆角与无边框阴影，视觉质感浑然天成；
     - **设置面板专属视频字幕卡片**：在偏好设置提供独立总开关与 Apple 风格分段模式选择器，快捷主面板维持 225px 黄金高度；
     - **内置 600 条 LRU 高速缓存**：避免视频播放中反复对相同字幕调用 API，兼顾极速响应与配额保护。
   - `v1.5.0` 更新重点：

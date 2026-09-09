@@ -18,9 +18,17 @@
     showRing: true,
     textColor: '#86a003',        // Default: screenshot olive green
     translateService: 'google',
-    videoSubtitlesEnabled: false,
+    videoSubtitlesEnabled: true,
     subtitleMode: 'bilingual'     // 'bilingual' | 'monolingual'
   };
+
+  // Video Subtitles Engine State
+  const subtitleCache = new Map();
+  const MAX_SUB_CACHE = 600;
+  const pendingSubRequests = new Set();
+  let ytCaptionObserver = null;
+  let universalVideoObserver = null;
+  let activeTrackListeners = new WeakSet();
 
   // Check if extension context is still valid
   function isExtensionValid() {
@@ -72,7 +80,7 @@
         if (res.showRing !== undefined) config.showRing = res.showRing;
         if (res.textColor) config.textColor = res.textColor;
         if (res.translateService) config.translateService = res.translateService;
-        if (res.videoSubtitlesEnabled !== undefined) config.videoSubtitlesEnabled = res.videoSubtitlesEnabled;
+        config.videoSubtitlesEnabled = res.videoSubtitlesEnabled !== undefined ? Boolean(res.videoSubtitlesEnabled) : true;
         if (res.subtitleMode !== undefined) config.subtitleMode = res.subtitleMode;
 
         if (config.videoSubtitlesEnabled && typeof initVideoSubtitlesEngine === 'function') {
@@ -843,11 +851,6 @@
   // =========================================================
   // Video Subtitles Translation Engine (YouTube & X / Universal)
   // =========================================================
-  const subtitleCache = new Map();
-  const MAX_SUB_CACHE = 600;
-  let ytCaptionObserver = null;
-  let universalVideoInterval = null;
-  let activeTrackListeners = new WeakSet();
 
   function getCachedSub(text) {
     return subtitleCache.get(text.trim());
@@ -869,28 +872,43 @@
       callback(cached);
       return;
     }
+    if (pendingSubRequests.has(text)) return;
     if (!isExtensionValid()) return;
+
+    pendingSubRequests.add(text);
     try {
       chrome.runtime.sendMessage({
-        action: 'translate',
+        action: 'TRANSLATE',
         text: text,
-        sourceLang: config.sourceLang,
+        sourceLang: config.sourceLang || 'auto',
         targetLang: config.targetLang,
-        service: config.translateService
+        service: config.translateService || 'google'
       }, (res) => {
-        if (chrome.runtime.lastError || !res || !res.success) return;
+        pendingSubRequests.delete(text);
+        if (chrome.runtime.lastError || !res || !res.success || !res.translatedText) return;
         setCachedSub(text, res.translatedText);
         callback(res.translatedText);
       });
-    } catch (e) {}
+    } catch (e) {
+      pendingSubRequests.delete(text);
+    }
   }
 
   // --- YouTube Subtitles Handler ---
   function handleYouTubeCaptions(captionContainer) {
     if (!captionContainer) return;
 
-    const windows = captionContainer.querySelectorAll('.caption-window');
+    const windows = (captionContainer.matches && captionContainer.matches('.caption-window'))
+      ? [captionContainer]
+      : captionContainer.querySelectorAll('.caption-window');
     windows.forEach((win) => {
+      // Override YouTube inline styles: enable flex stacking and visible overflow
+      win.style.setProperty('overflow', 'visible', 'important');
+      win.style.setProperty('height', 'auto', 'important');
+      win.style.setProperty('display', 'flex', 'important');
+      win.style.setProperty('flex-direction', 'column', 'important');
+      win.style.setProperty('align-items', 'center', 'important');
+
       const segments = win.querySelectorAll('.ytp-caption-segment');
       if (!segments.length) return;
 
@@ -905,17 +923,35 @@
         win.appendChild(subEl);
       }
 
-      if (subEl.dataset.originalText === fullOriginalText) {
+      if (subEl.dataset.translatedText && subEl.dataset.originalText === fullOriginalText) {
+        if (subEl.textContent !== subEl.dataset.translatedText) {
+          subEl.textContent = subEl.dataset.translatedText;
+        }
         applyYouTubeDisplayMode(win, segments, subEl);
         return;
       }
 
-      subEl.dataset.originalText = fullOriginalText;
+      const cached = getCachedSub(fullOriginalText);
+      if (cached) {
+        subEl.dataset.originalText = fullOriginalText;
+        subEl.dataset.translatedText = cached;
+        if (subEl.textContent !== cached) {
+          subEl.textContent = cached;
+        }
+        applyYouTubeDisplayMode(win, segments, subEl);
+        return;
+      }
 
       translateSubtitleText(fullOriginalText, (translatedText) => {
-        if (subEl.dataset.originalText !== fullOriginalText) return;
-        subEl.textContent = translatedText;
-        applyYouTubeDisplayMode(win, segments, subEl);
+        const currentSegments = win.querySelectorAll('.ytp-caption-segment');
+        const currentFull = Array.from(currentSegments).map(s => s.textContent).join(' ').trim();
+        if (currentFull !== fullOriginalText) return;
+        subEl.dataset.originalText = fullOriginalText;
+        subEl.dataset.translatedText = translatedText;
+        if (subEl.textContent !== translatedText) {
+          subEl.textContent = translatedText;
+        }
+        applyYouTubeDisplayMode(win, currentSegments, subEl);
       });
     });
   }
@@ -923,33 +959,53 @@
   function applyYouTubeDisplayMode(win, segments, subEl) {
     const isMonolingual = config.subtitleMode === 'monolingual';
     segments.forEach(s => {
-      s.style.display = isMonolingual ? 'none' : '';
+      s.style.setProperty('display', isMonolingual ? 'none' : '', 'important');
     });
-    if (subEl) {
-      subEl.style.display = '';
+    const capText = win.querySelector('.captions-text');
+    if (capText) {
+      capText.style.setProperty('display', isMonolingual ? 'none' : '', 'important');
+    }
+    if (subEl && subEl.textContent) {
+      subEl.style.setProperty('display', 'block', 'important');
       subEl.style.setProperty('color', config.textColor, 'important');
     }
   }
 
   function startYouTubeObserver() {
-    if (ytCaptionObserver) return;
     const checkTarget = () => {
       const container = document.querySelector('.ytp-caption-window-container') ||
                         document.querySelector('#movie_player') ||
                         document.querySelector('.html5-video-player');
       if (container) {
-        ytCaptionObserver = new MutationObserver(() => {
-          if (!config.videoSubtitlesEnabled) return;
-          const capContainer = document.querySelector('.ytp-caption-window-container') || container;
-          handleYouTubeCaptions(capContainer);
-        });
-        ytCaptionObserver.observe(container, { childList: true, subtree: true, characterData: true });
+        if (!ytCaptionObserver) {
+          ytCaptionObserver = new MutationObserver((mutations) => {
+            if (!config.videoSubtitlesEnabled) return;
+            const hasExternalMutation = mutations.some(m => {
+              const target = m.target;
+              if (target && target.nodeType === 1 && target.classList && target.classList.contains('holdtranslate-yt-sub')) return false;
+              if (target && target.parentElement && target.parentElement.classList && target.parentElement.classList.contains('holdtranslate-yt-sub')) return false;
+              return true;
+            });
+            if (!hasExternalMutation) return;
+            const capContainer = document.querySelector('.ytp-caption-window-container') || container;
+            handleYouTubeCaptions(capContainer);
+          });
+          ytCaptionObserver.observe(container, { childList: true, subtree: true, characterData: true });
+        }
         handleYouTubeCaptions(container);
       } else {
         setTimeout(checkTarget, 1000);
       }
     };
+
     checkTarget();
+
+    // Recheck on SPA page navigation or fullscreen changes
+    if (!window.__HOLD_TRANSLATE_YT_HOOKED__) {
+      window.__HOLD_TRANSLATE_YT_HOOKED__ = true;
+      window.addEventListener('yt-navigate-finish', () => setTimeout(checkTarget, 500), { passive: true });
+      window.addEventListener('fullscreenchange', () => setTimeout(checkTarget, 300), { passive: true });
+    }
   }
 
   // --- X (Twitter) & Universal HTML5 Video Subtitles Handler ---
@@ -1102,8 +1158,12 @@
 
   function initVideoSubtitlesEngine() {
     startYouTubeObserver();
-    if (!universalVideoInterval) {
-      universalVideoInterval = setInterval(handleGenericVideoCaptions, 800);
+    if (!universalVideoObserver && document.body) {
+      universalVideoObserver = new MutationObserver(() => {
+        if (!config.videoSubtitlesEnabled) return;
+        handleGenericVideoCaptions();
+      });
+      universalVideoObserver.observe(document.body, { childList: true, subtree: true });
     }
     handleGenericVideoCaptions();
   }
@@ -1113,9 +1173,9 @@
       ytCaptionObserver.disconnect();
       ytCaptionObserver = null;
     }
-    if (universalVideoInterval) {
-      clearInterval(universalVideoInterval);
-      universalVideoInterval = null;
+    if (universalVideoObserver) {
+      universalVideoObserver.disconnect();
+      universalVideoObserver = null;
     }
     document.querySelectorAll('.holdtranslate-yt-sub').forEach(el => el.remove());
     document.querySelectorAll('.holdtranslate-video-subtitle-capsule').forEach(el => el.remove());

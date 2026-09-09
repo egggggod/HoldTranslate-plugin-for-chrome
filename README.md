@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.6.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.6.1-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.6.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.6.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.0/holdtranslate-chrome-extension-v1.6.0.zip) (click to download v1.6.0) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.1/holdtranslate-chrome-extension-v1.6.1.zip) (click to download v1.6.1) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -63,11 +63,11 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### Features
 
-- 🎬 **Real-Time Video Subtitle Translation (YouTube & X Priority)**: Intelligent caption interceptor and renderer for YouTube (`.caption-window`) and X/Twitter (HTML5 `textTracks` & video player containers). Features dual display modes (**Bilingual Subtitles** with original text + translated subtitles, or **Monolingual Subtitles** showing pure translated text). Includes high-performance LRU memory caching to eliminate duplicate API requests.
-- 🪟 **16px Apple Curved Corner Window Aesthetics**: Upgraded popup window geometry to Apple VisionOS / iOS standard **16px corner curvature** (`border-radius: 16px`) with 1px glass border reflections and subtle depth drop shadows.
+- 🎬 **YouTube Native Subtitle Seamless Translation Engine**: Resolved background messaging casing mismatch and YouTube `.caption-window` flex stacking. Renders translated subtitles right below the native obsidian subtitle capsule in user-defined accent color; enabled by default (`true`) with both bilingual and monolingual modes, backed by 600-entry LRU cache.
+- 🪟 **Apple VisionOS 22px Floating Glass Island Aesthetics**: Completely eliminates Windows Chrome extension straight-edge clipping via 6px surrounding breathing margin and 3D specular depth shadow. Features 22px curved squircle corners that float gracefully across all operating systems.
 - 📱 **Apple iOS Sliding Subpage Architecture (Zero Height Lengthening)**: Implemented an Apple iOS Settings-grade sliding subpage architecture for language and translation service selection. The popup window height **strictly remains locked at 225px** without any downward stretching, jitter, or overflow issues.
 - ⚡ **Tactile 120ms Auto-Return Flow**: Selecting an option immediately displays an energetic green checkmark (`✓`) with instant tactile confirmation, then smoothly auto-slides back to the Quick View after 120ms. Manual navigation via the `← 返回` button and Escape key is always available.
-- 🍏 **Apple 2025 Floating Island Bar & Specular Sheen**: Reconstructed the bottom bar into an Apple WWDC25 June 2025 unified floating crystal island (`.floating-island-bar`) combining `[⚙️ Settings]`, `[● 就绪 · v1.6.0]`, and `[↗ Test Page]`. Features 115° specular sheen sweeps on hover and `scale(0.97)` tactile press indentation physics.
+- 🍏 **Apple 2025 Floating Island Bar & Specular Sheen**: Reconstructed the bottom bar into an Apple WWDC25 June 2025 unified floating crystal island (`.floating-island-bar`) combining `[⚙️ Settings]`, `[● 就绪 · v1.6.1]`, and `[↗ Test Page]`. Features 115° specular sheen sweeps on hover and `scale(0.97)` tactile press indentation physics.
 - 🌐 **Minimalist Multi-Engine Architecture**: Clean English naming across all services (**Google Translate**, **Microsoft Translator**, **DeepSeek API**, and **Custom API**) while preserving localized Chinese for intuitive language selection.
 - 🎛️ **Clean & Decluttered Settings Hierarchy**: Dedicated "🎬 视频字幕" configuration card with master switch and Apple-style segmented control (`[双语对照]` / `[仅译文]`), keeping Quick View locked at 225px.
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
@@ -78,8 +78,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.6.0)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.6.0.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.0/holdtranslate-chrome-extension-v1.6.0.zip))
+1. **Manual Installation (Recommended - latest v1.6.1)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.6.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.1/holdtranslate-chrome-extension-v1.6.1.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -112,10 +112,12 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.6.0`
+  - Current Version: `v1.6.1`
+  - `v1.6.1`:
+    - **Seamless YouTube Native Subtitle Translation**: Repaired communication casing mismatch and overflow clipping bugs. Flexbox vertical column layout ensures translated subtitles stack perfectly beneath the native subtitle bubble; active out-of-the-box (`true`);
+    - **22px Floating Glass Island Aesthetics**: Added 6px surrounding margin with 22px curved squircle border-radius, fully eliminating square clipping on Windows Chrome.
   - `v1.6.0`:
     - **Real-Time Video Subtitle Translation Engine**: Added full support for YouTube and X (Twitter) video subtitle translation, with selectable **Bilingual mode** (original on top + translated below) and **Monolingual mode** (pure translated subtitle);
-    - **Apple 16px Curved Window Aesthetics**: Popup window four corners upgraded to 16px curved radius with glass border reflections and subtle depth shadows;
     - **Dedicated Settings Subtitle Card**: Integrated master subtitle switch and Apple-style segmented mode control in Settings, keeping Quick View locked at 225px;
     - **High-Performance LRU Subtitle Cache**: Built-in 600-entry in-memory cache to prevent duplicate translation calls during continuous playback.
   - `v1.5.0`:

@@ -108,20 +108,32 @@
 /* =========================================================
    HoldTranslate Video Subtitle Styles (YouTube & X / HTML5)
    ========================================================= */
+.caption-window,
+.ytp-caption-window-bottom,
+.ytp-caption-window-rollup {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  overflow: visible !important;
+  height: auto !important;
+}
+
 .holdtranslate-yt-sub {
   display: block !important;
   font-weight: 600 !important;
-  text-shadow: 0 0 4px rgba(0, 0, 0, 0.95), 1px 1px 2px rgba(0, 0, 0, 0.95) !important;
-  background: rgba(10, 10, 10, 0.78) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  padding: 3px 10px !important;
-  border-radius: 6px !important;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 1px 1px 2px rgba(0, 0, 0, 0.95) !important;
+  background: rgba(8, 8, 8, 0.78) !important;
+  backdrop-filter: blur(4px) !important;
+  -webkit-backdrop-filter: blur(4px) !important;
+  padding: 2px 8px !important;
+  border-radius: 4px !important;
   margin-top: 4px !important;
   pointer-events: none !important;
   white-space: pre-wrap !important;
   line-height: 1.35 !important;
   text-align: center !important;
+  box-sizing: border-box !important;
+  max-width: 100% !important;
   transition: color 0.2s ease !important;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif !important;
 }

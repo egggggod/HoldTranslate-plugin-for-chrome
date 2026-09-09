@@ -528,8 +528,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (enabledSwitch) enabledSwitch.checked = isEnabled;
       if (quickEnabledSwitch) quickEnabledSwitch.checked = isEnabled;
 
-      // Video Subtitles
-      const isVideoSubtitles = res.videoSubtitlesEnabled !== undefined ? res.videoSubtitlesEnabled : false;
+      // Video Subtitles (default true for out-of-the-box readiness)
+      const isVideoSubtitles = res.videoSubtitlesEnabled !== undefined ? res.videoSubtitlesEnabled : true;
       if (videoSubtitlesSwitch) videoSubtitlesSwitch.checked = isVideoSubtitles;
 
       const currentSubMode = res.subtitleMode || 'bilingual';

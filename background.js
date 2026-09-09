@@ -444,7 +444,8 @@ async function translateText(text, options = {}) {
 
 // Listen for messages from content scripts
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'TRANSLATE') {
+  const action = (request && request.action) ? String(request.action).toUpperCase() : '';
+  if (action === 'TRANSLATE') {
     translateText(request.text, {
       service: request.service || 'google',
       sourceLang: request.sourceLang,
