@@ -113,78 +113,9 @@ Once installed, just:
 - **Multi-Engine Power**: Choose fast free web translation (Google/Microsoft) or cutting-edge LLM reasoning translation (DeepSeek/GPT-4o).
 - **Privacy & Lightweight**: Pure vanilla JavaScript without tracking, external dependencies, or telemetry.
 
-## Release Page & Versioning
+## Changelog
 
-- **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
-- **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.7.0`
-  - `v1.7.0`:
-    - **Zero-Latency Subtitle Prefetching Engine**: Stream-prefetches YouTube TimedText caption tracks 35s ahead of playback into cache, eliminating timing mismatch between original and translated subtitles with 0ms pop-in;
-    - **1:1 Dynamic Typography Mirroring**: Extracts computed font-size, font-family, font-weight, line-height, and letter-spacing directly from native subtitle elements;
-    - **Edge-to-Edge Native Window Integration**: Native edge-to-edge layout eliminates square background corners while retaining VisionOS frosted glass cards.
-  - `v1.6.2`:
-    - **Remove Outer Square Box & Unify Aesthetic**: Eliminated redundant 6px outer margin and 352px container;
-    - **Restore Full Natural Settings Height (No Shortening)**: Removed rigid `body { height: 225px }` clamp, allowing `#settingsView` to expand naturally to full height.
-  - `v1.6.1`:
-    - **Seamless YouTube Native Subtitle Translation**: Repaired communication casing mismatch and overflow clipping bugs. Flexbox vertical column layout ensures translated subtitles stack perfectly beneath the native subtitle bubble; active out-of-the-box (`true`).
-  - `v1.6.0`:
-    - **Real-Time Video Subtitle Translation Engine**: Added full support for YouTube and X (Twitter) video subtitle translation, with selectable **Bilingual mode** (original on top + translated below) and **Monolingual mode** (pure translated subtitle);
-    - **Dedicated Settings Subtitle Card**: Integrated master subtitle switch and Apple-style segmented mode control in Settings, keeping Quick View locked at 225px;
-    - **High-Performance LRU Subtitle Cache**: Built-in 600-entry in-memory cache to prevent duplicate translation calls during continuous playback.
-  - `v1.5.0`:
-    - **Zero-Height-Lengthening Architecture**: Implemented Apple iOS Settings-grade horizontal sliding subpage (`#subpageView`) for selecting Source Language, Target Language, and Translation Services. The popup height strictly remains locked at 225px with zero vertical expansion or window jitter;
-    - **Tactile 120ms Auto-Return**: Instant green checkmark (`✓`) confirmation upon item selection with smooth 120ms automatic slide-back to Quick View, alongside manual return via top-left button and Escape key;
-    - **VisionOS Frosted Subpages**: Designed frosted glass list items with smooth hover transitions, subtle micro scrollbars, and full theme synchronization;
-    - **100% Backward Compatibility**: Preserved all original select and menu DOM IDs for seamless integration with existing automated testing suites.
-  - `v1.4.4`:
-    - Resolved language selection popover clipping bug caused by parent card overflow restriction;
-    - Preserved high-transparency Apple 2025 VisionOS Liquid Glass aesthetic with anchored left/right popovers, micro-spring transitions, and active checkmarks (`✓`);
-    - Maintained compact ~225px zero-whitespace window at rest with elastic morphing to 375px when dropdowns are opened.
-  - `v1.4.3`:
-    - Recreated Apple WWDC25 June 2025 software redesign language: unified floating island pill bar (`.floating-island-bar`), 115° specular sheen sweep on hover, and 0.97 tactile press indentation.
-    - Completely eliminated blank whitespace under "就绪", reducing closed window height from 568px to 225px.
-    - Added elastic popover expansion allowing floating dropdowns to display without any bottom boundary clipping.
-    - Verified with DOM (44/44 IDs) and E2E translation automated test suites.
-  - `v1.4.2`:
-    - Cleaned up main interface service naming to standard English (`Google Translate`, `Microsoft Translator`, `DeepSeek API`, `Custom API`).
-    - Implemented Apple-grade physics: iOS view transitions, spring elongation switches (`cubic-bezier(0.34, 1.56, 0.64, 1)`), spring-popped active color chips, and tactile range slider thumb scaling.
-    - Docked status badge cleanly into the bottom bar center (`● 就绪 · v1.4.2`), eliminating bottom whitespace and shrinking popup height to an ultra-compact ~220px.
-    - Minimalist settings styling: removed emoji icons from section headers, removed verbose introduction text from LLM cards, retaining clean demonstration placeholders.
-  - `v1.4.1`:
-    - Replaced clunky OS native `<select>` dropdowns with custom Apple VisionOS Liquid Glass floating popovers for both translation service and language selectors.
-    - Designed ultra-clean minimalist option layouts: colorful official brand logos (Google, Microsoft, DeepSeek, Custom API) + soft green checkmark indicators (`✓`).
-    - Added backdrop-blur (28px) frosted glass depth, specular edge highlights, smooth scale-in spring animations, and automatic outside/Escape dismiss.
-    - Full bidirectional synchronization between custom popovers and hidden `<select>` elements, preserving 100% backward compatibility and test coverage.
-  - `v1.4.0`:
-    - Implemented Apple VisionOS inspired Liquid Glass UI system with high frosted transparency (20%~38% card opacity) and specular bevel highlights.
-    - Dynamic multi-color ambient fluid mesh glow behind the frosted glass with real-time theme color refraction.
-    - Added dedicated Liquid Glass toggle switch in Settings (Visual Appearance) with instant fallback to classic crisp solid card mode.
-    - Graphicalized and decluttered Quick View: pure icon bottom bar (⚙️ Settings + ↗ Test Page), glowing micro-pill status indicator (`● 就绪`), and section header icons (`✨/⏱️/🤖`).
-  - `v1.3.0`:
-    - Added Microsoft Translator and mainstream LLM API support (DeepSeek + Custom OpenAI-compatible).
-    - Quick View engine switcher dropdown capsule.
-    - Optimized settings layout to Visual-First hierarchy (Switch → Palette & Preview → Gestures → API Config).
-    - Fixed palette container padding and overflow to completely eliminate leftmost chip halo clipping.
-    - Streamlined intent confirmation delay explanation.
-    - Removed mutual Chinese translation toggle and automatically skip native Chinese on Chinese pages.
-  - `v1.2.0`:
-    - Added circular palette button (🎨) for arbitrary custom font color picking.
-    - Added breathing halo selection ring with card background spacing to prevent clipping or obscuring color chips.
-    - Synchronized chosen translation color to all colored plugin UI elements (switches, buttons, slider thumbs, hover states).
-  - `v1.1.0`:
-    - Modern dual-view popup redesign: minimalist quick dashboard + smooth in-popup navigation to full settings.
-    - 1-click dual-capsule language selection bar (`[Source] ⇄ [Target]`) with instant language swapping.
-    - Added service bar and real-time tab permission / readiness status detection.
-    - Full system-adaptive light and dark visual themes.
-  - `v1.0.2`:
-    - Fixed HTML5 `dragstart` handling on hyperlinks so links can be slid/dragged open smoothly.
-    - Added graceful drag cancellation: instantly aborts pending translation timer and hides progress ring upon drag initiation.
-    - `v1.0.1`:
-    - Resolved stretched-link overlay issue on BBC and news cards.
-    - Fixed horizontal flex container translation placement.
-    - Strengthened inline full-width formatting (`width: 100% !important; clear: both !important;`).
-  - `v1.0.0`: Initial release with 1:1 typography mirroring, YouTube deep extraction, custom color palette, and anti-misclick sliders.
-  - To upgrade an existing installation: simply download the latest release zip, replace the folder contents, and click the refresh button (⟳) in `chrome://extensions/`.
+For the complete release history and detailed changelog, please refer to **[CHANGELOG.md](CHANGELOG.md)** or visit our **[GitHub Releases](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** page.
 
 ## Contributing
 
@@ -197,3 +128,8 @@ Contributions are warmly welcome! Feel free to:
 ## License
 
 MIT License - feel free to use and modify as needed.
+
+## Acknowledgments
+
+Special thanks to Gemini 3.8 Flash.
+
