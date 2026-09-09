@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.6.1-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.6.2-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.6.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.6.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.1/holdtranslate-chrome-extension-v1.6.1.zip) (click to download v1.6.1) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.2/holdtranslate-chrome-extension-v1.6.2.zip) (click to download v1.6.2) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -78,8 +78,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.6.1)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.6.1.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.1/holdtranslate-chrome-extension-v1.6.1.zip))
+1. **Manual Installation (Recommended - latest v1.6.2)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.6.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.6.2/holdtranslate-chrome-extension-v1.6.2.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)
@@ -112,10 +112,12 @@ Once installed, just:
 
 - **Releases**: Check our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** for all version changelogs and downloadable `.zip` bundles.
 - **Versioning Strategy**: This project follows [Semantic Versioning](https://semver.org/) (`vMAJOR.MINOR.PATCH`).
-  - Current Version: `v1.6.1`
+  - Current Version: `v1.6.2`
+  - `v1.6.2`:
+    - **Remove Outer Square Box & Unify Aesthetic**: Eliminated redundant 6px outer margin and 352px container. The popup seamlessly fills the browser popup window edge-to-edge with 16px curved corners and no visible white/dark outer boundary frame;
+    - **Restore Full Natural Settings Height (No Shortening)**: Removed rigid `body { height: 225px }` clamp, allowing `#settingsView` to expand to its full natural height (up to 460px scrollable content) with all setting items (API keys, video subtitle mode, color picker, sliders) completely unhindered and fully visible, while keeping Quick View and Subpages locked at 225px.
   - `v1.6.1`:
-    - **Seamless YouTube Native Subtitle Translation**: Repaired communication casing mismatch and overflow clipping bugs. Flexbox vertical column layout ensures translated subtitles stack perfectly beneath the native subtitle bubble; active out-of-the-box (`true`);
-    - **22px Floating Glass Island Aesthetics**: Added 6px surrounding margin with 22px curved squircle border-radius, fully eliminating square clipping on Windows Chrome.
+    - **Seamless YouTube Native Subtitle Translation**: Repaired communication casing mismatch and overflow clipping bugs. Flexbox vertical column layout ensures translated subtitles stack perfectly beneath the native subtitle bubble; active out-of-the-box (`true`).
   - `v1.6.0`:
     - **Real-Time Video Subtitle Translation Engine**: Added full support for YouTube and X (Twitter) video subtitle translation, with selectable **Bilingual mode** (original on top + translated below) and **Monolingual mode** (pure translated subtitle);
     - **Dedicated Settings Subtitle Card**: Integrated master subtitle switch and Apple-style segmented mode control in Settings, keeping Quick View locked at 225px;

@@ -88,27 +88,26 @@
 }
 
 html {
-  width: 352px;
-  height: 237px;
+  width: 340px;
+  height: auto;
+  min-height: auto;
   margin: 0;
   padding: 0;
   overflow: hidden;
   background: transparent;
+  border-radius: 16px;
 }
 
 body {
   width: 340px;
-  height: 225px;
-  margin: 6px;
+  height: auto;
+  min-height: auto;
+  margin: 0;
   padding: 0;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 16px;
   border: none;
-  box-shadow: 
-    0 12px 32px -4px rgba(0, 0, 0, 0.35),
-    0 4px 12px rgba(0, 0, 0, 0.2),
-    0 0 0 1px var(--glass-border),
-    inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 36px -4px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--glass-border), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
   background-color: var(--bg-canvas);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -131,7 +130,7 @@ body {
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 16px;
 }
 
 .fluid-orb {
@@ -193,7 +192,7 @@ body {
   position: relative;
   width: 100%;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 16px;
   z-index: 1;
   transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1);
 }
