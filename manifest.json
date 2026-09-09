@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "HoldTranslate - 长按鼠标左键翻译/还原",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "长按鼠标左键在原文正下方插入双语对照翻译，再次长按一键还原；实时支持 YouTube 与 X 视频双语/单语字幕翻译；内置 Google、微软、DeepSeek 及自定义大模型",
   "permissions": [
     "storage"

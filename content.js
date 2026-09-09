@@ -29,6 +29,9 @@
   let ytCaptionObserver = null;
   let universalVideoObserver = null;
   let activeTrackListeners = new WeakSet();
+  let ytTimedTextCues = [];
+  let ytCurrentTrackUrl = null;
+  let ytPrefetchInterval = null;
 
   // Check if extension context is still valid
   function isExtensionValid() {
@@ -895,6 +898,25 @@
   }
 
   // --- YouTube Subtitles Handler ---
+  function mirrorSubtitleTypography(refSegment, targetEl) {
+    if (!refSegment || !targetEl) return;
+    try {
+      const comp = window.getComputedStyle(refSegment);
+      if (comp) {
+        if (comp.fontFamily) targetEl.style.setProperty('font-family', comp.fontFamily, 'important');
+        if (comp.fontSize) targetEl.style.setProperty('font-size', comp.fontSize, 'important');
+        if (comp.fontWeight) targetEl.style.setProperty('font-weight', comp.fontWeight, 'important');
+        if (comp.lineHeight && comp.lineHeight !== 'normal') {
+          targetEl.style.setProperty('line-height', comp.lineHeight, 'important');
+        } else {
+          targetEl.style.setProperty('line-height', '1.35', 'important');
+        }
+        if (comp.letterSpacing) targetEl.style.setProperty('letter-spacing', comp.letterSpacing, 'important');
+        if (comp.fontStyle) targetEl.style.setProperty('font-style', comp.fontStyle, 'important');
+      }
+    } catch (e) {}
+  }
+
   function handleYouTubeCaptions(captionContainer) {
     if (!captionContainer) return;
 
@@ -922,6 +944,9 @@
         subEl.style.setProperty('color', config.textColor, 'important');
         win.appendChild(subEl);
       }
+
+      // 1:1 Mirror typography from original native segment
+      mirrorSubtitleTypography(segments[0], subEl);
 
       if (subEl.dataset.translatedText && subEl.dataset.originalText === fullOriginalText) {
         if (subEl.textContent !== subEl.dataset.translatedText) {
@@ -968,6 +993,9 @@
     if (subEl && subEl.textContent) {
       subEl.style.setProperty('display', 'block', 'important');
       subEl.style.setProperty('color', config.textColor, 'important');
+      if (segments.length > 0) {
+        mirrorSubtitleTypography(segments[0], subEl);
+      }
     }
   }
 
@@ -1006,6 +1034,119 @@
       window.addEventListener('yt-navigate-finish', () => setTimeout(checkTarget, 500), { passive: true });
       window.addEventListener('fullscreenchange', () => setTimeout(checkTarget, 300), { passive: true });
     }
+  }
+
+  // --- YouTube TimedText Prefetching Engine (Zero-Latency Stream) ---
+  function initYouTubeTimedTextPrefetch() {
+    if (!window.location.hostname.includes('youtube.com')) return;
+
+    if (!document.getElementById('holdtranslate-yt-bridge')) {
+      const script = document.createElement('script');
+      script.id = 'holdtranslate-yt-bridge';
+      script.textContent = `
+        (function() {
+          function inspectTracks() {
+            try {
+              var p = document.getElementById('movie_player');
+              var tracks = null;
+              if (p && typeof p.getOption === 'function') {
+                tracks = p.getOption('captions', 'tracklist') || (p.getOption('captions', 'track') ? [p.getOption('captions', 'track')] : null);
+              }
+              if (!tracks && window.ytInitialPlayerResponse && window.ytInitialPlayerResponse.captions) {
+                tracks = window.ytInitialPlayerResponse.captions.playerCaptionsTracklistRenderer.captionTracks;
+              }
+              if (tracks && tracks.length) {
+                window.dispatchEvent(new CustomEvent('HoldTranslateTracks', { detail: JSON.stringify(tracks) }));
+              }
+            } catch(e) {}
+          }
+          inspectTracks();
+          window.addEventListener('yt-navigate-finish', function() { setTimeout(inspectTracks, 600); });
+          var p = document.getElementById('movie_player');
+          if (p && typeof p.addEventListener === 'function') {
+            p.addEventListener('onCaptionsTrackListChanged', inspectTracks);
+          }
+        })();
+      `;
+      (document.head || document.documentElement).appendChild(script);
+    }
+
+    window.addEventListener('HoldTranslateTracks', (e) => {
+      try {
+        const tracks = JSON.parse(e.detail);
+        loadYouTubeTrack(tracks);
+      } catch (err) {}
+    });
+
+    checkDOMForCaptionTracks();
+  }
+
+  function checkDOMForCaptionTracks() {
+    try {
+      const scripts = document.querySelectorAll('script');
+      for (let s of scripts) {
+        const text = s.textContent;
+        if (text && text.includes('captionTracks')) {
+          const match = text.match(/"captionTracks":\s*(\[.*?\])/);
+          if (match) {
+            const tracks = JSON.parse(match[1]);
+            loadYouTubeTrack(tracks);
+            break;
+          }
+        }
+      }
+    } catch (e) {}
+  }
+
+  function loadYouTubeTrack(tracks) {
+    if (!Array.isArray(tracks) || !tracks.length) return;
+    const track = tracks.find(t => t.languageCode === 'en' || (t.vssId && t.vssId.includes('.en'))) || tracks[0];
+    if (!track || !track.baseUrl || track.baseUrl === ytCurrentTrackUrl) return;
+
+    ytCurrentTrackUrl = track.baseUrl;
+    const fetchUrl = track.baseUrl.includes('fmt=json3') ? track.baseUrl : track.baseUrl + '&fmt=json3';
+
+    fetch(fetchUrl)
+      .then(r => r.json())
+      .then(data => {
+        if (!data || !data.events) return;
+        ytTimedTextCues = data.events.map(ev => {
+          if (!ev.segs || !ev.segs.length) return null;
+          const text = ev.segs.map(s => s.utf8).join('').replace(/\n/g, ' ').replace(/\s+/g, ' ').trim();
+          if (!text) return null;
+          return {
+            start: ev.tStartMs,
+            end: ev.tStartMs + (ev.dDurationMs || 3000),
+            text: text
+          };
+        }).filter(Boolean);
+
+        // Pre-translate upcoming cues (0 to 45s)
+        prefetchUpcomingCues(0, 45000);
+      })
+      .catch(() => {});
+  }
+
+  function prefetchUpcomingCues(fromMs, toMs) {
+    if (!ytTimedTextCues || !ytTimedTextCues.length) return;
+    const targetCues = ytTimedTextCues.filter(c => c.start >= fromMs - 2000 && c.start <= toMs);
+    targetCues.forEach(cue => {
+      if (!getCachedSub(cue.text) && !pendingSubRequests.has(cue.text)) {
+        translateSubtitleText(cue.text, () => {});
+      }
+    });
+  }
+
+  function startTrackPrefetchMonitor() {
+    if (ytPrefetchInterval) clearInterval(ytPrefetchInterval);
+    ytPrefetchInterval = setInterval(() => {
+      if (!config.videoSubtitlesEnabled) return;
+      const video = document.querySelector('video');
+      if (video && !video.paused) {
+        const curMs = Math.round(video.currentTime * 1000);
+        prefetchUpcomingCues(curMs, curMs + 35000);
+      }
+    }, 2500);
   }
 
   // --- X (Twitter) & Universal HTML5 Video Subtitles Handler ---
@@ -1158,6 +1299,8 @@
 
   function initVideoSubtitlesEngine() {
     startYouTubeObserver();
+    initYouTubeTimedTextPrefetch();
+    startTrackPrefetchMonitor();
     if (!universalVideoObserver && document.body) {
       universalVideoObserver = new MutationObserver(() => {
         if (!config.videoSubtitlesEnabled) return;
@@ -1173,6 +1316,12 @@
       ytCaptionObserver.disconnect();
       ytCaptionObserver = null;
     }
+    if (ytPrefetchInterval) {
+      clearInterval(ytPrefetchInterval);
+      ytPrefetchInterval = null;
+    }
+    ytTimedTextCues = [];
+    ytCurrentTrackUrl = null;
     if (universalVideoObserver) {
       universalVideoObserver.disconnect();
       universalVideoObserver = null;
