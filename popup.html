@@ -197,7 +197,7 @@
           <span class="status-dot"></span>
           <span class="status-message" id="statusMessage">就绪</span>
           <span class="status-sep">·</span>
-          <span class="bar-version">v1.5.0</span>
+          <span class="bar-version">v1.6.0</span>
         </div>
         <button type="button" class="bar-icon-btn island-btn" id="openTestPageBtn" title="打开测试基准页" aria-label="测试页">
           <svg viewBox="0 0 24 24" width="15" height="15">
@@ -251,7 +251,34 @@
           </label>
         </div>
 
-        <!-- ② 视觉外观体系 -->
+        <!-- ② 视频字幕体系 (YouTube & X 优先) -->
+        <div class="section-title">
+          <span>视频字幕 (YouTube & X)</span>
+        </div>
+
+        <div class="setting-item toggle-row">
+          <div class="setting-info">
+            <label class="setting-label" for="videoSubtitlesSwitch">启用视频字幕实时翻译</label>
+            <span class="setting-desc">实时监听 YouTube 与 X 视频字幕并翻译</span>
+          </div>
+          <label class="switch" title="开启/关闭视频字幕实时翻译">
+            <input type="checkbox" id="videoSubtitlesSwitch">
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-item" id="subtitleModeRow">
+          <div class="setting-info">
+            <label class="setting-label">字幕显示模式</label>
+            <span class="setting-desc">双语对照（原文+译文）或仅展示高亮译文</span>
+          </div>
+          <div class="segmented-control" id="subtitleModeGroup" role="radiogroup" aria-label="字幕模式">
+            <button type="button" class="segment-btn active" data-mode="bilingual" role="radio" aria-checked="true">双语对照</button>
+            <button type="button" class="segment-btn" data-mode="monolingual" role="radio" aria-checked="false">仅译文</button>
+          </div>
+        </div>
+
+        <!-- ③ 视觉外观体系 -->
         <div class="section-title">
           <span>视觉外观</span>
         </div>

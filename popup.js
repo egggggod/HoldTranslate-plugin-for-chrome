@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmDelayValue = document.getElementById('confirmDelayValue');
   const ringSwitch = document.getElementById('ringSwitch');
   const savedHint = document.getElementById('savedHint');
+  const videoSubtitlesSwitch = document.getElementById('videoSubtitlesSwitch');
+  const subtitleModeGroup = document.getElementById('subtitleModeGroup');
 
   // API Config elements
   const deepseekApiKey = document.getElementById('deepseekApiKey');
@@ -518,12 +520,26 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.storage.sync.get([
       'enabled', 'sourceLang', 'targetLang', 'pressDuration', 'confirmDelay',
       'showRing', 'textColor', 'translateService', 'deepseekApiKey',
-      'customApiUrl', 'customApiKey', 'customModel', 'liquidGlass'
+      'customApiUrl', 'customApiKey', 'customModel', 'liquidGlass',
+      'videoSubtitlesEnabled', 'subtitleMode'
     ], (res) => {
       // Main switches
       const isEnabled = res.enabled !== undefined ? res.enabled : true;
       if (enabledSwitch) enabledSwitch.checked = isEnabled;
       if (quickEnabledSwitch) quickEnabledSwitch.checked = isEnabled;
+
+      // Video Subtitles
+      const isVideoSubtitles = res.videoSubtitlesEnabled !== undefined ? res.videoSubtitlesEnabled : false;
+      if (videoSubtitlesSwitch) videoSubtitlesSwitch.checked = isVideoSubtitles;
+
+      const currentSubMode = res.subtitleMode || 'bilingual';
+      if (subtitleModeGroup) {
+        subtitleModeGroup.querySelectorAll('.segment-btn').forEach(btn => {
+          const isActive = btn.dataset.mode === currentSubMode;
+          btn.classList.toggle('active', isActive);
+          btn.setAttribute('aria-checked', isActive ? 'true' : 'false');
+        });
+      }
 
       // Liquid Glass switch
       const isLiquidGlass = res.liquidGlass !== undefined ? res.liquidGlass : true;
@@ -767,6 +783,33 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.toggle('liquid-glass', isLiquidGlass);
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ liquidGlass: isLiquidGlass }, showSaved);
+      }
+    });
+  }
+
+  // 12. Video Subtitles Listeners
+  if (videoSubtitlesSwitch) {
+    videoSubtitlesSwitch.addEventListener('change', () => {
+      const enabled = videoSubtitlesSwitch.checked;
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ videoSubtitlesEnabled: enabled }, showSaved);
+      }
+    });
+  }
+
+  if (subtitleModeGroup) {
+    subtitleModeGroup.addEventListener('click', (e) => {
+      const btn = e.target.closest('.segment-btn');
+      if (!btn) return;
+      const mode = btn.dataset.mode;
+      subtitleModeGroup.querySelectorAll('.segment-btn').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', 'true');
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ subtitleMode: mode }, showSaved);
       }
     });
   }

@@ -87,16 +87,27 @@
   padding: 0;
 }
 
-html, body {
+html {
   width: 340px;
   height: auto;
   min-height: auto;
   margin: 0;
   padding: 0;
   overflow: hidden;
+  background: transparent;
+  border-radius: 16px;
 }
 
 body {
+  width: 340px;
+  height: auto;
+  min-height: auto;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 10px 36px -4px rgba(0, 0, 0, 0.4), 0 0 0 1px var(--glass-border), inset 0 1px 1px 0 rgba(255, 255, 255, 0.25);
   background-color: var(--bg-canvas);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
@@ -119,6 +130,7 @@ body {
   pointer-events: none;
   z-index: 0;
   overflow: hidden;
+  border-radius: 16px;
 }
 
 .fluid-orb {
@@ -180,14 +192,7 @@ body {
   position: relative;
   width: 100%;
   overflow: hidden;
-  z-index: 1;
-  transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1);
-}
-
-.views-wrapper {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
+  border-radius: 16px;
   z-index: 1;
   transition: height 0.36s cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -1148,6 +1153,47 @@ input:checked + .slider:before {
   font-size: 11.5px;
   color: var(--text-muted);
   line-height: 1.4;
+}
+
+/* =========================================================
+   11.5 Segmented Control for Video Subtitle Modes
+   ========================================================= */
+.segmented-control {
+  display: flex;
+  background: var(--glass-capsule);
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 12px;
+  padding: 3px;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.segment-btn {
+  flex: 1;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: center;
+  user-select: none;
+}
+
+.segment-btn:hover {
+  color: var(--text-primary);
+  background: var(--glass-surface-hover);
+}
+
+.segment-btn.active {
+  background: var(--accent-subtle);
+  color: var(--accent-color);
+  font-weight: 600;
+  border-color: var(--accent-color);
+  box-shadow: 0 2px 8px var(--accent-subtle), inset 0 1px 0.5px rgba(255, 255, 255, 0.4);
 }
 
 /* =========================================================

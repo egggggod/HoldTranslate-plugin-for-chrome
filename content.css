@@ -104,3 +104,64 @@
   opacity: 0.85 !important;
   font-size: 0.88em !important;
 }
+
+/* =========================================================
+   HoldTranslate Video Subtitle Styles (YouTube & X / HTML5)
+   ========================================================= */
+.holdtranslate-yt-sub {
+  display: block !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 4px rgba(0, 0, 0, 0.95), 1px 1px 2px rgba(0, 0, 0, 0.95) !important;
+  background: rgba(10, 10, 10, 0.78) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  padding: 3px 10px !important;
+  border-radius: 6px !important;
+  margin-top: 4px !important;
+  pointer-events: none !important;
+  white-space: pre-wrap !important;
+  line-height: 1.35 !important;
+  text-align: center !important;
+  transition: color 0.2s ease !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif !important;
+}
+
+.holdtranslate-video-subtitle-capsule {
+  position: absolute !important;
+  bottom: 12% !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 2147483647 !important;
+  pointer-events: none !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 3px !important;
+  max-width: 88% !important;
+  background: rgba(12, 14, 20, 0.82) !important;
+  backdrop-filter: blur(12px) saturate(160%) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 10px !important;
+  padding: 5px 14px !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5), inset 0 1px 0.5px rgba(255, 255, 255, 0.2) !important;
+  text-align: center !important;
+  user-select: none !important;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, "PingFang SC", sans-serif !important;
+  transition: opacity 0.2s ease, transform 0.2s ease !important;
+}
+
+.holdtranslate-sub-original {
+  color: #f1f5f9 !important;
+  font-size: clamp(13px, 1.8vw, 18px) !important;
+  font-weight: 500 !important;
+  line-height: 1.35 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+.holdtranslate-sub-translated {
+  font-size: clamp(14px, 2.1vw, 21px) !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9) !important;
+}

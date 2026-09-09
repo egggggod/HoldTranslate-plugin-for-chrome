@@ -17,7 +17,9 @@
     targetLang: 'auto',
     showRing: true,
     textColor: '#86a003',        // Default: screenshot olive green
-    translateService: 'google'
+    translateService: 'google',
+    videoSubtitlesEnabled: false,
+    subtitleMode: 'bilingual'     // 'bilingual' | 'monolingual'
   };
 
   // Check if extension context is still valid
@@ -40,12 +42,15 @@
       window.removeEventListener('contextmenu', handleContextMenu, { capture: true });
       window.removeEventListener('dragstart', handleDragStart, { capture: true });
       window.removeEventListener('dragend', handleDragEnd, { capture: true });
+      if (typeof stopVideoSubtitlesEngine === 'function') {
+        stopVideoSubtitlesEngine();
+      }
     } catch (e) {}
   }
 
   // Update color of all existing translations when settings change
   function updateExistingTranslationsColor(color) {
-    const items = document.querySelectorAll('.__gtrans-inline-result');
+    const items = document.querySelectorAll('.__gtrans-inline-result, .holdtranslate-yt-sub, .holdtranslate-sub-translated');
     items.forEach((item) => {
       item.style.setProperty('color', color, 'important');
     });
@@ -56,7 +61,7 @@
     try {
       chrome.storage.sync.get([
         'enabled', 'pressDuration', 'confirmDelay', 'sourceLang', 'targetLang', 'showRing', 'textColor',
-        'translateService'
+        'translateService', 'videoSubtitlesEnabled', 'subtitleMode'
       ], (res) => {
         if (!isExtensionValid() || (chrome.runtime && chrome.runtime.lastError)) return;
         if (res.enabled !== undefined) config.enabled = res.enabled;
@@ -67,6 +72,12 @@
         if (res.showRing !== undefined) config.showRing = res.showRing;
         if (res.textColor) config.textColor = res.textColor;
         if (res.translateService) config.translateService = res.translateService;
+        if (res.videoSubtitlesEnabled !== undefined) config.videoSubtitlesEnabled = res.videoSubtitlesEnabled;
+        if (res.subtitleMode !== undefined) config.subtitleMode = res.subtitleMode;
+
+        if (config.videoSubtitlesEnabled && typeof initVideoSubtitlesEngine === 'function') {
+          initVideoSubtitlesEngine();
+        }
       });
 
       chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -85,6 +96,20 @@
           if (changes.textColor) {
             config.textColor = changes.textColor.newValue;
             updateExistingTranslationsColor(config.textColor);
+          }
+          if (changes.videoSubtitlesEnabled !== undefined) {
+            config.videoSubtitlesEnabled = changes.videoSubtitlesEnabled.newValue;
+            if (config.videoSubtitlesEnabled && typeof initVideoSubtitlesEngine === 'function') {
+              initVideoSubtitlesEngine();
+            } else if (typeof stopVideoSubtitlesEngine === 'function') {
+              stopVideoSubtitlesEngine();
+            }
+          }
+          if (changes.subtitleMode !== undefined) {
+            config.subtitleMode = changes.subtitleMode.newValue;
+            if (typeof refreshAllSubtitlesDisplay === 'function') {
+              refreshAllSubtitlesDisplay();
+            }
           }
         }
       });
@@ -813,6 +838,288 @@
     }
     hideProgressIndicator();
     isLongPressTriggered = false;
+  }
+
+  // =========================================================
+  // Video Subtitles Translation Engine (YouTube & X / Universal)
+  // =========================================================
+  const subtitleCache = new Map();
+  const MAX_SUB_CACHE = 600;
+  let ytCaptionObserver = null;
+  let universalVideoInterval = null;
+  let activeTrackListeners = new WeakSet();
+
+  function getCachedSub(text) {
+    return subtitleCache.get(text.trim());
+  }
+
+  function setCachedSub(text, trans) {
+    if (subtitleCache.size >= MAX_SUB_CACHE) {
+      const firstKey = subtitleCache.keys().next().value;
+      subtitleCache.delete(firstKey);
+    }
+    subtitleCache.set(text.trim(), trans);
+  }
+
+  function translateSubtitleText(rawText, callback) {
+    const text = rawText.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    const cached = getCachedSub(text);
+    if (cached) {
+      callback(cached);
+      return;
+    }
+    if (!isExtensionValid()) return;
+    try {
+      chrome.runtime.sendMessage({
+        action: 'translate',
+        text: text,
+        sourceLang: config.sourceLang,
+        targetLang: config.targetLang,
+        service: config.translateService
+      }, (res) => {
+        if (chrome.runtime.lastError || !res || !res.success) return;
+        setCachedSub(text, res.translatedText);
+        callback(res.translatedText);
+      });
+    } catch (e) {}
+  }
+
+  // --- YouTube Subtitles Handler ---
+  function handleYouTubeCaptions(captionContainer) {
+    if (!captionContainer) return;
+
+    const windows = captionContainer.querySelectorAll('.caption-window');
+    windows.forEach((win) => {
+      const segments = win.querySelectorAll('.ytp-caption-segment');
+      if (!segments.length) return;
+
+      const fullOriginalText = Array.from(segments).map(s => s.textContent).join(' ').trim();
+      if (!fullOriginalText) return;
+
+      let subEl = win.querySelector('.holdtranslate-yt-sub');
+      if (!subEl) {
+        subEl = document.createElement('div');
+        subEl.className = 'holdtranslate-yt-sub';
+        subEl.style.setProperty('color', config.textColor, 'important');
+        win.appendChild(subEl);
+      }
+
+      if (subEl.dataset.originalText === fullOriginalText) {
+        applyYouTubeDisplayMode(win, segments, subEl);
+        return;
+      }
+
+      subEl.dataset.originalText = fullOriginalText;
+
+      translateSubtitleText(fullOriginalText, (translatedText) => {
+        if (subEl.dataset.originalText !== fullOriginalText) return;
+        subEl.textContent = translatedText;
+        applyYouTubeDisplayMode(win, segments, subEl);
+      });
+    });
+  }
+
+  function applyYouTubeDisplayMode(win, segments, subEl) {
+    const isMonolingual = config.subtitleMode === 'monolingual';
+    segments.forEach(s => {
+      s.style.display = isMonolingual ? 'none' : '';
+    });
+    if (subEl) {
+      subEl.style.display = '';
+      subEl.style.setProperty('color', config.textColor, 'important');
+    }
+  }
+
+  function startYouTubeObserver() {
+    if (ytCaptionObserver) return;
+    const checkTarget = () => {
+      const container = document.querySelector('.ytp-caption-window-container') ||
+                        document.querySelector('#movie_player') ||
+                        document.querySelector('.html5-video-player');
+      if (container) {
+        ytCaptionObserver = new MutationObserver(() => {
+          if (!config.videoSubtitlesEnabled) return;
+          const capContainer = document.querySelector('.ytp-caption-window-container') || container;
+          handleYouTubeCaptions(capContainer);
+        });
+        ytCaptionObserver.observe(container, { childList: true, subtree: true, characterData: true });
+        handleYouTubeCaptions(container);
+      } else {
+        setTimeout(checkTarget, 1000);
+      }
+    };
+    checkTarget();
+  }
+
+  // --- X (Twitter) & Universal HTML5 Video Subtitles Handler ---
+  function handleGenericVideoCaptions() {
+    const videos = document.querySelectorAll('video');
+    videos.forEach((video) => {
+      // Check HTML5 textTracks
+      if (video.textTracks && video.textTracks.length > 0) {
+        for (let i = 0; i < video.textTracks.length; i++) {
+          const track = video.textTracks[i];
+          if (!activeTrackListeners.has(track)) {
+            activeTrackListeners.add(track);
+            track.addEventListener('cuechange', () => {
+              if (!config.videoSubtitlesEnabled) return;
+              processVideoCues(video, track);
+            });
+          }
+          if (track.mode === 'showing') {
+            processVideoCues(video, track);
+          }
+        }
+      }
+
+      // X (Twitter) custom caption container observer
+      const xPlayer = video.closest('[data-testid="videoPlayer"], [data-testid="videoComponent"], .css-175oi2r');
+      if (xPlayer && !xPlayer.dataset.holdtranslateObserved) {
+        xPlayer.dataset.holdtranslateObserved = 'true';
+        const xObserver = new MutationObserver(() => {
+          if (!config.videoSubtitlesEnabled) return;
+          handleXDomCaptions(xPlayer, video);
+        });
+        xObserver.observe(xPlayer, { childList: true, subtree: true, characterData: true });
+        handleXDomCaptions(xPlayer, video);
+      }
+    });
+  }
+
+  function processVideoCues(video, track) {
+    const activeCues = track.activeCues;
+    const playerContainer = video.parentElement || video;
+    let capsule = playerContainer.querySelector('.holdtranslate-video-subtitle-capsule');
+
+    if (!activeCues || activeCues.length === 0) {
+      if (capsule) capsule.style.display = 'none';
+      return;
+    }
+
+    const cueTexts = [];
+    for (let j = 0; j < activeCues.length; j++) {
+      cueTexts.push(activeCues[j].text);
+    }
+    const fullText = cueTexts.join(' ').replace(/<[^>]+>/g, '').trim();
+    if (!fullText) {
+      if (capsule) capsule.style.display = 'none';
+      return;
+    }
+
+    if (!capsule) {
+      capsule = createVideoSubtitleCapsule(playerContainer);
+    }
+
+    if (capsule.dataset.originalText === fullText) {
+      updateCapsuleDisplay(capsule);
+      return;
+    }
+
+    capsule.dataset.originalText = fullText;
+    const origEl = capsule.querySelector('.holdtranslate-sub-original');
+    if (origEl) origEl.textContent = fullText;
+
+    translateSubtitleText(fullText, (translatedText) => {
+      if (capsule.dataset.originalText !== fullText) return;
+      const transEl = capsule.querySelector('.holdtranslate-sub-translated');
+      if (transEl) transEl.textContent = translatedText;
+      updateCapsuleDisplay(capsule);
+    });
+  }
+
+  function handleXDomCaptions(playerContainer, video) {
+    const captionEl = playerContainer.querySelector('div[aria-label="Captions"], [data-testid="caption"]');
+    if (!captionEl) return;
+    const text = captionEl.textContent.trim();
+    if (!text) return;
+
+    let capsule = playerContainer.querySelector('.holdtranslate-video-subtitle-capsule');
+    if (!capsule) {
+      capsule = createVideoSubtitleCapsule(playerContainer);
+    }
+
+    if (capsule.dataset.originalText === text) {
+      updateCapsuleDisplay(capsule);
+      return;
+    }
+
+    capsule.dataset.originalText = text;
+    const origEl = capsule.querySelector('.holdtranslate-sub-original');
+    if (origEl) origEl.textContent = text;
+
+    translateSubtitleText(text, (translatedText) => {
+      if (capsule.dataset.originalText !== text) return;
+      const transEl = capsule.querySelector('.holdtranslate-sub-translated');
+      if (transEl) transEl.textContent = translatedText;
+      updateCapsuleDisplay(capsule);
+    });
+  }
+
+  function createVideoSubtitleCapsule(parent) {
+    const capsule = document.createElement('div');
+    capsule.className = 'holdtranslate-video-subtitle-capsule';
+    capsule.innerHTML = `
+      <div class="holdtranslate-sub-original"></div>
+      <div class="holdtranslate-sub-translated"></div>
+    `;
+    const computedPos = window.getComputedStyle(parent).position;
+    if (computedPos === 'static') {
+      parent.style.position = 'relative';
+    }
+    parent.appendChild(capsule);
+    return capsule;
+  }
+
+  function updateCapsuleDisplay(capsule) {
+    if (!capsule) return;
+    capsule.style.display = 'flex';
+    const origEl = capsule.querySelector('.holdtranslate-sub-original');
+    const transEl = capsule.querySelector('.holdtranslate-sub-translated');
+
+    if (origEl) {
+      origEl.style.display = config.subtitleMode === 'monolingual' ? 'none' : 'block';
+    }
+    if (transEl) {
+      transEl.style.display = 'block';
+      transEl.style.setProperty('color', config.textColor, 'important');
+    }
+  }
+
+  function refreshAllSubtitlesDisplay() {
+    document.querySelectorAll('.caption-window').forEach((win) => {
+      const segments = win.querySelectorAll('.ytp-caption-segment');
+      const subEl = win.querySelector('.holdtranslate-yt-sub');
+      if (subEl) {
+        applyYouTubeDisplayMode(win, segments, subEl);
+      }
+    });
+
+    document.querySelectorAll('.holdtranslate-video-subtitle-capsule').forEach((capsule) => {
+      updateCapsuleDisplay(capsule);
+    });
+  }
+
+  function initVideoSubtitlesEngine() {
+    startYouTubeObserver();
+    if (!universalVideoInterval) {
+      universalVideoInterval = setInterval(handleGenericVideoCaptions, 800);
+    }
+    handleGenericVideoCaptions();
+  }
+
+  function stopVideoSubtitlesEngine() {
+    if (ytCaptionObserver) {
+      ytCaptionObserver.disconnect();
+      ytCaptionObserver = null;
+    }
+    if (universalVideoInterval) {
+      clearInterval(universalVideoInterval);
+      universalVideoInterval = null;
+    }
+    document.querySelectorAll('.holdtranslate-yt-sub').forEach(el => el.remove());
+    document.querySelectorAll('.holdtranslate-video-subtitle-capsule').forEach(el => el.remove());
+    document.querySelectorAll('.ytp-caption-segment').forEach(el => el.style.display = '');
   }
 
   // Register listeners
