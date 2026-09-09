@@ -781,6 +781,12 @@ document.addEventListener('DOMContentLoaded', () => {
     liquidGlassSwitch.addEventListener('change', () => {
       const isLiquidGlass = liquidGlassSwitch.checked;
       document.body.classList.toggle('liquid-glass', isLiquidGlass);
+      if (!isLiquidGlass) {
+        const feImage1 = document.getElementById('htFeImage1');
+        const feImage2 = document.getElementById('htFeImage2');
+        if (feImage1) { feImage1.setAttribute('x', '0%'); feImage1.setAttribute('y', '0%'); }
+        if (feImage2) { feImage2.setAttribute('x', '0%'); feImage2.setAttribute('y', '0%'); }
+      }
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ liquidGlass: isLiquidGlass }, showSaved);
       }
@@ -813,4 +819,105 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // =========================================================
+  // 13. Apple Liquid Glass Optical & Specular Physics Engine
+  // (Full dynamic pointer illumination & perspective parallax)
+  // =========================================================
+  function initLiquidGlassPhysics() {
+    const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isReducedMotion) return;
+
+    const feImage1 = document.getElementById('htFeImage1');
+    const feImage2 = document.getElementById('htFeImage2');
+    let rafId = null;
+    let activeTarget = null;
+    let lastX = 50;
+    let lastY = 50;
+    let lastDeg = 135;
+
+    function onPointerMove(e) {
+      if (!document.body.classList.contains('liquid-glass')) return;
+
+      const target = e.target.closest(
+        '.language-card, .service-capsule, .lang-capsule, .bottom-bar.floating-island-bar, .subpage-item, .setting-item, .api-card, .custom-dropdown-menu'
+      );
+
+      if (!target) {
+        if (activeTarget) {
+          activeTarget.style.removeProperty('--mouse-x');
+          activeTarget.style.removeProperty('--mouse-y');
+          activeTarget.style.removeProperty('--mouse-deg');
+          activeTarget = null;
+        }
+        return;
+      }
+
+      activeTarget = target;
+      const rect = target.getBoundingClientRect();
+      const x = Math.max(0, Math.min(rect.width, e.clientX - rect.left));
+      const y = Math.max(0, Math.min(rect.height, e.clientY - rect.top));
+
+      const pctX = (x / rect.width) * 100;
+      const pctY = (y / rect.height) * 100;
+
+      // Specular reflection angle relative to center
+      const rad = Math.atan2(y - rect.height / 2, x - rect.width / 2);
+      const deg = Math.round(rad * (180 / Math.PI)) + 90;
+
+      lastX = pctX;
+      lastY = pctY;
+      lastDeg = deg;
+
+      if (!rafId) {
+        rafId = requestAnimationFrame(() => {
+          if (activeTarget) {
+            activeTarget.style.setProperty('--mouse-x', lastX.toFixed(1));
+            activeTarget.style.setProperty('--mouse-y', lastY.toFixed(1));
+            activeTarget.style.setProperty('--mouse-deg', `${lastDeg}deg`);
+          }
+
+          // Full optical simulation: micro-parallax shift of displacement map center
+          const parallaxX = ((lastX - 50) * 0.08).toFixed(2);
+          const parallaxY = ((lastY - 50) * 0.08).toFixed(2);
+          if (feImage1) {
+            feImage1.setAttribute('x', `${parallaxX}%`);
+            feImage1.setAttribute('y', `${parallaxY}%`);
+          }
+          if (feImage2) {
+            feImage2.setAttribute('x', `${parallaxX}%`);
+            feImage2.setAttribute('y', `${parallaxY}%`);
+          }
+
+          rafId = null;
+        });
+      }
+    }
+
+    function onPointerLeave() {
+      if (activeTarget) {
+        activeTarget.style.removeProperty('--mouse-x');
+        activeTarget.style.removeProperty('--mouse-y');
+        activeTarget.style.removeProperty('--mouse-deg');
+        activeTarget = null;
+      }
+      if (feImage1) {
+        feImage1.setAttribute('x', '0%');
+        feImage1.setAttribute('y', '0%');
+      }
+      if (feImage2) {
+        feImage2.setAttribute('x', '0%');
+        feImage2.setAttribute('y', '0%');
+      }
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    }
+
+    document.addEventListener('pointermove', onPointerMove, { passive: true });
+    document.addEventListener('pointerleave', onPointerLeave, { passive: true });
+  }
+
+  initLiquidGlassPhysics();
 });
