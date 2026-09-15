@@ -4,6 +4,18 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.1] - 2026-09-15
+
+### Added & Fixed
+- **MAIN World Transparent Subtitle Bridge (`yt-bridge.js`)**: Injected into YouTube page's MAIN world via Manifest V3 `world: "MAIN"`, completely bypassing YouTube's strict CSP restrictions (`script-src 'nonce-...'`). Reliably intercepts `/api/timedtext` subtitle streams and monitors `#movie_player` caption track state across initial load and SPA navigation.
+- **Multi-Granularity Caching & Sentence Reconstruction**: Intelligently parses both JSON (`fmt=json3`) and XML timedtext formats, reconstructing rolling ASR/auto-generated word fragments into complete sentences while indexing both individual cues and full phrases. Eliminates cache misses and achieves genuine 0ms instant display.
+- **Race Condition & Live Callback Fallback Repair**: Eliminated the premature translation discard condition (`currentFull !== fullOriginalText`) on progressive speech recognition captions. Guarantees translated subtitles smoothly update and display even during continuous speech.
+- **Seek-Aware Dynamic Prefetch Pipeline**: Subtitle engine dynamically re-aligns prefetch window upon `<video>` `seeked` and `play` events, pre-translating upcoming 45s cues in rate-limited batches.
+- **Strict Single-Line Bilingual Subtitle Architecture**: Extracted and unified native YouTube multi-fragment and broken lines into a clean two-row hierarchy—Line 1 for original native subtitle and Line 2 for translated subtitle. Completely eliminates redundant `<br>` line wrapping, with responsive dynamic font-size auto-scaling for long sentences.
+- **Immediate Native Subtitle Translation**: Automatically detects and seamlessly renders 0-latency translations as soon as YouTube native CC captions appear, with zero manual long-press or friction required.
+
+---
+
 ## [v1.7.0] - 2026-09-09
 
 ### Added

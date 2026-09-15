@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.7.1-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.7.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.7.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.0/holdtranslate-chrome-extension-v1.7.0.zip) (v1.7.0)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.1/holdtranslate-chrome-extension-v1.7.1.zip) (v1.7.1)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -48,6 +48,7 @@ HoldTranslate-plugin-for-chrome/
 ├── icons/              # 扩展图标 (16x16, 48x48, 128x128)
 ├── manifest.json       # Chrome 扩展配置文件 (Manifest V3)
 ├── background.js       # 多服务后台 Service Worker (Google, 微软, DeepSeek, 自定义 LLM)
+├── yt-bridge.js        # 主世界透明桥接脚本 (无视 CSP 截获 timedtext 与字幕轨)
 ├── content.js          # 核心脚本：长按事件监听、排版智能提取、译文插入与还原
 ├── content.css         # 沉浸式译文动画与基础样式
 ├── popup.html          # 扩展设置双视图弹窗界面
@@ -63,7 +64,7 @@ HoldTranslate-plugin-for-chrome/
 
 ## 浏览器扩展特性 (Features)
 
-- ⚡ **YouTube 字幕 0 延迟秒级同步引擎 (Zero-Latency Subtitle Prefetching)**：全面引入 YouTube TimedText 轨全量与流式向前预取机制，自动在后台提前将 upcoming 35 秒的字幕批次翻译存入高速 LRU 缓存池；视频播放至对应画面时直接 0ms 瞬间命中，彻底根治网络时延导致的译文与原文字幕弹出时间脱节问题；未命中自动平滑降级为极速实时流。
+- ⚡ **YouTube 字幕 0 延迟秒级同步引擎 (Zero-Latency Subtitle Prefetching)**：全面重构主世界透明桥接机制 (`yt-bridge.js`)，彻底突破 YouTube 严格的 CSP 限制；引入多粒度断句重组与多级索引，自动在后台提前将 upcoming 45 秒的字幕批次翻译存入高速 LRU 缓存池；视频播放至对应画面时直接 0ms 瞬间命中，彻底根治网络时延导致的译文与原文字幕弹出时间脱节问题；修复自动生成字幕滚动丢弃竞态，并辅以 0.2s 平滑淡入微动效。
 - 🎯 **视频字幕 1:1 动态排版镜像 (Dynamic Typography Mirroring)**：实时动态提取 YouTube 原生字幕段落的计算样式，将 `font-family`、`font-size`、`font-weight`、`line-height`、`letter-spacing` 等 1:1 动态精准赋给译文字幕，支持全屏播放与小窗缩放自适应，彻底消除字体突兀感；保持强调色高对比度呈现。
 - 🪟 **边缘直通无穿帮弹窗体系 (Edge-to-Edge Native Integration)**：彻底废除外层角隅裁切与多余外框，`html, body` 采用与成熟主流扩展一致的边缘直通无感设计，由 Chrome 宿主窗口自身呈现原生圆角与系统立体投影，彻底根除“方背景下叠一层弧形”的视觉穿帮缺陷；内部卡片全面维持苹果 VisionOS 液态玻璃圆角胶囊与流体光晕。
 - 📱 **Apple iOS 紧凑平滑滑动子页面架构（选择语言零变长、恒定 225px）**：采用苹果 iOS 设置级水平推拉子页面架构（`.show-subpage #subpageView`）。无论选择源语言、目标语言还是翻译服务，弹窗开窗高度**绝对严格锁定在 225px**，彻底消除界面抖动与上下拉长变形。
