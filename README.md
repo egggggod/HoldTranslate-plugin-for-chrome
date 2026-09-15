@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.7.0-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.7.1-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.7.0-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.7.1-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.0/holdtranslate-chrome-extension-v1.7.0.zip) (click to download v1.7.0) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.1/holdtranslate-chrome-extension-v1.7.1.zip) (click to download v1.7.1) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -48,6 +48,7 @@ HoldTranslate-plugin-for-chrome/
 ├── icons/              # Extension icons (16x16, 48x48, 128x128)
 ├── manifest.json       # Chrome Manifest V3 configuration
 ├── background.js       # Multi-service worker (Google, Microsoft, DeepSeek, Custom LLM)
+├── yt-bridge.js        # Main World bridge script (intercepts timedtext & caption tracks)
 ├── content.js          # Core DOM observer, typography extractor, long-press engine
 ├── content.css         # Minimal inline translation animations and styles
 ├── popup.html          # Adaptive dual-view popup UI
@@ -67,7 +68,7 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### Features
 
-- ⚡ **Zero-Latency Subtitle Prefetching Engine**: Introduced YouTube TimedText full-track parsing and predictive lookahead prefetching. Ahead of time, the background pipeline stream-translates upcoming cues within 35 seconds into the high-performance LRU cache, guaranteeing **0ms instant display** in perfect synchronization with original subtitles; gracefully falls back to ultra-fast real-time streaming.
+- ⚡ **Zero-Latency Subtitle Prefetching Engine**: Features MAIN World transparent stream interception (`yt-bridge.js`) completely bypassing CSP restrictions, multi-granularity sentence reconstruction, and forward lookahead prefetching (45s window). Guarantees **0ms instant display** in perfect synchronization with original YouTube audio and subtitles; gracefully falls back to ultra-fast real-time streaming with smooth 0.2s fade-in micro-transitions.
 - 🎯 **1:1 Dynamic Subtitle Typography Mirroring**: Dynamically extracts computed font attributes (`font-family`, `font-size`, `font-weight`, `line-height`, `letter-spacing`) from YouTube native caption segments and applies them directly to translated subtitles, naturally resizing across fullscreen and mini-player modes.
 - 🪟 **Edge-to-Edge Native Integration (Zero Cutout Frame)**: Adopted native edge-to-edge popup architecture matching top-tier Chrome extensions. `html, body` seamlessly fill the window, letting Chrome render native OS rounded corners and drop shadows without any triangular corner artifacts, while internal components retain full Apple VisionOS liquid glass aesthetics.
 - 📱 **Apple iOS Sliding Subpage Architecture (Zero Height Lengthening)**: Implemented an Apple iOS Settings-grade sliding subpage architecture for language and translation service selection. The popup window height **strictly remains locked at 225px** without any downward stretching, jitter, or overflow issues.
