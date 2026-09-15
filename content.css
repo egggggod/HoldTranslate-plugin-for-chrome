@@ -153,6 +153,15 @@
   animation: holdtranslateSubFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
+.holdtranslate-yt-sub:empty,
+.holdtranslate-yt-sub[data-empty="true"] {
+  display: none !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
 .holdtranslate-video-subtitle-capsule {
   position: absolute !important;
   bottom: 12% !important;
