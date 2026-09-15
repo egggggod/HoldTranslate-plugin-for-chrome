@@ -31,6 +31,7 @@
   let activeTrackListeners = new WeakSet();
   let ytTimedTextCues = [];
   let ytFullTrackCues = [];
+  let ytSentenceCues = [];
   let ytCurrentTrackUrl = null;
   let ytPrefetchInterval = null;
   let ytObservedTarget = null;
@@ -938,10 +939,29 @@
   }
 
   function getActiveTimedTextTranslation(curMs, originalText) {
+    // Priority 1: Sentence-onset instant full translation (shows full translation at word 1!)
+    if (ytSentenceCues && ytSentenceCues.length) {
+      const candidates = ytSentenceCues.filter(s => curMs >= s.start - 250 && curMs <= s.end + 250);
+      for (const sent of candidates) {
+        if (sent && sent.translation) {
+          if (originalText) {
+            const cleanOrig = originalText.trim().toLowerCase();
+            const cleanSent = (sent.text || '').trim().toLowerCase();
+            if (cleanSent.startsWith(cleanOrig) || cleanSent.includes(cleanOrig) || cleanOrig.startsWith(cleanSent)) {
+              setCachedSub(originalText, sent.translation);
+              return sent.translation;
+            }
+          } else {
+            return sent.translation;
+          }
+        }
+      }
+    }
+
+    // Priority 2: Direct text match across cue pool
     const cuePool = (ytFullTrackCues && ytFullTrackCues.length) ? ytFullTrackCues : ytTimedTextCues;
     if (!cuePool || !cuePool.length) return null;
 
-    // 1. Direct text match across cue pool
     if (originalText) {
       const cleanOrig = originalText.trim();
       const textMatch = cuePool.find(c => {
@@ -964,7 +984,7 @@
       }
     }
 
-    // 2. Timestamp range match (+/- 600ms tolerance)
+    // Priority 3: Timestamp range match (+/- 600ms tolerance) with word boundary verification
     const activeCue = cuePool.find(c => curMs >= c.start - 600 && curMs <= c.end + 600);
     if (activeCue) {
       const trans = activeCue.translation || getCachedSub(activeCue.text);
@@ -1265,6 +1285,7 @@
         // Reset state for new video
         ytTimedTextCues = [];
         ytFullTrackCues = [];
+        ytSentenceCues = [];
         ytCurrentTrackUrl = null;
         isVideoScrubbing = false;
         pendingSubRequests.clear();
@@ -1368,6 +1389,63 @@
     return result;
   }
 
+  // Build high-level sentence units for sentence-onset full translation
+  function buildSentencesFromCues(origCues, transCues) {
+    if (!origCues || !origCues.length) return [];
+    const sentences = [];
+    let curSent = null;
+
+    for (let i = 0; i < origCues.length; i++) {
+      const cue = origCues[i];
+      if (!cue || !cue.text) continue;
+
+      if (!curSent) {
+        curSent = {
+          start: cue.start,
+          end: cue.end,
+          text: cue.text,
+          translation: cue.translation || getCachedSub(cue.text) || null
+        };
+      } else {
+        const gap = cue.start - curSent.end;
+        const endsWithPunct = /[.!?。？！]\s*$/.test(curSent.text);
+        if (gap > 900 || endsWithPunct || curSent.text.length > 85) {
+          sentences.push(curSent);
+          curSent = {
+            start: cue.start,
+            end: cue.end,
+            text: cue.text,
+            translation: cue.translation || getCachedSub(cue.text) || null
+          };
+        } else {
+          curSent.end = cue.end;
+          curSent.text = (curSent.text + ' ' + cue.text).replace(/\s+/g, ' ').trim();
+          if (!curSent.translation && (cue.translation || getCachedSub(cue.text))) {
+            curSent.translation = cue.translation || getCachedSub(cue.text);
+          }
+        }
+      }
+    }
+    if (curSent && !sentences.includes(curSent)) {
+      sentences.push(curSent);
+    }
+
+    // Correlate translations from transCues if available
+    if (transCues && transCues.length) {
+      sentences.forEach(sent => {
+        if (!sent.translation) {
+          const match = transCues.find(tc => Math.abs(tc.start - sent.start) < 600);
+          if (match && match.text) {
+            sent.translation = match.text;
+            setCachedSub(sent.text, match.text);
+          }
+        }
+      });
+    }
+
+    return sentences;
+  }
+
   function handleInterceptedTimedText(url, rawText) {
     if (!rawText) return;
     const cues = parseTimedTextData(rawText);
@@ -1426,6 +1504,7 @@
                 }
               });
             }
+            ytSentenceCues = buildSentencesFromCues(ytFullTrackCues || ytTimedTextCues, transCues);
             handleYouTubeCaptions();
           }
         })
@@ -1475,10 +1554,12 @@
         });
         ytFullTrackCues = origCues;
         ytTimedTextCues = origCues;
+        ytSentenceCues = buildSentencesFromCues(origCues, transCues);
         handleYouTubeCaptions();
       } else if (origCues.length) {
         ytFullTrackCues = origCues;
         ytTimedTextCues = origCues;
+        ytSentenceCues = buildSentencesFromCues(origCues, null);
         handleYouTubeCaptions();
         const video = document.querySelector('video');
         const curMs = video ? Math.round(video.currentTime * 1000) : 0;
@@ -1726,6 +1807,7 @@
     }
     ytTimedTextCues = [];
     ytFullTrackCues = [];
+    ytSentenceCues = [];
     ytCurrentTrackUrl = null;
     ytObservedTarget = null;
     isVideoScrubbing = false;

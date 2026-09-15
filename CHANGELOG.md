@@ -4,6 +4,18 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.2] - 2026-09-15
+
+### Added & Fixed
+- **Sentence-Onset Instant Full Translation (`ytSentenceCues`)**: Re-engineered subtitle timeline indexing with high-level semantic sentence mapping (`ytSentenceCues`). Even when native ASR rolling captions only speak the first word, the complete, high-quality Chinese translation of the entire sentence is displayed immediately at 0ms.
+- **Prefix Continuation Stability**: Translated subtitles remain permanently stable throughout the gradual rollout of native English words, eliminating content jitter and partial sentence fragmentation.
+- **Strict 0ms Synchronous Subtitle Lifecycle**: Native caption window state (`display: none`, `visibility: hidden`, `.ytp-caption-window-hide`) directly drives translated subtitle visibility, guaranteeing that the translation disappears simultaneously in 0ms when speakers pause or stop.
+- **Anti-Flicker CSS Transition Engine**: Replaced repetitive keyframe resets with smooth CSS transitions (`opacity 0.15s ease, color 0.2s ease`), completely eliminating white-flash strobing on progressive caption updates.
+- **Progress Bar Seek Resilience & Persistent Host Anchoring**: Anchored observer to `#movie_player` with automatic heartbeat self-healing, preventing observer dropouts when YouTube reconstructs caption containers during timeline scrubbing.
+- **Word-Boundary Semantic Validation**: Enforced strict boundary and context correlation in timestamp matching, preventing short rolling words from matching unrelated sentences across the video.
+
+---
+
 ## [v1.7.1] - 2026-09-15
 
 ### Added & Fixed
