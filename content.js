@@ -944,7 +944,17 @@
     // 1. Direct text match across cue pool
     if (originalText) {
       const cleanOrig = originalText.trim();
-      const textMatch = cuePool.find(c => c.text === cleanOrig || c.text.includes(cleanOrig) || cleanOrig.includes(c.text));
+      const textMatch = cuePool.find(c => {
+        if (!c.text) return false;
+        if (c.text === cleanOrig) return true;
+        // Require at least 10 chars and proximity within 10s for prefix/suffix match to prevent false hits on short words
+        if (cleanOrig.length >= 10) {
+          if (c.text.startsWith(cleanOrig) || cleanOrig.startsWith(c.text)) {
+            return Math.abs(curMs - c.start) < 10000;
+          }
+        }
+        return false;
+      });
       if (textMatch) {
         const trans = textMatch.translation || getCachedSub(textMatch.text);
         if (trans) {
@@ -959,8 +969,17 @@
     if (activeCue) {
       const trans = activeCue.translation || getCachedSub(activeCue.text);
       if (trans) {
-        if (originalText && originalText !== activeCue.text) {
-          setCachedSub(originalText, trans);
+        if (originalText) {
+          const cleanOrig = originalText.trim();
+          const cleanCue = (activeCue.text || '').trim();
+          const isPrefix = cleanCue.toLowerCase().startsWith(cleanOrig.toLowerCase()) || cleanOrig.toLowerCase().startsWith(cleanCue.toLowerCase());
+          const hasWord = new RegExp('\\b' + cleanOrig.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i').test(cleanCue);
+          if (!isPrefix && !hasWord) {
+            return null;
+          }
+          if (originalText !== activeCue.text) {
+            setCachedSub(originalText, trans);
+          }
         }
         return trans;
       }
@@ -990,19 +1009,32 @@
     const video = document.querySelector('video');
 
     windows.forEach((win) => {
-      // Override YouTube inline styles: enable flex stacking and visible overflow for natural wrapping
-      win.style.setProperty('overflow', 'visible', 'important');
-      win.style.setProperty('height', 'auto', 'important');
-      win.style.setProperty('display', 'flex', 'important');
-      win.style.setProperty('flex-direction', 'column', 'important');
-      win.style.setProperty('align-items', 'center', 'important');
+      // 1. Check if window is hidden by YouTube (style="display: none", visibility: hidden, or hide class)
+      const winStyle = win.getAttribute('style') || '';
+      const isWinHidden = winStyle.includes('display: none') ||
+                          winStyle.includes('visibility: hidden') ||
+                          win.classList.contains('ytp-caption-window-hide');
+      if (isWinHidden) {
+        const subEl = win.querySelector('.holdtranslate-yt-sub');
+        if (subEl) {
+          subEl.textContent = '';
+          subEl.dataset.empty = 'true';
+          subEl.dataset.originalText = '';
+          subEl.dataset.translatedText = '';
+          subEl.style.setProperty('display', 'none', 'important');
+        }
+        return;
+      }
 
+      // 2. Check segments inside window
       const segments = win.querySelectorAll('.ytp-caption-segment');
       if (!segments.length) {
         let subEl = win.querySelector('.holdtranslate-yt-sub');
         if (subEl) {
           subEl.textContent = '';
           subEl.dataset.empty = 'true';
+          subEl.dataset.originalText = '';
+          subEl.dataset.translatedText = '';
           subEl.style.setProperty('display', 'none', 'important');
         }
         return;
@@ -1014,10 +1046,19 @@
         if (subEl) {
           subEl.textContent = '';
           subEl.dataset.empty = 'true';
+          subEl.dataset.originalText = '';
+          subEl.dataset.translatedText = '';
           subEl.style.setProperty('display', 'none', 'important');
         }
         return;
       }
+
+      // Apply flex layout only when window is active and visible
+      win.style.setProperty('overflow', 'visible', 'important');
+      win.style.setProperty('height', 'auto', 'important');
+      win.style.setProperty('display', 'flex', 'important');
+      win.style.setProperty('flex-direction', 'column', 'important');
+      win.style.setProperty('align-items', 'center', 'important');
 
       let subEl = win.querySelector('.holdtranslate-yt-sub');
       if (!subEl) {
@@ -1032,7 +1073,7 @@
       // 1:1 Mirror typography from original native segment
       mirrorSubtitleTypography(segments[0], subEl);
 
-      // Already displaying up-to-date translation for this text
+      // A. Already displaying up-to-date translation for this text
       if (subEl.dataset.translatedText && subEl.dataset.originalText === fullOriginalText) {
         if (subEl.textContent !== subEl.dataset.translatedText) {
           subEl.textContent = subEl.dataset.translatedText;
@@ -1042,7 +1083,7 @@
         return;
       }
 
-      // 1. Direct text cache hit (0ms)
+      // B. Direct text cache hit (0ms)
       const cached = getCachedSub(fullOriginalText);
       if (cached) {
         subEl.dataset.originalText = fullOriginalText;
@@ -1055,7 +1096,7 @@
         return;
       }
 
-      // 2. Timestamp-aligned prefetch cache hit (0ms)
+      // C. Timestamp-aligned prefetch cache hit (0ms)
       if (video) {
         const curMs = Math.round(video.currentTime * 1000);
         const timeSyncTrans = getActiveTimedTextTranslation(curMs, fullOriginalText);
@@ -1071,20 +1112,24 @@
         }
       }
 
-      // 3. Scrubbing protection:
-      // While dragging / scrubbing the seekbar, DO NOT trigger live API network calls!
-      // This prevents triggering HTTP 429 rate limits while scrubbing along the timeline.
+      // D. Scrubbing protection:
       if (isVideoScrubbing || (video && video.seeking)) {
-        subEl.textContent = '';
-        subEl.dataset.empty = 'true';
         subEl.style.setProperty('display', 'none', 'important');
         return;
       }
 
-      // 4. Fallback to live translation with safe queue
-      // In pending state, keep subEl quietly hidden until translatedText arrives
-      subEl.dataset.empty = 'true';
-      subEl.style.setProperty('display', 'none', 'important');
+      // E. Anti-Flicker Protection during live translation / ASR rolling words:
+      // If subEl ALREADY has an active translation showing and is related to the current sentence
+      // (e.g. current sentence is rolling/growing), KEEP IT VISIBLE! DO NOT HIDE subEl!
+      const hasExistingDisplay = subEl.dataset.translatedText && subEl.textContent && subEl.dataset.empty !== 'true';
+      const isPrefixContinuation = Boolean(hasExistingDisplay && subEl.dataset.originalText &&
+        (fullOriginalText.startsWith(subEl.dataset.originalText) || subEl.dataset.originalText.startsWith(fullOriginalText)));
+
+      if (!isPrefixContinuation) {
+        // Only if it's a completely brand new sentence and not yet translated, stay quietly hidden
+        subEl.dataset.empty = 'true';
+        subEl.style.setProperty('display', 'none', 'important');
+      }
 
       translateSubtitleText(fullOriginalText, (translatedText) => {
         if (!translatedText) return;
@@ -1093,6 +1138,8 @@
         if (!currentFull) {
           subEl.textContent = '';
           subEl.dataset.empty = 'true';
+          subEl.dataset.originalText = '';
+          subEl.dataset.translatedText = '';
           subEl.style.setProperty('display', 'none', 'important');
           return;
         }

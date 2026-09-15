@@ -108,9 +108,9 @@
 /* =========================================================
    HoldTranslate Video Subtitle Styles (YouTube & X / HTML5)
    ========================================================= */
-.caption-window,
-.ytp-caption-window-bottom,
-.ytp-caption-window-rollup {
+.caption-window:not([style*="display: none"]):not([style*="visibility: hidden"]):not(.ytp-caption-window-hide),
+.ytp-caption-window-bottom:not([style*="display: none"]):not([style*="visibility: hidden"]):not(.ytp-caption-window-hide),
+.ytp-caption-window-rollup:not([style*="display: none"]):not([style*="visibility: hidden"]):not(.ytp-caption-window-hide) {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
@@ -120,15 +120,11 @@
   max-width: 95% !important;
 }
 
-@keyframes holdtranslateSubFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(2px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.caption-window[style*="display: none"],
+.caption-window[style*="visibility: hidden"],
+.caption-window.ytp-caption-window-hide {
+  display: none !important;
+  visibility: hidden !important;
 }
 
 .holdtranslate-yt-sub {
@@ -149,8 +145,7 @@
   text-align: center !important;
   box-sizing: border-box !important;
   max-width: 100% !important;
-  transition: color 0.2s ease !important;
-  animation: holdtranslateSubFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  transition: opacity 0.15s ease, color 0.2s ease !important;
 }
 
 .holdtranslate-yt-sub:empty,
