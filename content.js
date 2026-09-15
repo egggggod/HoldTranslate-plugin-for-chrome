@@ -67,6 +67,11 @@
     });
   }
 
+  // Early start for video subtitles without waiting for storage async delay
+  if (config.videoSubtitlesEnabled && typeof initVideoSubtitlesEngine === 'function') {
+    initVideoSubtitlesEngine();
+  }
+
   // Load config from storage safely
   if (isExtensionValid() && chrome.storage && chrome.storage.sync) {
     try {
@@ -915,16 +920,7 @@
       const comp = window.getComputedStyle(refSegment);
       if (comp) {
         if (comp.fontFamily) targetEl.style.setProperty('font-family', comp.fontFamily, 'important');
-        if (comp.fontSize) {
-          const parsed = parseFloat(comp.fontSize);
-          const textLen = (targetEl.textContent || '').length;
-          // Auto-scale slightly if long to guarantee single-line fit
-          if (parsed > 0 && textLen > 45) {
-            targetEl.style.setProperty('font-size', `${Math.max(12, Math.round(parsed * 0.88))}px`, 'important');
-          } else {
-            targetEl.style.setProperty('font-size', comp.fontSize, 'important');
-          }
-        }
+        if (comp.fontSize) targetEl.style.setProperty('font-size', comp.fontSize, 'important');
         if (comp.fontWeight) targetEl.style.setProperty('font-weight', comp.fontWeight, 'important');
         if (comp.lineHeight && comp.lineHeight !== 'normal') {
           targetEl.style.setProperty('line-height', comp.lineHeight, 'important');
@@ -942,7 +938,7 @@
     // 1. Check if an active cue at this timestamp has cached translation
     const activeCue = ytTimedTextCues.find(c => curMs >= c.start - 400 && curMs <= c.end + 400);
     if (activeCue) {
-      const trans = getCachedSub(activeCue.text);
+      const trans = activeCue.translation || getCachedSub(activeCue.text);
       if (trans) {
         if (originalText && originalText !== activeCue.text) {
           setCachedSub(originalText, trans);
@@ -960,15 +956,12 @@
       ? [captionContainer]
       : captionContainer.querySelectorAll('.caption-window');
     windows.forEach((win) => {
-      // Override YouTube inline styles: enable flex stacking and single-line layout
+      // Override YouTube inline styles: enable flex stacking and visible overflow for natural wrapping
       win.style.setProperty('overflow', 'visible', 'important');
       win.style.setProperty('height', 'auto', 'important');
-      win.style.setProperty('max-width', '95%', 'important');
-      win.style.setProperty('width', 'auto', 'important');
       win.style.setProperty('display', 'flex', 'important');
       win.style.setProperty('flex-direction', 'column', 'important');
       win.style.setProperty('align-items', 'center', 'important');
-      win.style.setProperty('justify-content', 'center', 'important');
 
       const segments = win.querySelectorAll('.ytp-caption-segment');
       if (!segments.length) return;
@@ -1024,7 +1017,7 @@
         }
       }
 
-      // 3. Fallback to ultra-fast live translation with race-condition mitigation
+      // 3. Fallback to live translation with safe queue
       translateSubtitleText(fullOriginalText, (translatedText) => {
         if (!translatedText) return;
         const currentSegments = win.querySelectorAll('.ytp-caption-segment');
@@ -1050,18 +1043,14 @@
   function applyYouTubeDisplayMode(win, segments, subEl) {
     const isMonolingual = config.subtitleMode === 'monolingual';
     segments.forEach(s => {
-      s.style.setProperty('display', isMonolingual ? 'none' : 'inline', 'important');
-      s.style.setProperty('white-space', 'nowrap', 'important');
+      s.style.setProperty('display', isMonolingual ? 'none' : '', 'important');
     });
     const capText = win.querySelector('.captions-text');
     if (capText) {
-      capText.style.setProperty('display', isMonolingual ? 'none' : 'block', 'important');
-      capText.style.setProperty('white-space', 'nowrap', 'important');
-      capText.style.setProperty('text-align', 'center', 'important');
+      capText.style.setProperty('display', isMonolingual ? 'none' : '', 'important');
     }
     if (subEl && subEl.textContent) {
       subEl.style.setProperty('display', 'block', 'important');
-      subEl.style.setProperty('white-space', 'nowrap', 'important');
       subEl.style.setProperty('color', config.textColor, 'important');
       if (segments.length > 0) {
         mirrorSubtitleTypography(segments[0], subEl);
@@ -1122,6 +1111,9 @@
         ytCurrentTrackUrl = null;
         pendingSubRequests.clear();
         document.querySelectorAll('.holdtranslate-yt-sub').forEach(el => el.remove());
+        try {
+          window.postMessage({ source: 'holdtranslate-content', type: 'REQUEST_TRACKS' }, '*');
+        } catch (e) {}
         setTimeout(checkTarget, 500);
       }, { passive: true });
       window.addEventListener('fullscreenchange', () => setTimeout(checkTarget, 300), { passive: true });
@@ -1129,6 +1121,16 @@
   }
 
   // --- YouTube TimedText Parsing & Prefetching Engine ---
+
+  function getYouTubeTlang(targetLang) {
+    if (!targetLang || targetLang === 'auto' || targetLang === 'zh-CN' || targetLang === 'zh') {
+      return 'zh-Hans';
+    }
+    if (targetLang === 'zh-TW') {
+      return 'zh-Hant';
+    }
+    return targetLang;
+  }
 
   function parseTimedTextData(rawText) {
     if (!rawText || typeof rawText !== 'string') return [];
@@ -1216,6 +1218,27 @@
     ytTimedTextCues = cues;
     ytCurrentTrackUrl = url;
 
+    // If intercepted url does not have tlang, try fetching tlang track
+    if (!url.includes('tlang=')) {
+      const cleanBase = url.replace(/&fmt=[^&]+/g, '').replace(/&tlang=[^&]+/g, '');
+      const tlang = getYouTubeTlang(config.targetLang);
+      fetch(`${cleanBase}&fmt=json3&tlang=${encodeURIComponent(tlang)}`)
+        .then(r => r.text())
+        .then(transRaw => {
+          const transCues = parseTimedTextData(transRaw);
+          if (transCues && transCues.length) {
+            cues.forEach(origCue => {
+              const match = transCues.find(tc => Math.abs(tc.start - origCue.start) < 500);
+              if (match && match.text && origCue.text) {
+                origCue.translation = match.text;
+                setCachedSub(origCue.text, match.text);
+              }
+            });
+          }
+        })
+        .catch(() => {});
+    }
+
     const video = document.querySelector('video');
     const curMs = video ? Math.round(video.currentTime * 1000) : 0;
     prefetchUpcomingCues(curMs, curMs + 45000);
@@ -1232,20 +1255,36 @@
     if (!track || !track.baseUrl || track.baseUrl === ytCurrentTrackUrl) return;
 
     ytCurrentTrackUrl = track.baseUrl;
-    const fetchUrl = track.baseUrl.includes('fmt=json3') ? track.baseUrl : track.baseUrl + '&fmt=json3';
+    const cleanBase = track.baseUrl.replace(/&fmt=[^&]+/g, '').replace(/&tlang=[^&]+/g, '');
+    const tlang = getYouTubeTlang(config.targetLang);
 
-    fetch(fetchUrl)
-      .then(r => r.text())
-      .then(rawText => {
-        const cues = parseTimedTextData(rawText);
-        if (cues && cues.length) {
-          ytTimedTextCues = cues;
-          const video = document.querySelector('video');
-          const curMs = video ? Math.round(video.currentTime * 1000) : 0;
-          prefetchUpcomingCues(curMs, curMs + 45000);
-        }
-      })
-      .catch(() => {});
+    // Fetch original and YouTube official translated track in parallel for instant 0ms full-video cache
+    const origUrl = `${cleanBase}&fmt=json3`;
+    const tlangUrl = `${cleanBase}&fmt=json3&tlang=${encodeURIComponent(tlang)}`;
+
+    Promise.all([
+      fetch(origUrl).then(r => r.text()).catch(() => null),
+      fetch(tlangUrl).then(r => r.text()).catch(() => null)
+    ]).then(([origRaw, transRaw]) => {
+      const origCues = origRaw ? parseTimedTextData(origRaw) : [];
+      const transCues = transRaw ? parseTimedTextData(transRaw) : [];
+
+      if (origCues.length && transCues.length) {
+        origCues.forEach(origCue => {
+          const match = transCues.find(tc => Math.abs(tc.start - origCue.start) < 500);
+          if (match && match.text && origCue.text) {
+            origCue.translation = match.text;
+            setCachedSub(origCue.text, match.text);
+          }
+        });
+        ytTimedTextCues = origCues;
+      } else if (origCues.length) {
+        ytTimedTextCues = origCues;
+        const video = document.querySelector('video');
+        const curMs = video ? Math.round(video.currentTime * 1000) : 0;
+        prefetchUpcomingCues(curMs, curMs + 45000);
+      }
+    }).catch(() => {});
   }
 
   function initYouTubeTimedTextPrefetch() {
@@ -1265,6 +1304,16 @@
       });
     }
 
+    // Bi-directional Handshake: request tracks from yt-bridge.js
+    const requestTracks = () => {
+      try {
+        window.postMessage({ source: 'holdtranslate-content', type: 'REQUEST_TRACKS' }, '*');
+      } catch (e) {}
+    };
+    requestTracks();
+    setTimeout(requestTracks, 500);
+    setTimeout(requestTracks, 1500);
+
     hookVideoEvents();
   }
 
@@ -1274,14 +1323,15 @@
 
     const targetCues = ytTimedTextCues.filter(c => c.start >= fromMs - 1000 && c.start <= toMs);
     const needed = targetCues.filter(c => !getCachedSub(c.text) && !pendingSubRequests.has(c.text));
+    if (!needed.length) return;
 
-    // Stagger prefetch requests in small batches to avoid network choking or rate limiting
-    needed.slice(0, 15).forEach((cue, index) => {
+    // Throttle safely: max 4 requests at a time, spaced by 350ms to prevent Google 429
+    needed.slice(0, 4).forEach((cue, index) => {
       setTimeout(() => {
         if (!getCachedSub(cue.text) && !pendingSubRequests.has(cue.text)) {
           translateSubtitleText(cue.text, () => {});
         }
-      }, index * 80);
+      }, index * 350);
     });
   }
 

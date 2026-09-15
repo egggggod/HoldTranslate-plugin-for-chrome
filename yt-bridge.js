@@ -7,6 +7,9 @@
   if (window.__HOLDTRANSLATE_YT_BRIDGE_INITIALIZED__) return;
   window.__HOLDTRANSLATE_YT_BRIDGE_INITIALIZED__ = true;
 
+  let cachedTracks = null;
+  let cachedTimedText = null;
+
   // Dispatch message to isolated world content script
   function sendToContentScript(type, payload) {
     try {
@@ -30,7 +33,8 @@
           const clone = response.clone();
           clone.text().then((text) => {
             if (text) {
-              sendToContentScript('TIMED_TEXT_INTERCEPTED', { url: url, text: text });
+              cachedTimedText = { url: url, text: text };
+              sendToContentScript('TIMED_TEXT_INTERCEPTED', cachedTimedText);
             }
           }).catch(() => {});
         }
@@ -51,7 +55,8 @@
       try {
         const url = String(this.__holdtranslate_url || '');
         if (url.includes('/api/timedtext') && this.responseText) {
-          sendToContentScript('TIMED_TEXT_INTERCEPTED', { url: url, text: this.responseText });
+          cachedTimedText = { url: url, text: this.responseText };
+          sendToContentScript('TIMED_TEXT_INTERCEPTED', cachedTimedText);
         }
       } catch (e) {}
     });
@@ -77,10 +82,25 @@
       }
 
       if (tracks && tracks.length) {
+        cachedTracks = tracks;
         sendToContentScript('CAPTION_TRACKS_DETECTED', { tracks: tracks });
       }
     } catch (e) {}
   }
+
+  // 4. Bi-directional Handshake: Listen for requests from content script
+  window.addEventListener('message', (e) => {
+    if (!e.data || e.data.source !== 'holdtranslate-content') return;
+    if (e.data.type === 'REQUEST_TRACKS') {
+      if (cachedTracks && cachedTracks.length) {
+        sendToContentScript('CAPTION_TRACKS_DETECTED', { tracks: cachedTracks });
+      }
+      if (cachedTimedText) {
+        sendToContentScript('TIMED_TEXT_INTERCEPTED', cachedTimedText);
+      }
+      inspectPlayerCaptionTracks();
+    }
+  });
 
   // Periodic check until movie_player is ready, plus event hooks
   let trackCheckAttempts = 0;
@@ -101,6 +121,8 @@
 
   // Re-check on YouTube SPA navigation
   window.addEventListener('yt-navigate-finish', () => {
+    cachedTracks = null;
+    cachedTimedText = null;
     setTimeout(inspectPlayerCaptionTracks, 300);
     setTimeout(inspectPlayerCaptionTracks, 1000);
   }, { passive: true });

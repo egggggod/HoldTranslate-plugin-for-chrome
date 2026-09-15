@@ -120,24 +120,6 @@
   max-width: 95% !important;
 }
 
-.caption-window .captions-text {
-  display: block !important;
-  white-space: nowrap !important;
-  text-align: center !important;
-  max-width: 100% !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-}
-
-.caption-window .ytp-caption-segment {
-  display: inline !important;
-  white-space: nowrap !important;
-}
-
-.caption-window .ytp-caption-segment br {
-  display: none !important;
-}
-
 @keyframes holdtranslateSubFadeIn {
   from {
     opacity: 0;
@@ -161,13 +143,13 @@
   border-radius: 6px !important;
   margin-top: 4px !important;
   pointer-events: none !important;
-  white-space: nowrap !important;
-  text-overflow: ellipsis !important;
-  overflow: hidden !important;
+  white-space: normal !important;
+  word-break: break-word !important;
+  line-height: 1.35 !important;
   text-align: center !important;
   box-sizing: border-box !important;
   max-width: 100% !important;
-  transition: color 0.2s ease, font-size 0.2s ease !important;
+  transition: color 0.2s ease !important;
   animation: holdtranslateSubFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
