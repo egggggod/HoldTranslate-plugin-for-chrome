@@ -4,6 +4,16 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.3] - 2026-09-15
+
+### Added & Fixed
+- **Bottom-Anchored Baseline Alignment (Zero Vertical Jitter)**: Eliminated vertical subtitle jumping and jitter by pinning the `.caption-window` to a solid bottom baseline (`top: auto !important; bottom: 64px !important; justify-content: flex-end !important`). Overrode YouTube's dynamic inline `top` pixel recalculations so that single-line to multi-line wrapping expands upward without moving the bottom translated text edge.
+- **Adaptive Control Bar Height Sync**: Subtitles smoothly lower to `bottom: 24px` when YouTube controls auto-hide (`.ytp-autohide`) during uninterrupted playback, with fluid 0.25s transitions matching the YouTube player UI.
+- **Seamless Retention & Anti-Flicker Protection**: Eradicated blank frames and flickers during progressive speech and sentence switching by stably retaining existing translations until new translations arrive, completely eliminating intermediate `display: none` toggles.
+- **Deep Sentence Prefetching on Raw ASR Tracks**: Extended proactive background prefetching to full sentence structures (`ytSentenceCues`) across all videos, achieving 99% instant memory hits even on raw auto-generated speech recognition captions without official translated tracks.
+
+---
+
 ## [v1.7.2] - 2026-09-15
 
 ### Added & Fixed

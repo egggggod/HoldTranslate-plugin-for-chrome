@@ -9,16 +9,16 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.7.2-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.7.3-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.7.2-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.7.3-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.2/holdtranslate-chrome-extension-v1.7.2.zip) (v1.7.2)，解压后即可在 Chrome 中体验：
+点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.3/holdtranslate-chrome-extension-v1.7.3.zip) (v1.7.3)，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -64,12 +64,12 @@ HoldTranslate-plugin-for-chrome/
 
 ## 浏览器扩展特性 (Features)
 
-- ⚡ **YouTube 字幕 0 延迟秒级同步与句首即现 (Zero-Latency Subtitle & Sentence-Onset Translation)**：全面重构主世界透明桥接机制 (`yt-bridge.js`) 与高层语义断句流模型 (`ytSentenceCues`)，句子刚开口（即使是滚动 ASR 自动生成字幕的第一词出现时）即 0ms 瞬间完整呈现整句译文；引入高韧性防闪烁前缀衔接与原生字幕 0ms 同步隐现控制，并辅以 0.2s 平滑微动效。
+- ⚡ **YouTube 字幕 0 延迟秒级同步与底部基准线锁定 (Zero-Latency & Bottom-Anchored Baseline)**：全面重构主世界透明桥接机制 (`yt-bridge.js`)、深度断句预翻译与底部基准线锁定（`justify-content: flex-end`）。彻底消除字幕纵向跳动与颠簸，多行换行一律向上平滑生长；句子刚开口即 0ms 瞬间呈现整句高品质译文，切句无缝保留旧译文直至新译文命中，全程绝无空白闪烁。
 - 🎯 **视频字幕 1:1 动态排版镜像 (Dynamic Typography Mirroring)**：实时动态提取 YouTube 原生字幕段落的计算样式，将 `font-family`、`font-size`、`font-weight`、`line-height`、`letter-spacing` 等 1:1 动态精准赋给译文字幕，支持全屏播放与小窗缩放自适应，彻底消除字体突兀感；保持强调色高对比度呈现。
 - 🪟 **边缘直通无穿帮弹窗体系 (Edge-to-Edge Native Integration)**：彻底废除外层角隅裁切与多余外框，`html, body` 采用与成熟主流扩展一致的边缘直通无感设计，由 Chrome 宿主窗口自身呈现原生圆角与系统立体投影，彻底根除“方背景下叠一层弧形”的视觉穿帮缺陷；内部卡片全面维持苹果 VisionOS 液态玻璃圆角胶囊与流体光晕。
 - 📱 **Apple iOS 紧凑平滑滑动子页面架构（选择语言零变长、恒定 225px）**：采用苹果 iOS 设置级水平推拉子页面架构（`.show-subpage #subpageView`）。无论选择源语言、目标语言还是翻译服务，弹窗开窗高度**绝对严格锁定在 225px**，彻底消除界面抖动与上下拉长变形。
 - ⚡ **120ms 触觉确认平滑回弹流**：点击任意语言或服务选项，立即点亮精致绿勾（`✓`）与柔和胶囊底色提供即时触觉确认，随后经 120ms 平滑滑动自动返回主面板；左上角 `← 返回` 胶囊按钮与键盘 ESC 键随时可手动返回。
-- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.7.2]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
+- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.7.3]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
 - 🌐 **极简纯英服务标识 (Minimal English Services)**：主界面翻译服务全面取消冗余中文字样，统一采用标准英文品牌名称（**Google Translate**、**Microsoft Translator**、**DeepSeek API**、**Custom API**），语言选择器保留地道中文以符合直觉。
 - 🎛️ **去冗余纯净设置体系**：偏好设置内新增「🎬 视频字幕」专属配置卡片，包含总开关与 Apple 风格分段选择器（`[双语对照]` / `[仅译文]`），快捷主面板维持 225px 黄金高度不变。
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
@@ -80,8 +80,8 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.7.2）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.7.2.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.2/holdtranslate-chrome-extension-v1.7.2.zip)）；
+1. **直接下载安装包（推荐 - 最新 v1.7.3）**
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.7.3.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.3/holdtranslate-chrome-extension-v1.7.3.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；

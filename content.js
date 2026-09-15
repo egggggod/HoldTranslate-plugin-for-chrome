@@ -941,18 +941,19 @@
   function getActiveTimedTextTranslation(curMs, originalText) {
     // Priority 1: Sentence-onset instant full translation (shows full translation at word 1!)
     if (ytSentenceCues && ytSentenceCues.length) {
-      const candidates = ytSentenceCues.filter(s => curMs >= s.start - 250 && curMs <= s.end + 250);
+      const candidates = ytSentenceCues.filter(s => curMs >= s.start - 350 && curMs <= s.end + 450);
       for (const sent of candidates) {
-        if (sent && sent.translation) {
+        const trans = sent.translation || getCachedSub(sent.text);
+        if (sent && trans) {
           if (originalText) {
             const cleanOrig = originalText.trim().toLowerCase();
             const cleanSent = (sent.text || '').trim().toLowerCase();
             if (cleanSent.startsWith(cleanOrig) || cleanSent.includes(cleanOrig) || cleanOrig.startsWith(cleanSent)) {
-              setCachedSub(originalText, sent.translation);
-              return sent.translation;
+              setCachedSub(originalText, trans);
+              return trans;
             }
           } else {
-            return sent.translation;
+            return trans;
           }
         }
       }
@@ -1073,11 +1074,13 @@
         return;
       }
 
-      // Apply flex layout only when window is active and visible
+      // Apply bottom-anchored baseline layout directly to window (shield against YouTube inline top overrides)
       win.style.setProperty('overflow', 'visible', 'important');
       win.style.setProperty('height', 'auto', 'important');
+      win.style.setProperty('top', 'auto', 'important');
       win.style.setProperty('display', 'flex', 'important');
       win.style.setProperty('flex-direction', 'column', 'important');
+      win.style.setProperty('justify-content', 'flex-end', 'important');
       win.style.setProperty('align-items', 'center', 'important');
 
       let subEl = win.querySelector('.holdtranslate-yt-sub');
@@ -1138,15 +1141,14 @@
         return;
       }
 
-      // E. Anti-Flicker Protection during live translation / ASR rolling words:
-      // If subEl ALREADY has an active translation showing and is related to the current sentence
-      // (e.g. current sentence is rolling/growing), KEEP IT VISIBLE! DO NOT HIDE subEl!
-      const hasExistingDisplay = subEl.dataset.translatedText && subEl.textContent && subEl.dataset.empty !== 'true';
-      const isPrefixContinuation = Boolean(hasExistingDisplay && subEl.dataset.originalText &&
-        (fullOriginalText.startsWith(subEl.dataset.originalText) || subEl.dataset.originalText.startsWith(fullOriginalText)));
-
-      if (!isPrefixContinuation) {
-        // Only if it's a completely brand new sentence and not yet translated, stay quietly hidden
+      // E. Seamless Retention & Anti-Flicker Protection during live translation / ASR rolling words:
+      // While native captions are actively showing, DO NOT HIDE subEl!
+      // Keep existing translation visible until the new translation arrives, eliminating blank flashes.
+      const hasExistingDisplay = Boolean(subEl.dataset.translatedText && subEl.textContent && subEl.dataset.empty !== 'true');
+      if (hasExistingDisplay) {
+        subEl.style.setProperty('display', 'block', 'important');
+        subEl.style.setProperty('opacity', '1', 'important');
+      } else {
         subEl.dataset.empty = 'true';
         subEl.style.setProperty('display', 'none', 'important');
       }
@@ -1187,12 +1189,14 @@
     }
     if (subEl && subEl.textContent && subEl.dataset.empty !== 'true') {
       subEl.style.setProperty('display', 'block', 'important');
+      subEl.style.setProperty('opacity', '1', 'important');
       subEl.style.setProperty('color', config.textColor, 'important');
       if (segments.length > 0) {
         mirrorSubtitleTypography(segments[0], subEl);
       }
     } else if (subEl) {
       subEl.style.setProperty('display', 'none', 'important');
+      subEl.style.setProperty('opacity', '0', 'important');
     }
   }
 
@@ -1601,20 +1605,41 @@
   }
 
   function prefetchUpcomingCues(fromMs, toMs) {
-    if (!ytTimedTextCues || !ytTimedTextCues.length) return;
     if (!config.videoSubtitlesEnabled) return;
 
+    // 1. Deep Sentence Prefetching (priority for sentence-onset 0ms instant display)
+    if (ytSentenceCues && ytSentenceCues.length) {
+      const targetSentences = ytSentenceCues.filter(s => s.start >= fromMs - 1000 && s.start <= toMs);
+      const neededSentences = targetSentences.filter(s => !s.translation && !getCachedSub(s.text) && !pendingSubRequests.has(s.text));
+      if (neededSentences.length) {
+        neededSentences.slice(0, 4).forEach((sent, index) => {
+          setTimeout(() => {
+            if (!sent.translation && !getCachedSub(sent.text) && !pendingSubRequests.has(sent.text)) {
+              translateSubtitleText(sent.text, (trans) => {
+                if (trans) {
+                  sent.translation = trans;
+                  setCachedSub(sent.text, trans);
+                }
+              });
+            }
+          }, index * 260);
+        });
+      }
+    }
+
+    // 2. Individual cue pool prefetch for fine-grained fallback
+    if (!ytTimedTextCues || !ytTimedTextCues.length) return;
     const targetCues = ytTimedTextCues.filter(c => c.start >= fromMs - 1000 && c.start <= toMs);
     const needed = targetCues.filter(c => !getCachedSub(c.text) && !pendingSubRequests.has(c.text));
     if (!needed.length) return;
 
-    // Throttle safely: max 4 requests at a time, spaced by 350ms to prevent Google 429
-    needed.slice(0, 4).forEach((cue, index) => {
+    // Throttle safely: max 3 requests at a time, spaced by 260ms
+    needed.slice(0, 3).forEach((cue, index) => {
       setTimeout(() => {
         if (!getCachedSub(cue.text) && !pendingSubRequests.has(cue.text)) {
           translateSubtitleText(cue.text, () => {});
         }
-      }, index * 350);
+      }, (index + 4) * 260);
     });
   }
 
