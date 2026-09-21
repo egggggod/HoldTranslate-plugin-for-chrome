@@ -116,6 +116,9 @@
   bottom: 64px !important;
   left: 50% !important;
   transform: translateX(-50%) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center !important;
   width: max-content !important;
   min-width: min-content !important;
   max-width: 88% !important;
@@ -126,7 +129,28 @@
   justify-content: flex-end !important;
   overflow: visible !important;
   height: auto !important;
+  pointer-events: none !important;
+  user-select: none !important;
   transition: bottom 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
+}
+
+/* Ensure native English caption lines are strictly centered on the common vertical axis */
+.caption-window .captions-text,
+.caption-window .caption-visual-line {
+  text-align: center !important;
+  width: 100% !important;
+  display: block !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  pointer-events: none !important;
+  user-select: none !important;
+}
+
+.caption-window .ytp-caption-segment {
+  text-align: center !important;
+  display: inline-block !important;
+  pointer-events: none !important;
+  user-select: none !important;
 }
 
 /* When YouTube controls auto-hide in playback, smoothly slide subtitles down closer to bottom */
@@ -157,7 +181,11 @@
   padding: 3px 12px !important;
   border-radius: 6px !important;
   margin-top: 4px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  align-self: center !important;
   pointer-events: none !important;
+  user-select: none !important;
   white-space: pre-wrap !important;
   word-break: break-word !important;
   line-height: 1.35 !important;

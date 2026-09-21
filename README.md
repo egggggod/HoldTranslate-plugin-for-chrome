@@ -9,16 +9,16 @@ Immersive long-press instant web translation & smooth restoration for Google Chr
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
-[![Version](https://img.shields.io/badge/version-1.7.4-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.7.5-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.7.4-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.7.5-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
 
 > Works smoothly across all modern web pages, including complex responsive sites, dynamic feeds (YouTube, X/Twitter), and classic academic/news layouts (BBC, Economist, ArXiv).
 
-Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.4/holdtranslate-chrome-extension-v1.7.4.zip) (click to download v1.7.4) installed in Chrome:
+Here is a demo of using the latest [HoldTranslate Chrome extension](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.5/holdtranslate-chrome-extension-v1.7.5.zip) (click to download v1.7.5) installed in Chrome:
 
 ### 1. Immersive Reading in Light Mode (e.g. News & Articles)
 ![Light Mode Demo](assets/demo-light.png)
@@ -68,12 +68,12 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### Features
 
-- ⚡ **Zero-Latency Subtitle & Unconstrained Width Engine**: Reconstructed MAIN World transparent stream interception (`yt-bridge.js`), deep sentence prefetching (`ytSentenceCues`), and bottom-anchored baseline alignment. Unconstrained 88% player adaptive centering (`max-width: 88% !important; left: 50% !important; transform: translateX(-50%) !important; width: max-content !important;`) allows Chinese subtitles to expand naturally without being constrained by English text width. Features smart semantic and midpoint line balancing (`formatBalancedTranslation`) to harmoniously mirror English lines (1 line when English is 1 line; graceful 2-line break when English is 2 lines).
+- ⚡ **Zero-Latency Subtitle & Axis-Symmetric Centering Engine**: Reconstructed MAIN World transparent stream interception (`yt-bridge.js`), deep sentence prefetching (`ytSentenceCues`), and bottom-anchored baseline alignment. Unconstrained 88% player adaptive centering with strict axis-symmetric centering (`left: 50% !important; transform: translateX(-50%) !important; text-align: center !important`) ensures English subtitles and Chinese translations share 100% identical horizontal center axes. Features smart line balancing (`formatBalancedTranslation`) and accidental drag lock with click pass-through (`pointer-events: none`).
 - 🎯 **1:1 Dynamic Subtitle Typography Mirroring**: Dynamically extracts computed font attributes (`font-family`, `font-size`, `font-weight`, `line-height`, `letter-spacing`) from YouTube native caption segments and applies them directly to translated subtitles, naturally resizing across fullscreen and mini-player modes.
 - 🪟 **Edge-to-Edge Native Integration (Zero Cutout Frame)**: Adopted native edge-to-edge popup architecture matching top-tier Chrome extensions. `html, body` seamlessly fill the window, letting Chrome render native OS rounded corners and drop shadows without any triangular corner artifacts, while internal components retain full Apple VisionOS liquid glass aesthetics.
 - 📱 **Apple iOS Sliding Subpage Architecture (Zero Height Lengthening)**: Implemented an Apple iOS Settings-grade sliding subpage architecture for language and translation service selection. The popup window height **strictly remains locked at 225px** without any downward stretching, jitter, or overflow issues.
 - ⚡ **Tactile 120ms Auto-Return Flow**: Selecting an option immediately displays an energetic green checkmark (`✓`) with instant tactile confirmation, then smoothly auto-slides back to the Quick View after 120ms. Manual navigation via the `← 返回` button and Escape key is always available.
-- 🍏 **Apple 2025 Floating Island Bar & Specular Sheen**: Reconstructed the bottom bar into an Apple WWDC25 June 2025 unified floating crystal island (`.floating-island-bar`) combining `[⚙️ Settings]`, `[● 就绪 · v1.7.4]`, and `[↗ Test Page]`. Features 115° specular sheen sweeps on hover and `scale(0.97)` tactile press indentation physics.
+- 🍏 **Apple 2025 Floating Island Bar & Specular Sheen**: Reconstructed the bottom bar into an Apple WWDC25 June 2025 unified floating crystal island (`.floating-island-bar`) combining `[⚙️ Settings]`, `[● 就绪 · v1.7.5]`, and `[↗ Test Page]`. Features 115° specular sheen sweeps on hover and `scale(0.97)` tactile press indentation physics.
 - 🌐 **Minimalist Multi-Engine Architecture**: Clean English naming across all services (**Google Translate**, **Microsoft Translator**, **DeepSeek API**, and **Custom API**) while preserving localized Chinese for intuitive language selection.
 - 🎛️ **Clean & Decluttered Settings Hierarchy**: Dedicated "🎬 视频字幕" configuration card with master switch and Apple-style segmented control (`[双语对照]` / `[仅译文]`), keeping Quick View locked at 225px.
 - 🎯 **1:1 Typography & Rich-Text Mirroring**: Matches exact computed font sizes (including YouTube `#video-title` nested structures), automatically mirrors `bold`, `italic`, `underline`, and detects Serif vs. Sans-serif.
@@ -84,8 +84,8 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-1. **Manual Installation (Recommended - latest v1.7.4)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.7.4.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.4/holdtranslate-chrome-extension-v1.7.4.zip))
+1. **Manual Installation (Recommended - latest v1.7.5)**
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.7.5.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.5/holdtranslate-chrome-extension-v1.7.5.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)

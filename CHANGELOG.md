@@ -4,6 +4,15 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.5] - 2026-09-21
+
+### Added & Fixed
+- **Guaranteed Axis-Symmetric Centering**: Enforced strict horizontal centering across both the outer subtitle container (`.caption-window`) and all inner text wrappers (`.captions-text`, `.caption-visual-line`, `.ytp-caption-segment`, `.holdtranslate-yt-sub`). Completely eliminates asymmetric text alignment where native English subtitles defaulted to left-aligned while Chinese translations were centered.
+- **Pure Streaming Axis Alignment**: Subtitle lines independently align along the common vertical center axis (100% axis-symmetric matching Netflix and cinema bilingual subtitle typography standards) across single-line, dual-line, and 88% player max-width wrapping.
+- **Drag-Lock Pass-Through (`pointer-events: none`)**: Set `pointer-events: none !important; user-select: none !important;` on the subtitle container and text elements. Completely prevents accidental mouse drags from knocking subtitles off center while allowing mouse clicks on subtitles to smoothly pass through to the video player for instant play/pause toggling.
+
+---
+
 ## [v1.7.4] - 2026-09-21
 
 ### Added & Fixed

@@ -1159,6 +1159,9 @@
       win.style.setProperty('top', 'auto', 'important');
       win.style.setProperty('left', '50%', 'important');
       win.style.setProperty('transform', 'translateX(-50%)', 'important');
+      win.style.setProperty('margin-left', 'auto', 'important');
+      win.style.setProperty('margin-right', 'auto', 'important');
+      win.style.setProperty('text-align', 'center', 'important');
       win.style.setProperty('width', 'max-content', 'important');
       win.style.setProperty('min-width', 'min-content', 'important');
       win.style.setProperty('max-width', '88%', 'important');
@@ -1167,6 +1170,8 @@
       win.style.setProperty('flex-direction', 'column', 'important');
       win.style.setProperty('justify-content', 'flex-end', 'important');
       win.style.setProperty('align-items', 'center', 'important');
+      win.style.setProperty('pointer-events', 'none', 'important');
+      win.style.setProperty('user-select', 'none', 'important');
 
       let subEl = win.querySelector('.holdtranslate-yt-sub');
       if (!subEl) {
@@ -1268,16 +1273,37 @@
   function applyYouTubeDisplayMode(win, segments, subEl) {
     const isMonolingual = config.subtitleMode === 'monolingual';
     segments.forEach(s => {
-      s.style.setProperty('display', isMonolingual ? 'none' : '', 'important');
+      s.style.setProperty('display', isMonolingual ? 'none' : 'inline-block', 'important');
+      s.style.setProperty('text-align', 'center', 'important');
+      s.style.setProperty('pointer-events', 'none', 'important');
     });
     const capText = win.querySelector('.captions-text');
     if (capText) {
-      capText.style.setProperty('display', isMonolingual ? 'none' : '', 'important');
+      capText.style.setProperty('display', isMonolingual ? 'none' : 'block', 'important');
+      capText.style.setProperty('text-align', 'center', 'important');
+      capText.style.setProperty('width', '100%', 'important');
+      capText.style.setProperty('margin-left', 'auto', 'important');
+      capText.style.setProperty('margin-right', 'auto', 'important');
+      capText.style.setProperty('pointer-events', 'none', 'important');
     }
+    const visualLines = win.querySelectorAll('.caption-visual-line');
+    visualLines.forEach(vl => {
+      vl.style.setProperty('text-align', 'center', 'important');
+      vl.style.setProperty('display', 'block', 'important');
+      vl.style.setProperty('margin-left', 'auto', 'important');
+      vl.style.setProperty('margin-right', 'auto', 'important');
+      vl.style.setProperty('width', '100%', 'important');
+      vl.style.setProperty('pointer-events', 'none', 'important');
+    });
     if (subEl && subEl.textContent && subEl.dataset.empty !== 'true') {
       subEl.style.setProperty('display', 'block', 'important');
       subEl.style.setProperty('opacity', '1', 'important');
       subEl.style.setProperty('color', config.textColor, 'important');
+      subEl.style.setProperty('text-align', 'center', 'important');
+      subEl.style.setProperty('align-self', 'center', 'important');
+      subEl.style.setProperty('margin-left', 'auto', 'important');
+      subEl.style.setProperty('margin-right', 'auto', 'important');
+      subEl.style.setProperty('pointer-events', 'none', 'important');
       if (segments.length > 0) {
         mirrorSubtitleTypography(segments[0], subEl);
       }
