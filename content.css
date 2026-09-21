@@ -108,19 +108,24 @@
 /* =========================================================
    HoldTranslate Video Subtitle Styles (YouTube & X / HTML5)
    ========================================================= */
-/* Bottom-anchored baseline: strictly pins subtitle container to bottom, eliminates jumping */
+/* Bottom-anchored baseline & player-wide centered layout: strictly unconstrained by English width */
 .caption-window:not([style*="display: none"]):not([style*="visibility: hidden"]):not(.ytp-caption-window-hide),
 .ytp-caption-window-bottom:not([style*="display: none"]):not([style*="visibility: hidden"]):not(.ytp-caption-window-hide),
 .ytp-caption-window-rollup:not([style*="display: none"]):not([style*="visibility: hidden"]):not(.ytp-caption-window-hide) {
   top: auto !important;
   bottom: 64px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: max-content !important;
+  min-width: min-content !important;
+  max-width: 88% !important;
+  box-sizing: border-box !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: flex-end !important;
   overflow: visible !important;
   height: auto !important;
-  max-width: 95% !important;
   transition: bottom 0.25s cubic-bezier(0.2, 0, 0, 1) !important;
 }
 
@@ -153,12 +158,13 @@
   border-radius: 6px !important;
   margin-top: 4px !important;
   pointer-events: none !important;
-  white-space: normal !important;
+  white-space: pre-wrap !important;
   word-break: break-word !important;
   line-height: 1.35 !important;
   text-align: center !important;
   box-sizing: border-box !important;
   max-width: 100% !important;
+  width: auto !important;
   opacity: 1 !important;
   transition: opacity 0.18s ease, color 0.2s ease !important;
 }

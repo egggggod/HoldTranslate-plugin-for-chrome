@@ -907,6 +907,85 @@
     }
   }
 
+  // --- Smart Line Balancing: Align Chinese line count with English line count ---
+  function formatBalancedTranslation(chineseText, segments, win) {
+    if (!chineseText || typeof chineseText !== 'string') return '';
+    const clean = chineseText.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!clean) return '';
+
+    // 1. Detect if English native captions are multi-line (>= 2 lines)
+    let isEnglishMultiLine = false;
+    try {
+      if (win) {
+        if (win.querySelector('br')) {
+          isEnglishMultiLine = true;
+        } else {
+          const capText = win.querySelector('.captions-text');
+          if (capText && segments && segments.length > 0) {
+            const segComp = window.getComputedStyle(segments[0]);
+            const singleH = parseFloat(segComp.lineHeight) || (parseFloat(segComp.fontSize) * 1.35) || 24;
+            if (capText.clientHeight > singleH * 1.45) {
+              isEnglishMultiLine = true;
+            }
+          }
+        }
+      }
+      if (!isEnglishMultiLine && segments && segments.length >= 2) {
+        const top0 = segments[0].offsetTop || 0;
+        const top1 = segments[1].offsetTop || 0;
+        if (Math.abs(top1 - top0) > 8) {
+          isEnglishMultiLine = true;
+        }
+      }
+    } catch (e) {}
+
+    // Rule 1: If English is single-line, keep Chinese single-line
+    if (!isEnglishMultiLine) {
+      return clean;
+    }
+
+    // Rule 2: If English is multi-line (>= 2 lines), balance Chinese if it is long enough
+    // If Chinese is short (<= 18 chars), keep as 1 clean line to avoid fragmenting
+    if (clean.length <= 18) {
+      return clean;
+    }
+
+    // Rule 3: Find natural punctuation near midpoint [28% ~ 72%]
+    const minIdx = Math.floor(clean.length * 0.28);
+    const maxIdx = Math.ceil(clean.length * 0.72);
+    const mid = clean.length / 2;
+
+    const punctRegex = /[，、；： ,;]/g;
+    let bestIdx = -1;
+    let bestDist = Infinity;
+    let match;
+
+    while ((match = punctRegex.exec(clean)) !== null) {
+      const idx = match.index;
+      if (idx >= minIdx && idx <= maxIdx) {
+        const dist = Math.abs(idx - mid);
+        if (dist < bestDist) {
+          bestDist = dist;
+          bestIdx = idx;
+        }
+      }
+    }
+
+    if (bestIdx !== -1) {
+      const p1 = clean.slice(0, bestIdx + 1).trim();
+      const p2 = clean.slice(bestIdx + 1).trim();
+      if (p1 && p2) {
+        return p1 + '\n' + p2;
+      }
+    }
+
+    // Fallback: If no punctuation in middle, break at midpoint
+    const splitPoint = Math.round(mid);
+    const p1 = clean.slice(0, splitPoint).trim();
+    const p2 = clean.slice(splitPoint).trim();
+    return (p1 && p2) ? (p1 + '\n' + p2) : clean;
+  }
+
   // --- YouTube Subtitles Handler ---
   function extractCleanSegmentText(el) {
     if (!el) return '';
@@ -1074,10 +1153,16 @@
         return;
       }
 
-      // Apply bottom-anchored baseline layout directly to window (shield against YouTube inline top overrides)
+      // Apply bottom-anchored baseline & player-wide centered layout (strictly unconstrained by English width)
       win.style.setProperty('overflow', 'visible', 'important');
       win.style.setProperty('height', 'auto', 'important');
       win.style.setProperty('top', 'auto', 'important');
+      win.style.setProperty('left', '50%', 'important');
+      win.style.setProperty('transform', 'translateX(-50%)', 'important');
+      win.style.setProperty('width', 'max-content', 'important');
+      win.style.setProperty('min-width', 'min-content', 'important');
+      win.style.setProperty('max-width', '88%', 'important');
+      win.style.setProperty('box-sizing', 'border-box', 'important');
       win.style.setProperty('display', 'flex', 'important');
       win.style.setProperty('flex-direction', 'column', 'important');
       win.style.setProperty('justify-content', 'flex-end', 'important');
@@ -1096,11 +1181,16 @@
       // 1:1 Mirror typography from original native segment
       mirrorSubtitleTypography(segments[0], subEl);
 
+      const setFormattedSubtitle = (trans) => {
+        const balanced = formatBalancedTranslation(trans, segments, win);
+        if (subEl.textContent !== balanced) {
+          subEl.textContent = balanced;
+        }
+      };
+
       // A. Already displaying up-to-date translation for this text
       if (subEl.dataset.translatedText && subEl.dataset.originalText === fullOriginalText) {
-        if (subEl.textContent !== subEl.dataset.translatedText) {
-          subEl.textContent = subEl.dataset.translatedText;
-        }
+        setFormattedSubtitle(subEl.dataset.translatedText);
         subEl.dataset.empty = 'false';
         applyYouTubeDisplayMode(win, segments, subEl);
         return;
@@ -1112,9 +1202,7 @@
         subEl.dataset.originalText = fullOriginalText;
         subEl.dataset.translatedText = cached;
         subEl.dataset.empty = 'false';
-        if (subEl.textContent !== cached) {
-          subEl.textContent = cached;
-        }
+        setFormattedSubtitle(cached);
         applyYouTubeDisplayMode(win, segments, subEl);
         return;
       }
@@ -1127,9 +1215,7 @@
           subEl.dataset.originalText = fullOriginalText;
           subEl.dataset.translatedText = timeSyncTrans;
           subEl.dataset.empty = 'false';
-          if (subEl.textContent !== timeSyncTrans) {
-            subEl.textContent = timeSyncTrans;
-          }
+          setFormattedSubtitle(timeSyncTrans);
           applyYouTubeDisplayMode(win, segments, subEl);
           return;
         }
@@ -1169,8 +1255,9 @@
           subEl.dataset.originalText = currentFull;
           subEl.dataset.translatedText = translatedText;
           subEl.dataset.empty = 'false';
-          if (subEl.textContent !== translatedText) {
-            subEl.textContent = translatedText;
+          const formatted = formatBalancedTranslation(translatedText, currentSegments, win);
+          if (subEl.textContent !== formatted) {
+            subEl.textContent = formatted;
           }
           applyYouTubeDisplayMode(win, currentSegments, subEl);
         }

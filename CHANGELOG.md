@@ -4,6 +4,16 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.4] - 2026-09-21
+
+### Added & Fixed
+- **Unconstrained Subtitle Width & 88% Player Adaptive Centering**: Completely removed YouTube's native dynamic inline width constraint on the caption container (`.caption-window`). Subtitles now dynamically expand horizontally up to 88% of the video player viewport (`max-width: 88% !important; left: 50% !important; transform: translateX(-50%) !important; width: max-content !important;`), preventing premature Chinese text wrapping when English subtitles are short.
+- **Smart Semantic & Midpoint Line Balancing (`formatBalancedTranslation`)**: Harmoniously aligns Chinese subtitle line count with English lines to deliver an optimal viewing experience. When English is 1 line, Chinese remains 1 line without wrapping. When English is 2 lines and Chinese is long (> 18 characters), the engine intelligently breaks Chinese at natural punctuation marks (，、； etc.) or the midpoint into 2 balanced lines; short Chinese (<= 18 characters) remains on 1 line.
+- **Unified Cache & Live Rendering Alignment**: Integrated the smart line balancing formatter across all translation pipelines (full-track timedtext cache, sentence cue cache, LRU prefetch cache, and real-time streaming translation).
+- **Rock-Solid Bottom Baseline & Zero Jitter**: Maintained bottom-anchored baseline alignment so multi-line and single-line transitions expand smoothly upward with zero vertical jumping or flickering.
+
+---
+
 ## [v1.7.3] - 2026-09-15
 
 ### Added & Fixed
