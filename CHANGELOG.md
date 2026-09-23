@@ -4,6 +4,14 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.6] - 2026-09-23
+
+### Added & Fixed
+- **Media Player & Scrubbing Drag Exemption (`isMediaOrInteractiveControl`)**: Implemented comprehensive automatic exemption for video/audio elements and player controls. Completely eliminates mouse drag conflicts on Douyin (XGPlayer), Bilibili, YouTube, and HTML5 video progress bars, timeline scrubbing, and swipe-up/down gestures.
+- **Silent Minimalist Long-Press Flow**: Completely removed the spinning circle indicator (`.__gtrans-progress-indicator`) and associated timers. Long-press translation now provides a pure, zero-distraction experience that silently renders bilingual translations upon hold duration completion.
+
+---
+
 ## [v1.7.5] - 2026-09-21
 
 ### Added & Fixed

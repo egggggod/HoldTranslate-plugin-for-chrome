@@ -250,7 +250,7 @@
           <span class="status-dot"></span>
           <span class="status-message" id="statusMessage">就绪</span>
           <span class="status-sep">·</span>
-          <span class="bar-version">v1.7.5</span>
+          <span class="bar-version">v1.7.6</span>
         </div>
         <button type="button" class="bar-icon-btn island-btn" id="openTestPageBtn" title="打开测试基准页" aria-label="测试页">
           <svg viewBox="0 0 24 24" width="15" height="15">
@@ -397,14 +397,14 @@
           <span>手势与时延</span>
         </div>
 
-        <!-- 显示圆圈开关 -->
-        <div class="setting-item toggle-row">
+        <!-- 显示圆圈开关 (已移除转圈动画，静默极简体验) -->
+        <div class="setting-item toggle-row" style="display: none;">
           <div class="setting-info">
             <label class="setting-label" for="ringSwitch">长按光标指示环</label>
             <span class="setting-desc">按住时在光标处显示圆环旋转进度</span>
           </div>
           <label class="switch">
-            <input type="checkbox" id="ringSwitch" checked>
+            <input type="checkbox" id="ringSwitch">
             <span class="slider"></span>
           </label>
         </div>

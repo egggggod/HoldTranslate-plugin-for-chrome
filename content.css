@@ -1,42 +1,8 @@
 /* HoldTranslate - Immersive Bilingual Content Styles */
 
-/* Progress Ring during Long Press */
+/* Progress Ring during Long Press - Permanently disabled for silent minimalist flow */
 .__gtrans-progress-indicator {
-  position: fixed;
-  z-index: 2147483647;
-  pointer-events: none;
-  width: 30px;
-  height: 30px;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-  transition: opacity 0.15s ease-out;
-}
-
-.__gtrans-progress-indicator.active {
-  opacity: 1;
-}
-
-.__gtrans-progress-indicator svg {
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
-}
-
-.__gtrans-progress-indicator circle.bg {
-  fill: rgba(0, 0, 0, 0.4);
-  stroke: rgba(255, 255, 255, 0.2);
-  stroke-width: 2.5;
-}
-
-.__gtrans-progress-indicator circle.meter {
-  fill: none;
-  stroke: #86a003;
-  stroke-width: 3.5;
-  stroke-linecap: round;
-  stroke-dasharray: 88;
-  stroke-dashoffset: 88;
-  transition: stroke-dashoffset linear;
+  display: none !important;
 }
 
 /* Immersive Inline Translation Element (No Card, No Borders, Transparent Background) */

@@ -576,7 +576,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateDurationUI(res.pressDuration !== undefined ? res.pressDuration : 500);
       updateConfirmDelayUI(res.confirmDelay !== undefined ? res.confirmDelay : 160);
       if (ringSwitch) {
-        ringSwitch.checked = res.showRing !== undefined ? res.showRing : true;
+        ringSwitch.checked = res.showRing !== undefined ? res.showRing : false;
       }
 
       // Color

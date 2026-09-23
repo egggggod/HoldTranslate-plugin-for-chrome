@@ -15,7 +15,7 @@
     confirmDelay: 160,  // ms, 意图确认延迟 (0-300ms)
     sourceLang: 'auto',
     targetLang: 'auto',
-    showRing: true,
+    showRing: false,
     textColor: '#86a003',        // Default: screenshot olive green
     translateService: 'google',
     videoSubtitlesEnabled: true,
@@ -141,57 +141,16 @@
 
   // State
   let holdTimer = null;
-  let ringTimer = null;
   let startX = 0;
   let startY = 0;
   let downTarget = null;
   let isLongPressTriggered = false;
   let isProcessingLongPress = false;
-  let progressRingEl = null;
 
-  // Create Progress Ring Indicator
-  function createProgressIndicator() {
-    if (progressRingEl) return progressRingEl;
-    const ring = document.createElement('div');
-    ring.className = '__gtrans-progress-indicator';
-    ring.innerHTML = `
-      <svg viewBox="0 0 32 32">
-        <circle class="bg" cx="16" cy="16" r="14" />
-        <circle class="meter" cx="16" cy="16" r="14" />
-      </svg>
-    `;
-    document.documentElement.appendChild(ring);
-    progressRingEl = ring;
-    return ring;
-  }
-
-  function showProgressIndicator(x, y, duration) {
-    if (!config.showRing) return;
-    const ring = createProgressIndicator();
-    ring.style.left = `${x}px`;
-    ring.style.top = `${y}px`;
-    const meter = ring.querySelector('.meter');
-    if (meter) {
-      meter.style.stroke = config.textColor || '#86a003';
-      meter.style.transition = 'none';
-      meter.style.strokeDashoffset = '88';
-      // Force reflow
-      void meter.offsetHeight;
-      meter.style.transition = `stroke-dashoffset ${duration}ms linear`;
-      meter.style.strokeDashoffset = '0';
-    }
-    ring.classList.add('active');
-  }
-
-  function hideProgressIndicator() {
-    if (!progressRingEl) return;
-    progressRingEl.classList.remove('active');
-    const meter = progressRingEl.querySelector('.meter');
-    if (meter) {
-      meter.style.transition = 'none';
-      meter.style.strokeDashoffset = '88';
-    }
-  }
+  // Progress ring indicator permanently disabled for silent minimalist flow
+  function createProgressIndicator() { return null; }
+  function showProgressIndicator() {}
+  function hideProgressIndicator() {}
 
   // Extract font properties from original element to perfectly match typography
   function getElementTypography(targetEl, targetBlock) {
@@ -730,6 +689,35 @@
     requestTranslation(translationEl, textToTranslate);
   }
 
+  // Helper: Detect if target is part of a video/audio player or playback progress/slider control
+  function isMediaOrInteractiveControl(el) {
+    if (!el || el === document.body || el === document.documentElement) return false;
+
+    // Direct tag check
+    const tag = el.tagName ? el.tagName.toUpperCase() : '';
+    if (['VIDEO', 'AUDIO', 'CANVAS', 'EMBED', 'OBJECT'].includes(tag)) {
+      return true;
+    }
+
+    // Media & Player Ancestor Check (covers Douyin xgplayer, Bilibili, YouTube, HTML5 video players, etc.)
+    const mediaContainer = el.closest?.(
+      'video, audio, canvas, embed, object, ' +
+      '.xgplayer, [class*="xgplayer"], [class*="xg-"], ' +
+      '[class*="progress"], [class*="slider"], [class*="scrub"], [class*="timeline"], [class*="seek"], ' +
+      '[role="slider"], [role="progressbar"], ' +
+      '.html5-video-player, #movie_player, .bpx-player-container, .dplayer, .prism-player'
+    );
+    if (mediaContainer) {
+      // Do not block if user is specifically interacting with our subtitles
+      if (el.closest?.('.ytp-caption-segment, .captions-text, .caption-window, .holdtranslate-yt-sub, .holdtranslate-video-subtitle-capsule')) {
+        return false;
+      }
+      return true;
+    }
+
+    return false;
+  }
+
   // Global Mouse Event Listeners
   function handleMouseDown(e) {
     if (e.button !== 0) return;
@@ -742,12 +730,18 @@
 
     if (!config.enabled) return;
 
+    const hasSelection = window.getSelection() && window.getSelection().toString().trim().length > 0;
+
     // Ignore interactive input elements unless text is selected
     const tag = e.target.tagName;
     const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable;
-    const hasSelection = window.getSelection() && window.getSelection().toString().trim().length > 0;
 
     if (isInput && !hasSelection) {
+      return;
+    }
+
+    // Fully exempt media players, progress bars, and video scrubbing controls (fixes Douyin and all video players)
+    if (!hasSelection && isMediaOrInteractiveControl(e.target)) {
       return;
     }
 
@@ -756,23 +750,7 @@
     downTarget = getTrueTargetAtPoint(e.target, startX, startY);
     isLongPressTriggered = false;
 
-    // Use user-configured confirmDelay (capped to avoid exceeding pressDuration)
-    const userDelay = config.confirmDelay !== undefined ? config.confirmDelay : 160;
-    const actualConfirmDelay = Math.min(userDelay, Math.max(0, config.pressDuration - 40));
-    const remainingRingDuration = Math.max(60, config.pressDuration - actualConfirmDelay);
-
-    // Delayed indicator: only display the ring once hold intention is confirmed
-    if (actualConfirmDelay === 0) {
-      showProgressIndicator(startX, startY, config.pressDuration);
-    } else {
-      if (ringTimer) clearTimeout(ringTimer);
-      ringTimer = setTimeout(() => {
-        ringTimer = null;
-        showProgressIndicator(startX, startY, remainingRingDuration);
-      }, actualConfirmDelay);
-    }
-
-    // Start timer for long press
+    // Start timer for long press (pure silent without progress ring)
     if (holdTimer) clearTimeout(holdTimer);
     holdTimer = setTimeout(() => {
       holdTimer = null;
@@ -784,10 +762,6 @@
     // 16px tolerance threshold prevents high-DPI mouse micro-jitters from cancelling the timer
     const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
     if (dist > 16) {
-      if (ringTimer) {
-        clearTimeout(ringTimer);
-        ringTimer = null;
-      }
       if (holdTimer) {
         clearTimeout(holdTimer);
         holdTimer = null;
@@ -797,10 +771,6 @@
   }
 
   function handleMouseUp(e) {
-    if (ringTimer) {
-      clearTimeout(ringTimer);
-      ringTimer = null;
-    }
     if (holdTimer) {
       clearTimeout(holdTimer);
       holdTimer = null;
@@ -829,6 +799,10 @@
 
   // Handle HTML5 drag start (e.g. dragging a link to open in new tab, super drag, etc.)
   function handleDragStart(e) {
+    if (isMediaOrInteractiveControl(e.target)) {
+      return;
+    }
+
     if (isLongPressTriggered) {
       // Long press has already triggered and translated. Prevent unwanted drag ghost while releasing.
       e.preventDefault();
@@ -837,10 +811,6 @@
 
     // User is dragging an element (e.g. sliding a link, dragging an image or text).
     // Cancel pending long-press translation immediately so the drag operation is smooth and unhindered.
-    if (ringTimer) {
-      clearTimeout(ringTimer);
-      ringTimer = null;
-    }
     if (holdTimer) {
       clearTimeout(holdTimer);
       holdTimer = null;
@@ -849,10 +819,6 @@
   }
 
   function handleDragEnd(e) {
-    if (ringTimer) {
-      clearTimeout(ringTimer);
-      ringTimer = null;
-    }
     if (holdTimer) {
       clearTimeout(holdTimer);
       holdTimer = null;
