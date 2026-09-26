@@ -12,7 +12,6 @@
   let config = {
     enabled: true,
     pressDuration: 500, // ms
-    confirmDelay: 160,  // ms, 意图确认延迟 (0-300ms)
     sourceLang: 'auto',
     targetLang: 'auto',
     showRing: false,
@@ -81,13 +80,12 @@
   if (isExtensionValid() && chrome.storage && chrome.storage.sync) {
     try {
       chrome.storage.sync.get([
-        'enabled', 'pressDuration', 'confirmDelay', 'sourceLang', 'targetLang', 'showRing', 'textColor',
+        'enabled', 'pressDuration', 'sourceLang', 'targetLang', 'showRing', 'textColor',
         'translateService', 'videoSubtitlesEnabled', 'subtitleMode'
       ], (res) => {
         if (!isExtensionValid() || (chrome.runtime && chrome.runtime.lastError)) return;
         if (res.enabled !== undefined) config.enabled = res.enabled;
         if (res.pressDuration !== undefined) config.pressDuration = Number(res.pressDuration);
-        if (res.confirmDelay !== undefined) config.confirmDelay = Number(res.confirmDelay);
         if (res.sourceLang !== undefined) config.sourceLang = res.sourceLang;
         if (res.targetLang !== undefined) config.targetLang = res.targetLang;
         if (res.showRing !== undefined) config.showRing = res.showRing;
@@ -109,7 +107,6 @@
         if (namespace === 'sync') {
           if (changes.enabled) config.enabled = changes.enabled.newValue;
           if (changes.pressDuration) config.pressDuration = Number(changes.pressDuration.newValue);
-          if (changes.confirmDelay !== undefined) config.confirmDelay = Number(changes.confirmDelay.newValue);
           if (changes.sourceLang) config.sourceLang = changes.sourceLang.newValue;
           if (changes.targetLang) config.targetLang = changes.targetLang.newValue;
           if (changes.showRing) config.showRing = changes.showRing.newValue;
@@ -151,6 +148,28 @@
   function createProgressIndicator() { return null; }
   function showProgressIndicator() {}
   function hideProgressIndicator() {}
+
+  // Japanese and Korean regex
+  const JAPANESE_KANA_REGEX = /[\u3040-\u309F\u30A0-\u30FF]/;
+  const KOREAN_HANGUL_REGEX = /[\uAC00-\uD7AF]/;
+
+  // Check if text is predominantly Chinese (excluding Japanese/Korean)
+  function isChineseText(str) {
+    if (!str || typeof str !== 'string') return false;
+    const trimmed = str.trim();
+    if (!trimmed) return false;
+    if (JAPANESE_KANA_REGEX.test(trimmed) || KOREAN_HANGUL_REGEX.test(trimmed)) {
+      return false;
+    }
+    const matches = trimmed.match(/[\u4e00-\u9fa5]/g);
+    if (!matches) return false;
+    const total = trimmed.replace(/\s+/g, '').length;
+    if (total === 0) return false;
+    if (total <= 4) {
+      return matches.length >= 1;
+    }
+    return (matches.length / total) > 0.25;
+  }
 
   // Extract font properties from original element to perfectly match typography
   function getElementTypography(targetEl, targetBlock) {
@@ -557,11 +576,8 @@
         });
       }
     } else if (response && response.skipped) {
-      // Gentle hint for Chinese / Traditional Chinese skipped
-      el.innerHTML = `<span class="__gtrans-skip-hint">（${response.message || '已跳过中文翻译'}）</span>`;
-      setTimeout(() => {
-        revertTranslation(el);
-      }, 1200);
+      // Silent skip: revert/remove immediately without showing any prompt text
+      revertTranslation(el);
     } else {
       const errMsg = (response && response.error) || '翻译失败';
       el.innerHTML = `<span class="__gtrans-error">（${errMsg}，请长按重试）</span>`;
@@ -625,12 +641,11 @@
     isProcessingLongPress = true;
     setTimeout(() => { isProcessingLongPress = false; }, 350);
 
-    isLongPressTriggered = true;
-    hideProgressIndicator();
-
     // 1. Strict Check: If the clicked paragraph (or the translation itself) is already translated -> REVERT IT!
     const existingTranslation = getAssociatedTranslationForElement(targetEl);
     if (existingTranslation) {
+      isLongPressTriggered = true;
+      hideProgressIndicator();
       revertTranslation(existingTranslation);
       return;
     }
@@ -655,11 +670,14 @@
     }
 
     if (!targetBlock || !textToTranslate) {
+      hideProgressIndicator();
       return;
     }
 
     // If targetBlock is itself a translation, revert it!
     if (targetBlock.classList && targetBlock.classList.contains('__gtrans-inline-result')) {
+      isLongPressTriggered = true;
+      hideProgressIndicator();
       revertTranslation(targetBlock);
       return;
     }
@@ -667,9 +685,24 @@
     // Check if targetBlock specifically has an active translation
     const blockTranslation = getAssociatedTranslationForElement(targetBlock);
     if (blockTranslation) {
+      isLongPressTriggered = true;
+      hideProgressIndicator();
       revertTranslation(blockTranslation);
       return;
     }
+
+    // Silent skip for Chinese text when target language is Chinese / Auto:
+    // Do not insert any DOM element, do not show any prompt or loading text,
+    // and do NOT set isLongPressTriggered = true so native click / link navigation is fully preserved.
+    const effectiveTargetLang = config.targetLang || 'auto';
+    const isTargetChinese = effectiveTargetLang === 'auto' || effectiveTargetLang === 'zh-CN' || effectiveTargetLang === 'zh-TW' || effectiveTargetLang === 'zh';
+    if (isTargetChinese && isChineseText(textToTranslate)) {
+      hideProgressIndicator();
+      return;
+    }
+
+    isLongPressTriggered = true;
+    hideProgressIndicator();
 
     // 3. Extract typography from original text for exact font size & weight matching
     const typo = getElementTypography(targetEl, targetBlock);

@@ -20,15 +20,22 @@ function addToCache(key, data) {
 const JAPANESE_KANA_REGEX = /[\u3040-\u309F\u30A0-\u30FF]/;
 const KOREAN_HANGUL_REGEX = /[\uAC00-\uD7AF]/;
 
-// Check if text is Chinese (excluding Japanese/Korean)
+// Check if text is predominantly Chinese (excluding Japanese/Korean)
 function isChineseText(str) {
-  if (JAPANESE_KANA_REGEX.test(str) || KOREAN_HANGUL_REGEX.test(str)) {
+  if (!str || typeof str !== 'string') return false;
+  const trimmed = str.trim();
+  if (!trimmed) return false;
+  if (JAPANESE_KANA_REGEX.test(trimmed) || KOREAN_HANGUL_REGEX.test(trimmed)) {
     return false;
   }
-  const matches = str.match(/[\u4e00-\u9fa5]/g);
+  const matches = trimmed.match(/[\u4e00-\u9fa5]/g);
   if (!matches) return false;
-  const total = str.replace(/\s+/g, '').length;
-  return matches.length >= 2 || (matches.length / total) > 0.2;
+  const total = trimmed.replace(/\s+/g, '').length;
+  if (total === 0) return false;
+  if (total <= 4) {
+    return matches.length >= 1;
+  }
+  return (matches.length / total) > 0.25;
 }
 
 // LLM Language name mappings
@@ -402,7 +409,7 @@ async function translateText(text, options = {}) {
   }
 
   // Skip translation when input is already Chinese and target is Chinese
-  if ((actualTargetLang === 'zh-CN' || actualTargetLang === 'zh-TW') && isChineseText(trimmed)) {
+  if ((actualTargetLang === 'zh-CN' || actualTargetLang === 'zh-TW' || actualTargetLang === 'zh') && isChineseText(trimmed)) {
     return {
       success: false,
       skipped: true,

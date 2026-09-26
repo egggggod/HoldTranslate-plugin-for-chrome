@@ -38,8 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const liquidGlassSwitch = document.getElementById('liquidGlassSwitch');
   const durationSlider = document.getElementById('durationSlider');
   const durationValue = document.getElementById('durationValue');
-  const confirmDelaySlider = document.getElementById('confirmDelaySlider');
-  const confirmDelayValue = document.getElementById('confirmDelayValue');
   const ringSwitch = document.getElementById('ringSwitch');
   const savedHint = document.getElementById('savedHint');
   const videoSubtitlesSwitch = document.getElementById('videoSubtitlesSwitch');
@@ -460,14 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (durationValue) durationValue.textContent = `${num} ms`;
   }
 
-  function updateConfirmDelayUI(val) {
-    const num = Number(val);
-    if (confirmDelaySlider) confirmDelaySlider.value = num;
-    if (confirmDelayValue) {
-      confirmDelayValue.textContent = num === 0 ? '0 ms (即刻出圈)' : `${num} ms`;
-    }
-  }
-
   // 4. Current Tab Status Detection
   function detectCurrentTabStatus() {
     if (typeof chrome === 'undefined' || !chrome.tabs || !chrome.tabs.query) {
@@ -518,7 +508,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // 5. Load Saved Settings
   if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
     chrome.storage.sync.get([
-      'enabled', 'sourceLang', 'targetLang', 'pressDuration', 'confirmDelay',
+      'enabled', 'sourceLang', 'targetLang', 'pressDuration',
       'showRing', 'textColor', 'translateService', 'deepseekApiKey',
       'customApiUrl', 'customApiKey', 'customModel', 'liquidGlass',
       'videoSubtitlesEnabled', 'subtitleMode'
@@ -574,7 +564,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Sliders & Ring
       updateDurationUI(res.pressDuration !== undefined ? res.pressDuration : 500);
-      updateConfirmDelayUI(res.confirmDelay !== undefined ? res.confirmDelay : 160);
       if (ringSwitch) {
         ringSwitch.checked = res.showRing !== undefined ? res.showRing : false;
       }
@@ -591,7 +580,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const initColor = urlParams.get('color') || '#86a003';
     updateColorUI(initColor);
     updateDurationUI(500);
-    updateConfirmDelayUI(160);
     if (sourceLangSelect) syncDropdownUI(sourceLangDropdown, sourceLangSelect, sourceLangLabel);
     if (targetLangSelect) syncDropdownUI(targetLangDropdown, targetLangSelect, targetLangLabel);
     if (serviceSelect) syncDropdownUI(serviceDropdown, serviceSelect, serviceSelectedLabel);
@@ -673,21 +661,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const val = Number(durationSlider.value);
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ pressDuration: val }, showSaved);
-      }
-    });
-  }
-
-  if (confirmDelaySlider) {
-    confirmDelaySlider.addEventListener('input', () => {
-      const num = Number(confirmDelaySlider.value);
-      if (confirmDelayValue) {
-        confirmDelayValue.textContent = num === 0 ? '0 ms (即刻出圈)' : `${num} ms`;
-      }
-    });
-    confirmDelaySlider.addEventListener('change', () => {
-      const val = Number(confirmDelaySlider.value);
-      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
-        chrome.storage.sync.set({ confirmDelay: val }, showSaved);
       }
     });
   }

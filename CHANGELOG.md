@@ -4,6 +4,16 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.7] - 2026-09-26
+
+### Added & Fixed
+- **Silent Zero-Distraction Skip for Chinese Content**: When target language is set to Chinese or Auto (`zh-CN`, `zh-TW`, `zh`, `auto`), long-pressing Chinese text silently skips translation without creating DOM nodes, displaying loading placeholders, or popping up "（检测到中文，已跳过翻译）" hints.
+- **Native Click Preservation on Ignored Text**: Long-pressing Chinese links, buttons, or interactive elements preserves native browser click and navigation events upon mouse release, preventing unwanted event blocking.
+- **Streamlined Settings UI**: Completely removed the redundant "意图确认时间 (出圈延迟)" (intention confirmation buffer) slider from the popup settings panel, significantly simplifying the configuration interface.
+- **Enhanced Chinese Detection Algorithm**: Upgraded `isChineseText` density and ratio detection in both content and background scripts to accurately differentiate predominantly Chinese paragraphs from foreign texts referencing Chinese terms.
+
+---
+
 ## [v1.7.6] - 2026-09-23
 
 ### Added & Fixed
