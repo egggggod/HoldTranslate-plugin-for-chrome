@@ -4,14 +4,17 @@
 
 # HoldTranslate
 
+> 🎉 **已正式上架 Chrome 插件商店（Chrome Web Store）！**
+
 网页沉浸式长按翻译与平滑还原 Chrome 扩展！
 
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-已上架-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/)
 [![Version](https://img.shields.io/badge/version-1.7.8-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.7.7-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.7.8-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## 演示 (Demo)
@@ -96,10 +99,10 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-当前源码版本为 **v1.7.8**。加载本目录作为已解压的扩展程序即可使用字幕同步修复；已发布的安装包可在 Releases 页面下载。
+当前最新版本为 **v1.7.8**，已上架 Chrome 插件商店，也可在 Releases 页面直接下载离线安装包。
 
 1. **直接下载安装包（已发布版本）**
-   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.7.7.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.7/holdtranslate-chrome-extension-v1.7.7.zip)）；
+   - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.7.8.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.8/holdtranslate-chrome-extension-v1.7.8.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
    - 打开页面右上角的 **“开发者模式”**；

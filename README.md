@@ -4,14 +4,17 @@
 
 # HoldTranslate
 
+> 🎉 **Now officially available on the Chrome Web Store! (已上架 Chrome 插件商店)**
+
 Immersive long-press instant web translation & smooth restoration for Google Chrome!
 
 > **A super quick reminder:**  
 > HoldTranslate is designed for **pure reading flow and zero visual clutter**. No giant popup cards, no intrusive Google logos, and no clunky toolbars. The translation seamlessly renders as native-like bilingual subtitles right below the original text, inheriting 100% of the surrounding typography.
 
+[![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-4285F4?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/)
 [![Version](https://img.shields.io/badge/version-1.7.8-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
-[![Releases](https://img.shields.io/badge/Release-v1.7.7-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
+[![Releases](https://img.shields.io/badge/Release-v1.7.8-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 ## Demo
@@ -98,10 +101,10 @@ The browser extension embeds bilingual translations directly beneath web text wi
 
 ### 🚀 Quick Install Guide
 
-The current source version is **v1.7.8**. Load this folder as an unpacked extension to use the subtitle synchronization fixes; published archives are available on the Releases page.
+The latest version is **v1.7.8**, officially available on the Chrome Web Store and via pre-packaged archives on the Releases page.
 
 1. **Manual Installation (Published Archives)**
-   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.7.7.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.7/holdtranslate-chrome-extension-v1.7.7.zip))
+   - Download the pre-packaged zip from our **[Releases Page](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)** (or direct download: [holdtranslate-chrome-extension-v1.7.8.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.8/holdtranslate-chrome-extension-v1.7.8.zip))
    - Unzip the archive
    - Open Chrome and navigate to `chrome://extensions/`
    - Turn on **"Developer mode"** (top right corner)

@@ -4,9 +4,11 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [v1.7.8] - 2026-11-11
+## [v1.7.8] - 2026-11-12
 
-### Fixed
+### Added & Fixed
+- **Zero-Blanking Atomic Replacement & CPS Reading Duration**: Eliminate timeout-triggered subtitle blanking during long rolling ASR sentences. Dynamically calculate minimum reading hold duration (`1.2s ~ 5.0s`) based on character reading speed (CPS) while buffering streaming updates in the background for seamless atomic replacement.
+- **Direct YouTube Caption Dragging & Position Memory**: Drag source or translated captions directly anywhere within the player (including top placement) without extra handle clutter or custom cursors. Includes a 6px movement threshold to preserve native click/double-click player controls, automatic edge clamping across resizes/fullscreen, and a position reset button in settings.
 - **Auto-Generated Caption Stability**: Keep a stable translation unit through word appends and rolling captions, batch visible updates, and accept compatible in-flight results without clearing the translation on every word. Reconstruct append events and invalidate results on corrections, real cue boundaries, and seeks.
 - **YouTube Subtitle Synchronization**: Match translations to the visible source and active time intervals. Remove premature whole-sentence display, overlapping time tolerances, and stale translations across sentence changes.
 - **One Subtitle Translation Source**: Use the service selected in settings for every subtitle translation. Remove YouTube machine-translation track alignment and cross-fragment sentence assembly; preserve original cue timing without expanding the displayed source snapshot.
