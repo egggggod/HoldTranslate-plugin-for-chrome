@@ -581,6 +581,8 @@
 
       if (!config.enabled) return;
 
+      if (e.target.closest?.('.caption-window[data-holdtranslate-draggable="true"]')) return;
+
       const hasSelection = window.getSelection() && window.getSelection().toString().trim().length > 0;
 
       const tag = e.target.tagName;

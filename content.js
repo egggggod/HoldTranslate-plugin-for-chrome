@@ -12,7 +12,8 @@
     textColor: '#86a003',
     translateService: 'google',
     videoSubtitlesEnabled: true,
-    subtitleMode: 'bilingual'
+    subtitleMode: 'bilingual',
+    ytSubtitlePos: null
   };
   const config = { ...defaults };
   const modules = globalThis.__HOLD_TRANSLATE_MODULES__;

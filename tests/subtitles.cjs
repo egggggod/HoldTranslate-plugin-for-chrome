@@ -37,10 +37,19 @@ window.__fixtureLocation = new URL('https://www.youtube.com/watch?v=videoA');
 window.__requests = [];
 window.__network = [];
 window.__listeners = new Set();
+window.__savedSettings = {};
+window.__storageWrites = [];
 window.chrome = {
   runtime: { id: 'test-extension', sendMessage: (message, callback) => __requests.push({ message, callback }) },
   storage: {
-    sync: { get: (keys, callback) => { window.__loadSettings = callback; } },
+    sync: {
+      get: (keys, callback) => { window.__loadSettings = callback; },
+      set: (settings, callback) => {
+        Object.assign(__savedSettings, settings);
+        __storageWrites.push(settings);
+        callback?.();
+      }
+    },
     onChanged: {
       addListener: listener => __listeners.add(listener),
       removeListener: listener => __listeners.delete(listener)
@@ -125,11 +134,13 @@ const tests = String.raw`
     getSelection().removeAllRanges();
     app.applySettings({
       enabled: true, pressDuration: 25, sourceLang: 'auto', targetLang: 'zh-CN',
-      translateService: 'google', videoSubtitlesEnabled: true, subtitleMode: 'bilingual', textColor: '#86a003'
+      translateService: 'google', videoSubtitlesEnabled: true, subtitleMode: 'bilingual', textColor: '#86a003',
+      ytSubtitlePos: null
     });
     await tick();
     __requests.length = 0;
     __network.length = 0;
+    __storageWrites.length = 0;
   };
   const test = async (name, action) => {
     try {
@@ -363,6 +374,8 @@ const tests = String.raw`
     equal(document.querySelector('.holdtranslate-yt-sub').dataset.displayKey, key);
     await wait(200);
     respond(__requests.at(-1), '我们正在测试');
+    equal(displayed(), '我们');
+    await wait(1200);
     equal(displayed(), '我们正在测试');
   });
   await test('ASR accepts a compatible pending prefix without blanking', async () => {
@@ -376,6 +389,8 @@ const tests = String.raw`
     await wait(200);
     equal(__requests.at(-1).message.text, 'We are testing');
     respond(__requests.at(-1), '我们正在测试');
+    equal(displayed(), '我们');
+    await wait(1200);
     equal(displayed(), '我们正在测试');
   });
   await test('ASR continuous words with slow responses remain visible after first display', async () => {
@@ -430,6 +445,8 @@ const tests = String.raw`
     equal(displayed(), '我们正在测试字幕');
     await wait(200);
     respond(__requests.at(-1), '测试包含更多单词的字幕');
+    equal(displayed(), '我们正在测试字幕');
+    await wait(1800);
     equal(displayed(), '测试包含更多单词的字幕');
   });
   await test('ASR unrelated new text clears the previous unit', async () => {
@@ -471,16 +488,16 @@ const tests = String.raw`
     await tick();
     equal(displayed(), '');
   });
-  await test('ASR a stale retained prefix expires and cannot reappear from cache', async () => {
+  await test('ASR zero-blanking retains previous valid translation without expiring into blank', async () => {
     asr();
     cache('We are', '我们');
     await show('We are', 0.2);
     await show('We are testing', 0.7);
     equal(displayed(), '我们');
     await wait(1600);
-    equal(displayed(), '');
+    equal(displayed(), '我们');
     app.youtube.refresh();
-    equal(displayed(), '');
+    equal(displayed(), '我们');
   });
   await test('ASR failed requests retry the latest snapshot', async () => {
     asr();
@@ -521,6 +538,267 @@ const tests = String.raw`
     equal(displayed(), '我们准备好了');
     await show('We are', 1.1);
     equal(displayed(), '');
+  });
+  await test('ASR long rolling sentences never blank out while speech continues', async () => {
+    asr();
+    const long1 = 'We are testing the captions while the speaker continues with a very long sentence';
+    const long2 = 'the speaker continues with a very long sentence and additional words arrive before the translation is ready';
+    const translation1 = '说话者正在继续讲一个很长很长的句子，包含了很多重要的内容。';
+    cache(long1, translation1);
+    await show(long1, 0.5);
+    equal(displayed().replace(/\n/g, ''), translation1);
+    await show(long2, 1.2);
+    await wait(700);
+    equal(displayed().replace(/\n/g, ''), translation1);
+    await wait(1000);
+    equal(displayed().replace(/\n/g, ''), translation1);
+    respond(__requests.findLast(request => request.message.text === long2), '附加词语在新译文返回前到达。');
+    await wait(3500);
+    equal(displayed().replace(/\n/g, ''), '附加词语在新译文返回前到达。');
+  });
+  const prepareDrag = async () => {
+    player.style.cssText = 'position:relative;width:800px;height:450px;margin:40px';
+    caption.style.position = 'absolute';
+    await show('Drag these subtitles directly');
+    respond(__requests.at(-1), '按住字幕直接拖动');
+    equal(caption.querySelector('.holdtranslate-drag-handle'), null);
+    return caption.querySelector('.holdtranslate-yt-sub');
+  };
+  const pointer = (target, type, clientX, clientY, pointerId = 1) =>
+    target.dispatchEvent(new PointerEvent(type, {
+      bubbles: true, cancelable: true, pointerId, button: 0, buttons: type === 'pointerup' ? 0 : 1,
+      clientX, clientY
+    }));
+  await test('YouTube subtitles can be dragged to the top without jumping at pickup', async () => {
+    const subtitle = await prepareDrag();
+    const subtitleRect = subtitle.getBoundingClientRect();
+    const start = caption.getBoundingClientRect();
+    const grabX = subtitleRect.left + subtitleRect.width / 2;
+    const grabY = subtitleRect.top + subtitleRect.height / 2;
+    equal(document.elementFromPoint(grabX, grabY), subtitle);
+    equal(getComputedStyle(subtitle).cursor, 'default');
+    equal(getComputedStyle(original).cursor, 'default');
+    pointer(subtitle, 'pointerdown', grabX, grabY);
+    pointer(window, 'pointermove', grabX, grabY);
+    assert(Math.abs(caption.getBoundingClientRect().top - start.top) < 1, 'Caption jumped at pickup');
+    equal(app.config.ytSubtitlePos, null);
+    const bounds = player.getBoundingClientRect();
+    pointer(window, 'pointermove', grabX, grabY - 7);
+    assert(Math.abs(caption.getBoundingClientRect().top - (start.top - 7)) < 1, 'Caption jumped at drag threshold');
+    equal(getComputedStyle(subtitle).cursor, 'default');
+    pointer(window, 'pointermove', grabX, bounds.top + 14);
+    pointer(window, 'pointerup', grabX, bounds.top + 14);
+    equal(caption.dataset.customPos, 'true');
+    const placed = caption.getBoundingClientRect();
+    assert(placed.top < bounds.top + bounds.height / 3, 'Caption did not move to the top');
+    assert(placed.top >= bounds.top, 'Caption escaped the top of the player');
+    assert(placed.bottom <= bounds.bottom && placed.left >= bounds.left && placed.right <= bounds.right,
+      'Caption escaped the player');
+    equal(caption.style.bottom, 'auto');
+    equal(__storageWrites.length, 1);
+    equal(__savedSettings.ytSubtitlePos.y, app.config.ytSubtitlePos.y);
+    equal(getComputedStyle(subtitle).pointerEvents, 'auto');
+    equal(getComputedStyle(caption).pointerEvents, 'none');
+  });
+  await test('Dragging respects an inset caption container and clamps edges after resize', async () => {
+    const subtitle = await prepareDrag();
+    const container = document.createElement('div');
+    container.className = 'generic-fixture';
+    container.style.cssText = 'position:absolute;left:40px;top:30px;right:40px;bottom:30px';
+    player.appendChild(container);
+    container.appendChild(caption);
+    try {
+      const grip = subtitle.getBoundingClientRect();
+      const bounds = player.getBoundingClientRect();
+      pointer(subtitle, 'pointerdown', grip.left + 10, grip.top + 10);
+      pointer(window, 'pointermove', bounds.left - 500, bounds.top - 500);
+      pointer(window, 'pointerup', bounds.left - 500, bounds.top - 500);
+      let placed = caption.getBoundingClientRect();
+      assert(placed.left >= bounds.left - 1 && placed.left <= bounds.left + 10, 'Inset parent shifted caption horizontally');
+      assert(placed.top >= bounds.top, 'Inset parent shifted caption outside player');
+      player.style.width = '400px';
+      player.style.height = '250px';
+      app.youtube.refresh();
+      placed = caption.getBoundingClientRect();
+      const resized = player.getBoundingClientRect();
+      assert(placed.left >= resized.left - 1 && placed.right <= resized.right + 1, 'Resize clipped caption');
+      assert(placed.top >= resized.top, 'Resize clipped caption vertically');
+    } finally {
+      player.appendChild(caption);
+      container.remove();
+    }
+  });
+  await test('Dragged position survives restart, double-click bubbles, and settings reset placement', async () => {
+    let subtitle = await prepareDrag();
+    const grip = subtitle.getBoundingClientRect();
+    pointer(subtitle, 'pointerdown', grip.left + 10, grip.top + 10);
+    pointer(window, 'pointermove', grip.left + 10, player.getBoundingClientRect().top + 20);
+    pointer(window, 'pointerup', grip.left + 10, player.getBoundingClientRect().top + 20);
+    const saved = { ...__savedSettings.ytSubtitlePos };
+    app.youtube.stop();
+    equal(caption.dataset.holdtranslateDraggable, undefined);
+    app.applySettings({ ytSubtitlePos: saved });
+    await tick();
+    subtitle = caption.querySelector('.holdtranslate-yt-sub');
+    equal(caption.dataset.holdtranslateDraggable, 'true');
+    assert(caption.getBoundingClientRect().top < player.getBoundingClientRect().top + 150, 'Saved top position was lost');
+    let bubbled = 0;
+    const onDoubleClick = () => bubbled++;
+    player.addEventListener('dblclick', onDoubleClick);
+    try {
+      subtitle.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, detail: 2 }));
+      equal(bubbled, 1);
+      equal(app.config.ytSubtitlePos, saved);
+      __listeners.forEach(listener => listener({ ytSubtitlePos: { newValue: null } }, 'sync'));
+      equal(app.config.ytSubtitlePos, null);
+      equal(caption.dataset.customPos, undefined);
+      equal(getComputedStyle(caption).bottom, '56px');
+    } finally {
+      player.removeEventListener('dblclick', onDoubleClick);
+    }
+  });
+  await test('Drag cancellation and stopping remove active pointer listeners', async () => {
+    const subtitle = await prepareDrag();
+    const grip = subtitle.getBoundingClientRect();
+    const grabX = grip.left + 10;
+    const grabY = grip.top + 10;
+    pointer(subtitle, 'pointerdown', grabX, grabY);
+    pointer(window, 'pointermove', grabX, grabY - 100, 2);
+    equal(app.config.ytSubtitlePos, null);
+    pointer(window, 'pointermove', grabX, grabY - 100);
+    assert(app.config.ytSubtitlePos, 'Primary pointer did not move caption');
+    pointer(window, 'pointercancel', grabX, grabY - 100);
+    equal(app.config.ytSubtitlePos, null);
+    equal(__storageWrites.length, 0);
+    pointer(window, 'pointermove', grabX, grabY - 200);
+    equal(app.config.ytSubtitlePos, null);
+    pointer(subtitle, 'pointerdown', grabX, grabY);
+    app.youtube.stop();
+    pointer(window, 'pointermove', grabX, grabY - 200);
+    pointer(window, 'pointerup', grabX, grabY - 200);
+    equal(app.config.ytSubtitlePos, null);
+    equal(__storageWrites.length, 0);
+    equal(caption.dataset.holdtranslateDraggable, undefined);
+    equal(subtitle.isConnected, false);
+    equal(getComputedStyle(original).pointerEvents, 'none');
+  });
+  await test('Cloned native caption windows can be dragged by their source text', async () => {
+    await prepareDrag();
+    const replacement = caption.cloneNode(true);
+    try {
+      caption.replaceWith(replacement);
+      await tick();
+      const source = replacement.querySelector('.ytp-caption-segment');
+      equal(replacement.dataset.holdtranslateDraggable, 'true');
+      const grip = source.getBoundingClientRect();
+      pointer(source, 'pointerdown', grip.left + 10, grip.top + 10);
+      pointer(window, 'pointermove', grip.left + 10, player.getBoundingClientRect().top + 20);
+      pointer(window, 'pointerup', grip.left + 10, player.getBoundingClientRect().top + 20);
+      equal(replacement.dataset.customPos, 'true');
+      equal(__storageWrites.length, 1);
+    } finally {
+      replacement.replaceWith(caption);
+    }
+  });
+  await test('Small pointer movements keep ordinary subtitle clicks and double-clicks intact', async () => {
+    const subtitle = await prepareDrag();
+    const bounds = subtitle.getBoundingClientRect();
+    let clicks = 0;
+    let doubleClicks = 0;
+    const onClick = () => clicks++;
+    const onDoubleClick = () => doubleClicks++;
+    player.addEventListener('click', onClick);
+    player.addEventListener('dblclick', onDoubleClick);
+    try {
+      pointer(subtitle, 'pointerdown', bounds.left + 10, bounds.top + 10);
+      pointer(window, 'pointermove', bounds.left + 13, bounds.top + 12);
+      pointer(window, 'pointerup', bounds.left + 13, bounds.top + 12);
+      subtitle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+      subtitle.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, detail: 2 }));
+      equal(clicks, 1);
+      equal(doubleClicks, 1);
+      equal(__storageWrites.length, 0);
+      equal(app.config.ytSubtitlePos, null);
+    } finally {
+      player.removeEventListener('click', onClick);
+      player.removeEventListener('dblclick', onDoubleClick);
+    }
+  });
+  await test('A drag suppresses its release click but allows the next ordinary click', async () => {
+    const subtitle = await prepareDrag();
+    const bounds = subtitle.getBoundingClientRect();
+    let clicks = 0;
+    const onClick = () => clicks++;
+    player.addEventListener('click', onClick);
+    try {
+      pointer(subtitle, 'pointerdown', bounds.left + 10, bounds.top + 10);
+      pointer(window, 'pointermove', bounds.left + 10, bounds.top - 100);
+      pointer(window, 'pointerup', bounds.left + 10, bounds.top - 100);
+      equal(subtitle.dispatchEvent(new MouseEvent('click', {
+        bubbles: true, cancelable: true, detail: 1
+      })), false);
+      equal(clicks, 0);
+      pointer(subtitle, 'pointerdown', bounds.left + 10, bounds.top - 100);
+      pointer(window, 'pointerup', bounds.left + 10, bounds.top - 100);
+      subtitle.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 }));
+      equal(clicks, 1);
+      equal(__storageWrites.length, 1);
+    } finally {
+      player.removeEventListener('click', onClick);
+    }
+  });
+  await test('Holding source captions does not start page translation', async () => {
+    await prepareDrag();
+    __requests.length = 0;
+    const bounds = original.getBoundingClientRect();
+    pointer(original, 'pointerdown', bounds.left + 5, bounds.top + 5);
+    original.dispatchEvent(new MouseEvent('mousedown', {
+      bubbles: true, cancelable: true, button: 0, clientX: bounds.left + 5, clientY: bounds.top + 5
+    }));
+    await wait(60);
+    equal(__requests.length, 0);
+    equal(document.querySelector('.__gtrans-inline-result'), null);
+    pointer(window, 'pointerup', bounds.left + 5, bounds.top + 5);
+    original.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
+  });
+  await test('Monolingual translated captions remain directly draggable', async () => {
+    const subtitle = await prepareDrag();
+    app.applySettings({ subtitleMode: 'monolingual' });
+    equal(getComputedStyle(original).display, 'none');
+    const bounds = subtitle.getBoundingClientRect();
+    pointer(subtitle, 'pointerdown', bounds.left + 10, bounds.top + 10);
+    pointer(window, 'pointermove', bounds.left + 10, player.getBoundingClientRect().top + 20);
+    pointer(window, 'pointerup', bounds.left + 10, player.getBoundingClientRect().top + 20);
+    equal(caption.dataset.customPos, 'true');
+    equal(__storageWrites.length, 1);
+    equal(getComputedStyle(subtitle).cursor, 'default');
+  });
+  await test('The popup reset button restores dragged subtitles through saved settings', async () => {
+    const subtitle = await prepareDrag();
+    const bounds = subtitle.getBoundingClientRect();
+    pointer(subtitle, 'pointerdown', bounds.left + 10, bounds.top + 10);
+    pointer(window, 'pointermove', bounds.left + 10, player.getBoundingClientRect().top + 20);
+    pointer(window, 'pointerup', bounds.left + 10, player.getBoundingClientRect().top + 20);
+    const frame = document.createElement('iframe');
+    frame.style.cssText = 'width:340px;height:700px;border:0';
+    try {
+      const loaded = new Promise(resolve => frame.addEventListener('load', resolve, { once: true }));
+      frame.src = './popup.html';
+      document.body.appendChild(frame);
+      await loaded;
+      frame.contentDocument.querySelector('#openSettingsBtn').click();
+      await wait(450);
+      const resetButton = frame.contentDocument.querySelector('#resetSubtitlePositionBtn');
+      assert(resetButton.getBoundingClientRect().height > 0, 'Position reset is hidden in settings');
+      resetButton.click();
+      equal(__savedSettings.ytSubtitlePos, null);
+      equal(app.config.ytSubtitlePos, null);
+      equal(caption.dataset.customPos, undefined);
+      equal(getComputedStyle(caption).bottom, '56px');
+      equal(frame.contentDocument.querySelector('#savedHint').textContent, '已保存');
+    } finally {
+      frame.remove();
+    }
   });
   await test('Stopping cancels a scheduled navigation reattachment', async () => {
     window.dispatchEvent(new Event('yt-navigate-finish'));
@@ -588,6 +866,8 @@ const tests = String.raw`
       await wait(220);
       equal(__requests.at(-1).message.text, 'We are testing subtitles');
       respond(__requests.at(-1), '我们正在测试字幕');
+      equal(displayed(), '我们正在测试');
+      await wait(1200);
       equal(displayed(), '我们正在测试字幕');
     } finally {
       replacement.remove();
@@ -787,6 +1067,22 @@ const tests = String.raw`
 
 const fixture = path.join(directory, 'subtitles.html');
 const css = fs.readFileSync(path.join(workspace, 'content.css'), 'utf8');
+const popupBootstrap = `<script>
+window.chrome = { storage: { sync: {
+  get: (keys, callback) => callback(parent.__app.config),
+  set: (settings, callback) => {
+    parent.chrome.storage.sync.set(settings, callback);
+    const changes = Object.fromEntries(Object.entries(settings).map(([key, value]) => [key, {newValue: value}]));
+    parent.__listeners.forEach(listener => listener(changes, 'sync'));
+  }
+}}};
+</script>`;
+fs.writeFileSync(path.join(directory, 'popup.html'),
+  fs.readFileSync(path.join(workspace, 'popup.html'), 'utf8').replace('<script src="popup.js"></script>',
+    popupBootstrap + '<script src="popup.js"></script>'));
+for (const filename of ['popup.js', 'popup.css']) {
+  fs.copyFileSync(path.join(workspace, filename), path.join(directory, filename));
+}
 fs.writeFileSync(fixture, `<!doctype html><html><head><meta charset="utf-8"><style>${css}</style></head><body>
 <div id="movie_player"><video></video><div class="caption-window"><div class="captions-text"><div class="caption-visual-line"><span class="ytp-caption-segment"></span></div></div></div></div>
 <div id="page-fixture"></div><pre id="result">running</pre>

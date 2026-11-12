@@ -5,9 +5,10 @@
 
   modules.createYouTubeSubtitles = function ({ config, subtitles }) {
     const asrStates = new Map();
+    const draggableWindows = new Map();
     const ASR_TRANSLATION_DELAY = 180;
     const ASR_MAX_BATCH_WAIT = 600;
-    const ASR_MAX_RETENTION = 1500;
+    const ASR_MAX_RETENTION = 8000;
     const ASR_DOM_GAP_DELAY = 120;
     let events = null;
     let videoEvents = null;
@@ -73,6 +74,156 @@
       subtitle.style.setProperty('display', 'none', 'important');
     }
 
+    function getReadingDuration(text) {
+      if (!text) return 1200;
+      const clean = text.trim();
+      const cjk = (clean.match(/[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/gu) || []).length;
+      const words = (clean.match(/[\p{L}\p{N}]+/gu) || []).length;
+      const durationMs = cjk > 0 ? (cjk / 4.5) * 1000 : (words / 3.5) * 1000;
+      return Math.min(5000, Math.max(1200, Math.round(durationMs)));
+    }
+
+    function applyWindowPosition(captionWindow) {
+      const pos = config.ytSubtitlePos;
+      if (pos && Number.isFinite(pos.x) && Number.isFinite(pos.y)) {
+        const player = captionWindow.closest('#movie_player, .html5-video-player') || captionWindow.parentElement;
+        const playerRect = player?.getBoundingClientRect();
+        if (!playerRect?.width || !playerRect.height) return;
+        const captionRect = captionWindow.getBoundingClientRect();
+        const horizontalMargin = Math.min(playerRect.width / 2, captionRect.width / 2 + 8);
+        const topMargin = Math.min(playerRect.height / 2, captionRect.height / 2 + 8);
+        const bottomMargin = Math.min(playerRect.height / 2, captionRect.height / 2 + 8);
+        const centerX = Math.max(horizontalMargin, Math.min(playerRect.width - horizontalMargin, playerRect.width * pos.x / 100));
+        const centerY = Math.max(topMargin, Math.min(playerRect.height - bottomMargin, playerRect.height * pos.y / 100));
+        const parent = captionWindow.offsetParent || player;
+        const parentRect = parent.getBoundingClientRect();
+        const scaleX = parent.offsetWidth ? parentRect.width / parent.offsetWidth : 1;
+        const scaleY = parent.offsetHeight ? parentRect.height / parent.offsetHeight : 1;
+        if (!scaleX || !scaleY) return;
+        const left = (playerRect.left + centerX - parentRect.left) / scaleX - parent.clientLeft + parent.scrollLeft;
+        const top = (playerRect.top + centerY - parentRect.top) / scaleY - parent.clientTop + parent.scrollTop;
+        captionWindow.dataset.customPos = 'true';
+        captionWindow.style.setProperty('left', left + 'px', 'important');
+        captionWindow.style.setProperty('top', top + 'px', 'important');
+        captionWindow.style.setProperty('bottom', 'auto', 'important');
+        captionWindow.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
+      } else if (captionWindow.dataset.customPos === 'true') {
+        delete captionWindow.dataset.customPos;
+        captionWindow.style.removeProperty('left');
+        captionWindow.style.removeProperty('top');
+        captionWindow.style.removeProperty('bottom');
+        captionWindow.style.removeProperty('transform');
+      }
+    }
+
+    function setupSubtitleDrag(captionWindow) {
+      if (draggableWindows.has(captionWindow)) return;
+      const controller = new AbortController();
+      const options = { signal: controller.signal, capture: true };
+      captionWindow.dataset.holdtranslateDraggable = 'true';
+      let drag = null;
+      let suppressedClick = null;
+
+      const savePosition = () => {
+        try {
+          chrome.storage.sync.set({ ytSubtitlePos: config.ytSubtitlePos }, () => { void chrome.runtime.lastError; });
+        } catch (error) {}
+      };
+      const finishDrag = (event, save) => {
+        if (!drag || (event && event.pointerId !== drag.pointerId)) return;
+        const previous = drag;
+        drag = null;
+        previous.controller.abort();
+        if (!previous.started) return;
+        try { captionWindow.releasePointerCapture(previous.pointerId); } catch (error) {}
+        if (save) {
+          suppressedClick = { pointerId: previous.pointerId, player: previous.player, until: Date.now() + 500 };
+          savePosition();
+        } else {
+          config.ytSubtitlePos = previous.position;
+          applyWindowPosition(captionWindow);
+        }
+      };
+      window.addEventListener('pointerdown', () => { suppressedClick = null; }, options);
+      const suppressDragClick = event => {
+        if (!suppressedClick || Date.now() > suppressedClick.until || event.detail === 0) return;
+        if (event.pointerId !== undefined && event.pointerId !== suppressedClick.pointerId) return;
+        if (!suppressedClick.player.contains(event.target)) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      };
+      window.addEventListener('click', suppressDragClick, options);
+      window.addEventListener('dblclick', suppressDragClick, options);
+      const isSubtitleTarget = target =>
+        target instanceof Element && target.closest('.ytp-caption-segment, .holdtranslate-yt-sub');
+      captionWindow.addEventListener('mousedown', event => {
+        if (event.button !== 0 || !isSubtitleTarget(event.target)) return;
+        event.preventDefault();
+        event.stopPropagation();
+      }, options);
+      captionWindow.addEventListener('dragstart', event => {
+        if (!isSubtitleTarget(event.target)) return;
+        event.preventDefault();
+        event.stopPropagation();
+      }, options);
+      captionWindow.addEventListener('pointerdown', event => {
+        if (event.button !== 0 || drag) return;
+        if (!isSubtitleTarget(event.target) || !isVisible(captionWindow)) return;
+        const player = captionWindow.closest('#movie_player, .html5-video-player') || captionWindow.parentElement;
+        const playerRect = player?.getBoundingClientRect();
+        if (!playerRect?.width || !playerRect.height) return;
+        event.stopPropagation();
+        const captionRect = captionWindow.getBoundingClientRect();
+        drag = {
+          controller: new AbortController(), pointerId: event.pointerId, player,
+          position: config.ytSubtitlePos, started: false, startX: event.clientX, startY: event.clientY,
+          offsetX: event.clientX - captionRect.left - captionRect.width / 2,
+          offsetY: event.clientY - captionRect.top - captionRect.height / 2
+        };
+        const dragOptions = { signal: drag.controller.signal, capture: true };
+        window.addEventListener('pointermove', move => {
+          if (!drag || move.pointerId !== drag.pointerId) return;
+          if (!isVisible(captionWindow)) {
+            finishDrag(null, false);
+            return;
+          }
+          if (!drag.started) {
+            if (Math.hypot(move.clientX - drag.startX, move.clientY - drag.startY) <= 6) return;
+            drag.started = true;
+            try { captionWindow.setPointerCapture(move.pointerId); } catch (error) {}
+          }
+          move.preventDefault();
+          move.stopPropagation();
+          const bounds = drag.player.getBoundingClientRect();
+          if (!bounds.width || !bounds.height) return;
+          config.ytSubtitlePos = {
+            x: Math.max(0, Math.min(100, (move.clientX - drag.offsetX - bounds.left) / bounds.width * 100)),
+            y: Math.max(0, Math.min(100, (move.clientY - drag.offsetY - bounds.top) / bounds.height * 100))
+          };
+          applyWindowPosition(captionWindow);
+        }, dragOptions);
+        window.addEventListener('pointerup', up => {
+          if (up.pointerId !== drag?.pointerId) return;
+          if (drag.started) {
+            up.preventDefault();
+            up.stopPropagation();
+          }
+          finishDrag(up, true);
+        }, dragOptions);
+        window.addEventListener('pointercancel', cancel => finishDrag(cancel, false), dragOptions);
+        window.addEventListener('blur', () => finishDrag(null, false), dragOptions);
+      }, options);
+      captionWindow.addEventListener('lostpointercapture', event => finishDrag(event, false), options);
+      draggableWindows.set(captionWindow, {
+        dispose() {
+          finishDrag(null, false);
+          controller.abort();
+          delete captionWindow.dataset.holdtranslateDraggable;
+          draggableWindows.delete(captionWindow);
+        }
+      });
+    }
+
     function formatTranslation(text, segments, captionWindow) {
       const clean = normalize(text);
       if (!clean || clean.length <= 18 || !segments.length) return clean;
@@ -82,7 +233,32 @@
       const multiline = captionWindow.querySelector('br') ||
         (captionText && captionText.clientHeight > lineHeight * 1.45) ||
         (segments.length > 1 && Math.abs(segments[1].offsetTop - segments[0].offsetTop) > 8);
-      if (!multiline) return clean;
+      if (!multiline && clean.length < 28) return clean;
+      if (clean.length > 45) {
+        const third1 = clean.length / 3;
+        const third2 = (clean.length * 2) / 3;
+        let split1 = Math.round(third1);
+        let split2 = Math.round(third2);
+        let d1 = Infinity, d2 = Infinity;
+        for (const match of clean.matchAll(/[，、；： ,;]/g)) {
+          if (match.index >= clean.length * 0.18 && match.index <= clean.length * 0.48) {
+            if (Math.abs(match.index - third1) < d1) {
+              split1 = match.index + 1;
+              d1 = Math.abs(match.index - third1);
+            }
+          } else if (match.index >= clean.length * 0.52 && match.index <= clean.length * 0.82) {
+            if (Math.abs(match.index - third2) < d2) {
+              split2 = match.index + 1;
+              d2 = Math.abs(match.index - third2);
+            }
+          }
+        }
+        if (split2 > split1) {
+          return clean.slice(0, split1).trim() + '\n' +
+                 clean.slice(split1, split2).trim() + '\n' +
+                 clean.slice(split2).trim();
+        }
+      }
       const midpoint = clean.length / 2;
       let split = Math.round(midpoint);
       let distance = Infinity;
@@ -97,6 +273,7 @@
     }
 
     function applyDisplay(captionWindow, segments, subtitle) {
+      setupSubtitleDrag(captionWindow);
       const monolingual = config.subtitleMode === 'monolingual';
       segments.forEach(segment => segment.style.setProperty('display', monolingual ? 'none' : 'inline-block', 'important'));
       const captionText = captionWindow.querySelector('.captions-text');
@@ -111,6 +288,7 @@
         }
         subtitle.style.setProperty('line-height', style.lineHeight === 'normal' ? '1.35' : style.lineHeight, 'important');
       }
+      applyWindowPosition(captionWindow);
     }
 
     function showTranslation(subtitle, text, translation, segments, captionWindow) {
@@ -147,6 +325,7 @@
 
     function disposeState(state) {
       if (!state || asrStates.get(state.key) !== state) return;
+      clearTimeout(state.holdTimer);
       clearTimeout(state.translationTimer);
       clearTimeout(state.retentionTimer);
       clearTimeout(state.gapTimer);
@@ -160,6 +339,7 @@
 
     function resetSession(nextVideoId = getVideoId()) {
       Array.from(asrStates.values()).forEach(disposeState);
+      draggableWindows.forEach(record => record.dispose());
       if (trackRequest) trackRequest.abort();
       trackRequest = null;
       if (subtitles.clearPending) subtitles.clearPending();
@@ -206,6 +386,16 @@
       return 'new';
     }
 
+    function commitTranslation(state, snapshot, translation) {
+      state.displayed = { ...snapshot, translation };
+      state.displayedAt = Date.now();
+      state.pendingCandidate = null;
+      if (state.holdTimer) {
+        clearTimeout(state.holdTimer);
+        state.holdTimer = null;
+      }
+    }
+
     function acceptTranslation(state, snapshot, translation) {
       if (!translation || !isStateActive(state) || (!isVisible(state.window) && state.window.isConnected && !state.gapSince)) return false;
       const currentTokens = getTokens(state.text);
@@ -214,7 +404,7 @@
       if (position < 0 || (state.expiredText === snapshot.text && snapshot.text !== state.text)) return false;
       const video = document.querySelector('video');
       const mediaLag = state.mediaTime - snapshot.mediaTime;
-      if (snapshot.text !== state.text && mediaLag > ASR_MAX_RETENTION * Math.max(1, video ? video.playbackRate : 1)) return false;
+      if (snapshot.text !== state.text && mediaLag > 8000 * Math.max(1, video ? video.playbackRate : 1)) return false;
       if (state.displayed) {
         if (state.displayed.text === snapshot.text && state.displayed.translation === translation) return false;
         const displayedTokens = getTokens(state.displayed.text);
@@ -223,9 +413,26 @@
         const displayedProgress = displayedPosition + displayedTokens.length;
         if (displayedPosition >= 0 && (progress < displayedProgress ||
             (progress === displayedProgress && snapshot.revision < state.displayed.revision))) return false;
+
+        const now = Date.now();
+        const holdDuration = getReadingDuration(state.displayed.translation);
+        const minHoldUntil = (state.displayedAt || 0) + holdDuration;
+        if (now < minHoldUntil) {
+          state.pendingCandidate = { snapshot, translation };
+          if (!state.holdTimer) {
+            state.holdTimer = setTimeout(() => {
+              state.holdTimer = null;
+              if (state.pendingCandidate && isCurrent(state)) {
+                const candidate = state.pendingCandidate;
+                commitTranslation(state, candidate.snapshot, candidate.translation);
+                render();
+              }
+            }, Math.max(0, minHoldUntil - now));
+          }
+          return false;
+        }
       }
-      state.displayed = { ...snapshot, translation };
-      state.retainUntil = snapshot.text === state.text ? 0 : Date.now() + ASR_MAX_RETENTION;
+      commitTranslation(state, snapshot, translation);
       return true;
     }
 
@@ -322,27 +529,12 @@
           if (!stillVisible && change !== 'roll') {
             state.displayed = null;
             clearSubtitle(subtitle);
-          } else if (!state.retainUntil) {
-            state.retainUntil = Date.now() + (change === 'roll' ? ASR_MAX_BATCH_WAIT : ASR_MAX_RETENTION);
           }
         }
       }
       const cached = subtitles.getCached(text);
       if (cached) acceptTranslation(state, { text, revision: state.revision, mediaTime: time }, cached);
       clearTimeout(state.retentionTimer);
-      if (state.displayed && state.displayed.text !== text && state.retainUntil) {
-        if (Date.now() >= state.retainUntil) {
-          state.expiredText = state.displayed.text;
-          state.displayed = null;
-          clearSubtitle(subtitle);
-        } else {
-          state.retentionTimer = setTimeout(() => {
-            if (isCurrent(state)) render();
-          }, state.retainUntil - Date.now());
-        }
-      } else {
-        state.retainUntil = 0;
-      }
       subtitle.dataset.asr = 'true';
       subtitle.dataset.displayKey = `${generation}:${displayGeneration}:asr:${state.id}`;
       if (state.displayed) {
@@ -354,6 +546,9 @@
 
     function render() {
       if (!events || !config.videoSubtitlesEnabled || navigating) return;
+      draggableWindows.forEach((record, captionWindow) => {
+        if (!captionWindow.isConnected) record.dispose();
+      });
       const windows = Array.from(document.querySelectorAll('.caption-window'));
       asrStates.forEach(state => {
         if (!state.window.isConnected && !state.gapTimer) {
@@ -697,6 +892,7 @@
         scheduleAttach(500);
       }, options);
       window.addEventListener('fullscreenchange', () => scheduleAttach(300), options);
+      window.addEventListener('resize', () => scheduleAttach(0), options);
       attachObserver();
       requestTracks();
       heartbeat = setInterval(() => {

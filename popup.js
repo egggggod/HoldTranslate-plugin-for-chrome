@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const savedHint = document.getElementById('savedHint');
   const videoSubtitlesSwitch = document.getElementById('videoSubtitlesSwitch');
   const subtitleModeGroup = document.getElementById('subtitleModeGroup');
+  const resetSubtitlePositionBtn = document.getElementById('resetSubtitlePositionBtn');
 
   // API Config elements
   const deepseekApiKey = document.getElementById('deepseekApiKey');
@@ -772,6 +773,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const enabled = videoSubtitlesSwitch.checked;
       if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
         chrome.storage.sync.set({ videoSubtitlesEnabled: enabled }, showSaved);
+      }
+    });
+  }
+
+  if (resetSubtitlePositionBtn) {
+    resetSubtitlePositionBtn.addEventListener('click', () => {
+      if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.sync) {
+        chrome.storage.sync.set({ ytSubtitlePos: null }, showSaved);
       }
     });
   }
