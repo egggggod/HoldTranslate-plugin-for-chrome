@@ -4,6 +4,18 @@ All notable changes to the HoldTranslate extension will be documented in this fi
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.7.8] - 2026-11-11
+
+### Fixed
+- **Auto-Generated Caption Stability**: Keep a stable translation unit through word appends and rolling captions, batch visible updates, and accept compatible in-flight results without clearing the translation on every word. Reconstruct append events and invalidate results on corrections, real cue boundaries, and seeks.
+- **YouTube Subtitle Synchronization**: Match translations to the visible source and active time intervals. Remove premature whole-sentence display, overlapping time tolerances, and stale translations across sentence changes.
+- **One Subtitle Translation Source**: Use the service selected in settings for every subtitle translation. Remove YouTube machine-translation track alignment and cross-fragment sentence assembly; preserve original cue timing without expanding the displayed source snapshot.
+- **Shared Translation Requests & Cache Isolation**: Notify every subscriber when a shared request completes, and separate text translation caches by source language, target language, and service.
+- **Seek, Track & Navigation Recovery**: Follow the selected caption track and video identity, reject results from previous sessions, suppress stale captions during seeking, and observe native caption visibility changes.
+- **Content Modules & Cleanup**: Separate startup, page translation, shared subtitle requests, YouTube and HTML5/X adapters. Remove unused progress-ring code and duplicate state; release listeners, observers, timers and track fetches when their owner stops.
+
+---
+
 ## [v1.7.7] - 2026-09-26
 
 ### Added & Fixed

@@ -163,6 +163,10 @@
   transition: opacity 0.18s ease, color 0.2s ease !important;
 }
 
+.holdtranslate-yt-sub[data-asr="true"] {
+  transition: color 0.2s ease !important;
+}
+
 .holdtranslate-yt-sub:empty,
 .holdtranslate-yt-sub[data-empty="true"] {
   opacity: 0 !important;

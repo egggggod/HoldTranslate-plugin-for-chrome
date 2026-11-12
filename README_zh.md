@@ -9,7 +9,7 @@
 > **极速体验备忘：**  
 > HoldTranslate 专为**无感阅读与零视觉干扰**而生。没有笨重的大色块卡片，没有突兀的 Google 图标水印，更没有花哨多余的控制栏。译文如原生双语字幕般自然融入在原文正下方，100% 同步继承原文的所有排版细节。
 
-[![Version](https://img.shields.io/badge/version-1.7.7-blue.svg)](manifest.json)
+[![Version](https://img.shields.io/badge/version-1.7.8-blue.svg)](manifest.json)
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-success.svg)](manifest.json)
 [![Releases](https://img.shields.io/badge/Release-v1.7.7-green.svg)](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -18,7 +18,7 @@
 
 > 完美适配绝大多数现代网页，包括复杂自适应流式页面、社交动态流（YouTube、X/Twitter）以及经典学术/新闻刊物（BBC、经济学人、ArXiv 等）。
 
-点击直接下载最新版 [HoldTranslate Chrome 扩展安装包](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.7/holdtranslate-chrome-extension-v1.7.7.zip) (v1.7.7)，解压后即可在 Chrome 中体验：
+访问 [HoldTranslate Chrome 扩展发布页](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases) 下载安装包，解压后即可在 Chrome 中体验：
 
 ### 1. 浅色模式沉浸式阅读效果（如新闻、论文长文）
 ![浅色模式演示](assets/demo-light.png)
@@ -26,7 +26,7 @@
 ### 2. 深色模式与嵌套标题适配（如 YouTube 视频标题）
 ![深色模式演示](assets/demo-dark.png)
 
-### 3. YouTube 原生视频字幕实时翻译（0 延迟双语对照）
+### 3. YouTube 原生视频字幕实时翻译（同步双语对照）
 ![YouTube 视频字幕演示](assets/demo-subtitles.png)
 
 ## 项目概览 (Overview)
@@ -49,12 +49,18 @@ HoldTranslate-plugin-for-chrome/
 ├── manifest.json       # Chrome 扩展配置文件 (Manifest V3)
 ├── background.js       # 多服务后台 Service Worker (Google, 微软, DeepSeek, 自定义 LLM)
 ├── yt-bridge.js        # 主世界透明桥接脚本 (无视 CSP 截获 timedtext 与字幕轨)
-├── content.js          # 核心脚本：长按事件监听、排版智能提取、译文插入与还原
+├── content.js          # 启动入口、共享设置与模块生命周期
+├── page-translator.js  # 长按翻译、排版提取、译文插入与还原
+├── subtitle-service.js # 所选翻译服务、缓存与请求共享
+├── youtube-subtitles.js # YouTube 可见字幕快照、时间轴与资源管理
+├── video-subtitles.js  # HTML5 TextTrack 与 X 字幕适配
 ├── content.css         # 沉浸式译文动画与基础样式
 ├── popup.html          # 扩展设置双视图弹窗界面
 ├── popup.css           # 设置面板样式、调色盘呼吸留白与 API 配置卡片
 ├── popup.js            # 双视图切换、引擎选择器、调色板联动与 API 持久化
 ├── test.html           # 全场景本地测试基准页（含 YouTube 标题、斜体、下划线等）
+├── tests/subtitles.cjs # 无第三方依赖的浏览器回归检查
+├── GLOSSARY.md         # 字幕领域术语
 ├── LICENSE             # MIT 开源协议
 ├── README.md           # 英文主说明文档
 └── README_zh.md        # 中文说明文档 (简体中文)
@@ -62,18 +68,22 @@ HoldTranslate-plugin-for-chrome/
 
 整个项目结构轻量清晰，不依赖任何第三方打包工具或重量级依赖，纯原生现代 Web 技术编写，开箱即用。
 
+视频字幕统一使用设置中选定的翻译服务，以当前可见的原文快照为翻译范围，不跨字幕片段拼装整句，也不额外获取 YouTube 机器译文。术语和取舍分别记录在 [GLOSSARY.md](GLOSSARY.md) 与[字幕决策](docs/adr/0001-visible-caption-translations.md)中。
+
+执行 `node tests/subtitles.cjs` 可运行浏览器回归检查。测试使用已安装的 Chrome 或 Chromium，并模拟翻译响应，不访问翻译服务；浏览器安装在其他位置时，可通过 `HOLDTRANSLATE_CHROME` 指定可执行文件路径。
+
 ## 浏览器扩展 (Browser Extension)
 
 ### 特性亮点 (Features)
 
 - 🎬 **全网视频播放器与进度条拖拽深度豁免**：引入智能媒体识别引擎 (`isMediaOrInteractiveControl`)，全自动深度豁免抖音（XGPlayer）、B站、YouTube 及各类 HTML5 播放器，彻底解决进度条拖拽、滑块定位及滑动切视频等原生交互冲突，拖动 100% 丝滑无阻。
 - 🤫 **长按中文零干扰无感跳过**：当目标语言为中文或自动检测时，长按网页中文文本完全静默无感跳过，不插入任何 DOM 节点或加载动画，不弹出任何跳过提示语，且完好保留链接与按钮的原生点击跳转行为。
-- ⚡ **YouTube 字幕 0 延迟秒级同步与全域中轴对称居中 (Zero-Latency & Axis-Symmetric Centering Engine)**：全面重构主世界透明桥接机制 (`yt-bridge.js`)、深度断句预翻译与底部基准线锁定（`justify-content: flex-end`）。彻底实现字幕全域中轴对称居中对齐（`left: 50% !important; transform: translateX(-50%) !important; text-align: center !important`），确保英文原文与中文译文（单行、双行及多行）共享完全一致的水平垂直中轴线；引入智能标点与折半断行算法（`formatBalancedTranslation`），并配备点击穿透与严格防误拖机制（`pointer-events: none`），彻底杜绝鼠标误拖导致偏位，点击字幕区域直接顺畅触发视频播放/暂停。
+- ⚡ **YouTube 字幕同步与居中排版**：通过主世界桥接 (`yt-bridge.js`) 获取原文轨道，由所选服务翻译可见快照；人工字幕预取独立片段，自动字幕合并快速更新后再请求翻译。切换视频或字幕轨道时使旧结果失效。保留底部基准线、88% 播放器自适应宽度、中轴居中、智能断行与点击穿透。
 - 🎯 **视频字幕 1:1 动态排版镜像 (Dynamic Typography Mirroring)**：实时动态提取 YouTube 原生字幕段落的计算样式，将 `font-family`、`font-size`、`font-weight`、`line-height`、`letter-spacing` 等 1:1 动态精准赋给译文字幕，支持全屏播放与小窗缩放自适应，彻底消除字体突兀感；保持强调色高对比度呈现。
 - 🪟 **边缘直通无穿帮弹窗体系 (Edge-to-Edge Native Integration)**：彻底废除外层角隅裁切与多余外框，`html, body` 采用与成熟主流扩展一致的边缘直通无感设计，由 Chrome 宿主窗口自身呈现原生圆角与系统立体投影，彻底根除“方背景下叠一层弧形”的视觉穿帮缺陷；内部卡片全面维持苹果 VisionOS 液态玻璃圆角胶囊与流体光晕。
 - 📱 **Apple iOS 紧凑平滑滑动子页面架构（选择语言零变长、恒定 225px）**：采用苹果 iOS 设置级水平推拉子页面架构（`.show-subpage #subpageView`）。无论选择源语言、目标语言还是翻译服务，弹窗开窗高度**绝对严格锁定在 225px**，彻底消除界面抖动与上下拉长变形。
 - ⚡ **120ms 触觉确认平滑回弹流**：点击任意语言或服务选项，立即点亮精致绿勾（`✓`）与柔和胶囊底色提供即时触觉确认，随后经 120ms 平滑滑动自动返回主面板；左上角 `← 返回` 胶囊按钮与键盘 ESC 键随时可手动返回。
-- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.7.7]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
+- 🍏 **Apple 2025 灵动玻璃岛与光影交互 (Floating Island Bar & Specular Sheen)**：底部控制栏重构为苹果 2025 最新官方软件设计风格的统一浮动晶莹药丸岛（`.floating-island-bar`），一体化整合 `[⚙️ 设置]`、`[● 就绪 · v1.7.8]` 和 `[↗ 测试页]`；引入 115° 镜面光泽掠影（Hover Specular Sheen Sweep）与 `0.97` 触觉回弹微凹陷（Tactile Press Indentation）。
 - 🌐 **极简纯英服务标识 (Minimal English Services)**：主界面翻译服务全面取消冗余中文字样，统一采用标准英文品牌名称（**Google Translate**、**Microsoft Translator**、**DeepSeek API**、**Custom API**），语言选择器保留地道中文以符合直觉。
 - 🎛️ **去冗余纯净设置体系**：偏好设置内新增「🎬 视频字幕」专属配置卡片，包含总开关与 Apple 风格分段选择器（`[双语对照]` / `[仅译文]`），彻底剔除冗余出圈延迟滑条，快捷主面板维持 225px 黄金高度不变。
 - 🎯 **1:1 原生排版与富文本样式镜像**：精准匹配原文计算字号（专项穿透适配 YouTube `#video-title` 标题），自动同步加粗、斜体、下划线，智能感知衬线体（宋体）与非衬线体（黑体）。
@@ -84,7 +94,9 @@ HoldTranslate-plugin-for-chrome/
 
 ### 🚀 快速安装指南 (Quick Install Guide)
 
-1. **直接下载安装包（推荐 - 最新 v1.7.7）**
+当前源码版本为 **v1.7.8**。加载本目录作为已解压的扩展程序即可使用字幕同步修复；已发布的安装包可在 Releases 页面下载。
+
+1. **直接下载安装包（已发布版本）**
    - 访问我们的 **[Releases 发布页面](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases)**（或点击直接下载：[holdtranslate-chrome-extension-v1.7.7.zip](https://github.com/egggggod/HoldTranslate-plugin-for-chrome/releases/download/v1.7.7/holdtranslate-chrome-extension-v1.7.7.zip)）；
    - 解压下载好的 `.zip` 文件；
    - 打开 Chrome 浏览器，在地址栏输入访问：`chrome://extensions/`；
